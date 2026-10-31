@@ -1,3 +1,3 @@
 public extension String {
-    var isBlankOrEmpty: Bool { trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var isBlankOrEmpty: Bool { allSatisfy { $0.isWhitespace } }
 }
