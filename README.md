@@ -21,6 +21,7 @@ tools/                          コード生成・同期/依存チェック
 | iOS のテスト | `cd modules && swift test`（Xcode / macOS） |
 | Android のテスト | `cd apps/android && gradle test`（Android SDK が必要） |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
+| エージェント用スキルの配置 | `apm install`（原本は `.apm/skills/`。`pip install apm-cli`） |
 
 作業の進め方は [AGENTS.md](AGENTS.md) を参照してください。
 

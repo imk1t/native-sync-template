@@ -1,0 +1,13 @@
+name: native-sync-template
+version: 0.1.0
+description: iOS / Android ネイティブ同時開発テンプレートのエージェント設定
+# Claude Code は .claude/skills/、Codex などは .agents/skills/ に配置される
+targets:
+  - claude
+  - codex
+
+dependencies:
+  apm: []
+  mcp: []
+includes: auto
+scripts: {}

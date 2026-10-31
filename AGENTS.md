@@ -18,3 +18,9 @@
 - 依存ルール: `core/utils` は何にも依存しない / `core/*` は他の `core/*` のみ / `designsystem` は `core/utils` のみ / `features/*` は `core/*` と `designsystem` のみ（features 同士は禁止）。
 - 外部ライブラリは `core/*` のラッパー経由で使い、`shared/third-party.yaml` に両 OS の対応を書く。
 - iOS のモジュールは `modules/Package.swift` に追加する（理由は docs/adr/0001）。Android は `apps/android/settings.gradle.kts` に追加する。
+
+## スキル（apm で管理）
+- スキルの原本は `.apm/skills/<名前>/SKILL.md`。`apm.yml` の targets に従って `.claude/skills/` と `.agents/skills/` に配置される。**配置先は手で編集せず**、原本を直して `apm install` を実行し、両方をコミットする。
+- apm の入れ方: `pip install apm-cli`（または `brew install apm`）。clone 後と原本の変更後に `apm install`。
+- `apm compile` は実行しない（AGENTS.md を生成する機能で、この AGENTS.md は手書きのため）。
+- 現在のスキル: `sync-feature`（機能の追加・変更）、`add-module`（モジュール追加）、`add-third-party`（外部ライブラリ追加）。

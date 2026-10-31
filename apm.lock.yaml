@@ -1,0 +1,131 @@
+lockfile_version: '1'
+dependencies: []
+deployments:
+- kind: project-relative
+  target: claude
+  value: .claude/skills/add-module
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/add-module/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+- kind: project-relative
+  target: claude
+  value: .claude/skills/add-third-party
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/add-third-party/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ae1289e8db8fcc80fe8774735d954c7735e5e0f001525f499096ef628a277fac
+- kind: project-relative
+  target: claude
+  value: .claude/skills/sync-feature
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/sync-feature/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/add-module
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/add-module/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+- kind: project-relative
+  target: codex
+  value: .agents/skills/add-third-party
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/add-third-party/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ae1289e8db8fcc80fe8774735d954c7735e5e0f001525f499096ef628a277fac
+- kind: project-relative
+  target: codex
+  value: .agents/skills/sync-feature
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/sync-feature/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+local_deployed_files:
+- .agents/skills/add-module
+- .agents/skills/add-module/SKILL.md
+- .agents/skills/add-third-party
+- .agents/skills/add-third-party/SKILL.md
+- .agents/skills/sync-feature
+- .agents/skills/sync-feature/SKILL.md
+- .claude/skills/add-module
+- .claude/skills/add-module/SKILL.md
+- .claude/skills/add-third-party
+- .claude/skills/add-third-party/SKILL.md
+- .claude/skills/sync-feature
+- .claude/skills/sync-feature/SKILL.md
+local_deployed_file_hashes:
+  .agents/skills/add-module/SKILL.md: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  .agents/skills/add-third-party/SKILL.md: sha256:ae1289e8db8fcc80fe8774735d954c7735e5e0f001525f499096ef628a277fac
+  .agents/skills/sync-feature/SKILL.md: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+  .claude/skills/add-module/SKILL.md: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  .claude/skills/add-third-party/SKILL.md: sha256:ae1289e8db8fcc80fe8774735d954c7735e5e0f001525f499096ef628a277fac
+  .claude/skills/sync-feature/SKILL.md: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
