@@ -22,7 +22,7 @@ tools/                          コード生成・同期/依存チェック
 | Android のテスト | `cd apps/android && gradle test`（Android SDK が必要） |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
 
-作業の進め方は [CLAUDE.md](CLAUDE.md) を参照してください。
+作業の進め方は [AGENTS.md](AGENTS.md) を参照してください。
 
 ## 現状
 - 追加済み: 共通定義（OpenAPI サンプル、トークン）、トークンの Swift/Kotlin 生成、サンプル機能 `items`、同期/依存/生成差分の検査、CI の雛形。
