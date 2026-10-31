@@ -1,0 +1,22 @@
+# 両 OS のテストが同じファイルを読み、ViewModel の状態を比べる
+name: items-list
+feature: features/items
+steps:
+  - name: 読み込みに成功すると一覧が表示される
+    given:
+      listItems:
+        status: 200
+        body:
+          - { id: "1", title: "First" }
+          - { id: "2", title: "Second" }
+    when: load
+    then:
+      state: loaded
+      titles: ["First", "Second"]
+  - name: 読み込みに失敗するとエラーになる
+    given:
+      listItems:
+        status: 500
+    when: load
+    then:
+      state: error

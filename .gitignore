@@ -1,0 +1,14 @@
+.DS_Store
+.idea/
+*.iml
+build/
+.gradle/
+local.properties
+.build/
+xcuserdata/
+DerivedData/
+*.xcodeproj
+__pycache__/
+# 環境ごとの Firebase 設定は CI のシークレットから注入する
+GoogleService-Info.plist
+google-services.json

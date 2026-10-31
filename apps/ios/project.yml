@@ -1,0 +1,22 @@
+# XcodeGen の定義。`xcodegen generate` で App.xcodeproj を作る（.xcodeproj はコミットしない）。
+name: App
+options:
+  deploymentTarget:
+    iOS: "18.0"
+packages:
+  Modules:
+    path: ../../modules
+targets:
+  App:
+    type: application
+    platform: iOS
+    sources: [App]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.app
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: Modules
+        product: FeatureItems
+      - package: Modules
+        product: CoreNetwork

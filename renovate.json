@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "両 OS の同じ SDK（例: Firebase）は 1 つの PR にまとめる",
+      "matchPackageNames": ["firebase/firebase-ios-sdk", "com.google.firebase:firebase-bom"],
+      "groupName": "firebase"
+    }
+  ]
+}

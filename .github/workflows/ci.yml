@@ -1,0 +1,66 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ios: ${{ steps.f.outputs.ios }}
+      android: ${{ steps.f.outputs.android }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: f
+        with:
+          filters: |
+            ios:
+              - 'apps/ios/**'
+              - 'modules/**/ios/**'
+              - 'modules/Package.swift'
+              - 'shared/**'
+            android:
+              - 'apps/android/**'
+              - 'modules/**/android/**'
+              - 'shared/**'
+
+  repo-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/check_spec_sync.py
+      - run: python3 tools/check_deps.py
+      - run: bash tools/check_generated.sh
+
+  ios:
+    needs: changes
+    if: needs.changes.outputs.ios == 'true'
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test modules
+        working-directory: modules
+        run: |
+          xcodebuild test -scheme FeatureItems-Package \
+            -destination 'platform=iOS Simulator,name=iPhone 16' || \
+          xcodebuild test -scheme Modules-Package \
+            -destination 'platform=iOS Simulator,name=iPhone 16'
+
+  android:
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+      - name: Test modules
+        working-directory: apps/android
+        run: gradle test assembleDebug

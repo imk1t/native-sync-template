@@ -1,0 +1,9 @@
+# 役割ごとの外部ライブラリ対応表。CI で各 OS の実際の依存と照合する。
+# name は Package.swift / libs.versions.toml に現れるパッケージ名。
+libraries: []
+# 例:
+# - role: analytics
+#   module: core/analytics
+#   ios: { name: firebase-ios-sdk, license: Apache-2.0 }
+#   android: { name: firebase-bom, license: Apache-2.0 }
+#   owner: platform-team
