@@ -16,3 +16,7 @@ google-services.json
 
 # APM dependencies
 apm_modules/
+
+# apm が配置するスキル。原本は .apm/skills/。clone 後に tools/setup.sh（apm install）で作る
+.claude/skills/
+.agents/skills/
