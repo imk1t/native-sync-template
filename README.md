@@ -11,6 +11,26 @@ modules/features/<x>            機能（サンプル: items）
 tools/                          コード生成・同期/依存チェック
 ```
 
+## セットアップ
+
+clone 後に一度だけ実行します。
+
+1. apm（Agent Package Manager）をインストールする（どれか 1 つ）。
+
+   ```bash
+   brew install apm          # macOS
+   pip install apm-cli       # Python がある環境
+   ```
+
+2. エージェント用スキルを配置する。
+
+   ```bash
+   bash tools/setup.sh       # 中身は apm install
+   ```
+
+   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
+   Claude Code では、apm が入っていればセッション開始時に同じ処理が自動で走ります。
+
 ## よく使うコマンド
 | 目的 | コマンド |
 | --- | --- |
@@ -21,7 +41,7 @@ tools/                          コード生成・同期/依存チェック
 | iOS のテスト | `cd modules && swift test`（Xcode / macOS） |
 | Android のテスト | `cd apps/android && gradle test`（Android SDK が必要） |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
-| clone 後のセットアップ（スキルの配置） | `bash tools/setup.sh`（`apm install`。原本は `.apm/skills/`） |
+| スキルの原本を変更したあとに再配置 | `apm install` |
 
 作業の進め方は [AGENTS.md](AGENTS.md) を参照してください。
 

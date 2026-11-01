@@ -21,7 +21,7 @@
 
 ## スキル（apm で管理）
 - スキルの原本は `.apm/skills/<名前>/SKILL.md`。`apm.yml` の targets に従って `.claude/skills/` と `.agents/skills/` に配置される。配置先は**コミットしない**（.gitignore 済み）。
-- clone 後は `bash tools/setup.sh`（中身は `apm install`。apm が無ければ `pip install apm-cli` で入れる）。Claude Code では SessionStart フック（`.claude/hooks/session-start.sh`）が同じことを自動で行う。
+- clone 後は `bash tools/setup.sh`（中身は `apm install`）。apm のインストールは利用者が行う（README の「セットアップ」）。エージェントが勝手にインストールしない。Claude Code では、apm が入っていれば SessionStart フック（`.claude/hooks/session-start.sh`）が同じことを自動で行う。
 - 原本を直したら `apm install` をやり直す。配置先は手で編集しない。
 - `apm compile` は実行しない（AGENTS.md を生成する機能で、この AGENTS.md は手書きのため）。
 - 現在のスキル: `sync-feature`（機能の追加・変更）、`add-module`（モジュール追加）、`add-third-party`（外部ライブラリ追加）。
