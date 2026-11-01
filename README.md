@@ -11,6 +11,54 @@ modules/features/<x>            機能（サンプル: items）
 tools/                          コード生成・同期/依存チェック
 ```
 
+## 各プラットフォームのアーキテクチャ
+
+両 OS とも「MVVM + 単方向データフロー」と、Presentation / Domain / Data の 3 層で揃えます。TCA のような片方の OS にしかないフレームワークは使わず、両 OS の公式機能で同じ形を作ります。対応関係が 1 対 1 であるほど、AI による移植とレビューが正確になります。
+
+### モジュール内のレイヤー
+
+| レイヤー | 責務 | iOS の型 | Android の型 |
+| --- | --- | --- | --- |
+| Presentation | 画面と画面状態 | `ItemsView` + `ItemsViewModel`（`@Observable`） | `ItemsScreen` + `ItemsViewModel`（`StateFlow`） |
+| Domain | ビジネスルール、モデル、Repository の契約 | `ItemsUseCase`, `protocol ItemsRepository` | `ItemsUseCase`, `interface ItemsRepository` |
+| Data | Repository の実装、API/DB 型との変換 | `ItemsRepositoryImpl` | `ItemsRepositoryImpl` |
+
+型名とファイル名は両 OS で同じにします。各レイヤーが依存できるのは自分より内側（Presentation → Domain ← Data）だけです。サンプルの `features/items` は小さいため、現状は ViewModel と View だけで構成しています。
+
+### モジュール間の依存ルール
+
+| モジュール | 依存してよい先 |
+| --- | --- |
+| `apps/*` | すべて（DI の組み立てと画面遷移の配線だけを持つ） |
+| `features/*` | `core/*`、`designsystem`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由） |
+| `core/*` | 他の `core/*`（循環禁止） |
+| `core/utils` | なし（標準ライブラリの拡張など、機能を知らないコードだけ） |
+| `designsystem` | `core/utils` |
+
+`python3 tools/check_deps.py` がこのルールと、iOS と Android の依存関係が一致していることを検査します（CI でも実行）。
+
+### 技術スタック
+
+| 領域 | iOS | Android |
+| --- | --- | --- |
+| UI | SwiftUI（必要な箇所だけ UIKit） | Jetpack Compose |
+| 状態管理 | Observation（`@Observable`） | ViewModel + StateFlow |
+| 非同期 | Swift Concurrency | Kotlin Coroutines / Flow |
+| DI | イニシャライザ注入（必要なら swift-dependencies） | Hilt |
+| 通信 | 生成クライアント + URLSession | 生成クライアント + OkHttp |
+| 永続化 | SwiftData | Room |
+| ユニットテスト | Swift Testing | JUnit + kotlinx-coroutines-test |
+| UI テスト | XCUITest | Compose UI Test |
+| 静的解析 | SwiftLint / swift-format | ktlint / detekt |
+
+DI・通信・永続化・静的解析は方針で、テンプレートにはまだ組み込んでいません。
+
+### 最低対応バージョン（案）
+
+- **iOS 18 以上**：Observation と SwiftData を前提にできる。Liquid Glass（iOS 26）などの新 API は `#available` で分岐し、`designsystem` の中に閉じ込める。
+- **Android minSdk 28 以上**、targetSdk は常に最新。
+- リリース時期が決まった時点で、利用者の OS 分布を見て見直す。
+
 ## セットアップ
 
 clone 後に一度だけ実行します。

@@ -17,5 +17,5 @@ description: Firebase など外部ライブラリ（OSS・SDK）を iOS と Andr
    - Android: `apps/android/gradle/libs.versions.toml` にだけ書く。Firebase は BoM でバージョンを揃える。
 4. `shared/third-party.yaml` に、役割・モジュール・iOS と Android それぞれのライブラリ名とライセンス・担当を追記する。
 5. 分析イベント名や Remote Config のキーは `shared/` に定義して両 OS の定数を生成する（片方だけ名前が違う事故を防ぐ）。
-6. Firebase の設定ファイル（`GoogleService-Info.plist`、`google-services.json`）はコミットしない。dev / stg / prod ごとに用意して、ビルド設定（iOS の Configuration、Android の productFlavor）で切り替え、prod は CI のシークレットから注入する。
+6. Firebase の設定ファイル（`GoogleService-Info.plist`、`google-services.json`）はコミットしない。dev / prod ごとに用意して、ビルド設定（iOS の Configuration、Android の productFlavor）で切り替え、prod は CI のシークレットから注入する。
 7. `python3 tools/check_deps.py` を通す。
