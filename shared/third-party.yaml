@@ -1,5 +1,6 @@
 # 役割ごとの外部ライブラリ対応表。CI で各 OS の実際の依存と照合する。
-# name は Package.swift / libs.versions.toml に現れるパッケージ名。
+# ios.name は .product(..., package: ...) のパッケージ ID（小文字）、android.name は libs.versions.toml の library alias。
+# AndroidX・Kotlin・kotlinx は公式の基盤ライブラリとして対応表とラッパーの対象外。
 libraries: []
 # 例:
 # - role: analytics

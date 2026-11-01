@@ -13,7 +13,7 @@ import com.example.designsystem.Tokens
 @Composable
 fun ItemsScreen(viewModel: ItemsViewModel) {
     val state by viewModel.state.collectAsState()
-    LaunchedEffect(Unit) { viewModel.load() }
+    LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     when (val s = state) {
         ItemsState.Loading -> CircularProgressIndicator()
         is ItemsState.Loaded -> LazyColumn { items(s.items, key = { it.id }) { Text(it.title) } }

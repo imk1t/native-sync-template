@@ -17,6 +17,7 @@
 - `Generated/` と `generated/` 配下は手で編集しない。`python3 tools/generate.py` で再生成する。
 - 依存ルール: `core/utils` は何にも依存しない / `core/*` は他の `core/*` のみ / `designsystem` は `core/utils` のみ / `features/*` は `core/*` と `designsystem` のみ（features 同士は禁止）。
 - 外部ライブラリは `core/*` のラッパー経由で使い、`shared/third-party.yaml` に両 OS の対応を書く。
+- AndroidX・Kotlin・kotlinx は公式の基盤ライブラリとして `core/utils` 以外の各層から直接利用でき、外部 SDK の対応表の対象外。iOS の外部依存は `.product(name: ..., package: ...)` で明示する。
 - iOS のモジュールは `modules/Package.swift` に追加する（理由は docs/adr/0001）。Android は `apps/android/settings.gradle.kts` に追加する。
 
 ## スキル（apm で管理）

@@ -14,6 +14,6 @@ public struct ItemsView: View {
             case .error: Text("読み込みに失敗しました").foregroundStyle(Tokens.Color.primary)
             }
         }
-        .task { await viewModel.load() }
+        .task { await viewModel.loadIfNeeded() }
     }
 }

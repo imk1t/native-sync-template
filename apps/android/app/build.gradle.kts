@@ -24,4 +24,5 @@ dependencies {
     implementation(project(":features:items"))
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
+    implementation(libs.activity.ktx)
 }

@@ -20,3 +20,29 @@ steps:
     when: load
     then:
       state: error
+  - name: 同じ画面スコープで再表示しても取得し直さない
+    given:
+      listItems:
+        status: 200
+        body: [{ id: "1", title: "First" }]
+    when: open-then-reappear-in-same-scope
+    then:
+      state: loaded
+      titles: ["First"]
+      requestCount: 1
+  - name: 明示的な再読み込みは再取得する
+    given:
+      listItems:
+        status: 200
+        body: [{ id: "1", title: "First" }]
+    when: open-then-reload
+    then:
+      state: loaded
+      requestCount: 2
+  - name: 初回読み込みのキャンセルは通信エラーにしない
+    given:
+      listItems:
+        pending: true
+    when: cancel-owning-scope
+    then:
+      state: loading

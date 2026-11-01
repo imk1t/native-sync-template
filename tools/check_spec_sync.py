@@ -7,6 +7,7 @@
 import hashlib
 import pathlib
 import sys
+from module_manifest import android_modules, ios_targets
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MODULES = ROOT / "modules"
@@ -19,14 +20,24 @@ def spec_hash(spec):
 
 
 def specs():
-    return sorted(p.parent for p in MODULES.rglob("spec.md"))
+    # spec を消しても、ビルド定義や実装ディレクトリに残るモジュールを検査する。
+    modules = {p.parent for p in MODULES.rglob("spec.md")}
+    modules.update(MODULES / mod for mod, _ in ios_targets(ROOT).values())
+    modules.update(MODULES / mod for mod in android_modules(ROOT).values())
+    for plat in PLATFORMS:
+        modules.update(p.parent for p in MODULES.rglob(plat)
+                       if p.is_dir() and not any(part.startswith(".") for part in p.relative_to(MODULES).parts))
+    return sorted(modules)
 
 
 def check():
     errors = []
     for mod in specs():
-        expected = spec_hash(mod / "spec.md")
         rel = mod.relative_to(ROOT)
+        if not (mod / "spec.md").is_file():
+            errors.append(f"{rel}: spec.md がありません")
+            continue
+        expected = spec_hash(mod / "spec.md")
         for plat in PLATFORMS:
             marker = mod / plat / ".spec-sync"
             if not (mod / plat).is_dir():
@@ -55,7 +66,10 @@ if __name__ == "__main__":
             sys.exit("usage: --update ios|android|both <module-path>...")
         update(PLATFORMS if args[1] == "both" else (args[1],), args[2:])
         sys.exit(0)
-    errs = check()
+    try:
+        errs = check()
+    except (ValueError, OSError) as error:
+        sys.exit(f"ERROR {error}")
     for e in errs:
         print("ERROR", e)
     print("spec sync: OK" if not errs else f"spec sync: {len(errs)} problem(s)")

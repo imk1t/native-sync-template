@@ -10,6 +10,14 @@ private struct FakeItemsAPI: ItemsAPI {
 @main
 struct AppMain: App {
     var body: some Scene {
-        WindowGroup { ItemsView(viewModel: ItemsViewModel(api: FakeItemsAPI())) }
+        WindowGroup { ItemsRoot() }
+    }
+}
+
+private struct ItemsRoot: View {
+    @State private var viewModel = ItemsViewModel(api: FakeItemsAPI())
+
+    var body: some View {
+        ItemsView(viewModel: viewModel)
     }
 }

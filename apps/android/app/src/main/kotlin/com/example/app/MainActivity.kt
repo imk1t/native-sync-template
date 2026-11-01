@@ -3,6 +3,7 @@ package com.example.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import com.example.featureitems.ItemsScreen
@@ -14,9 +15,10 @@ private object FakeItemsApi : ItemsApi {
 }
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: ItemsViewModel by viewModels { ItemsViewModel.factory(FakeItemsApi) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = ItemsViewModel(FakeItemsApi)
         setContent { ItemsScreen(viewModel) }
     }
 }

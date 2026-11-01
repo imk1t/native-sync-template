@@ -63,6 +63,8 @@ DI・通信・永続化・静的解析は方針で、テンプレートにはま
 
 clone 後に一度だけ実行します。
 
+検査ツールには Python 3.11 以降と PyYAML が必要です。先に `python3 -m venv .venv`、`source .venv/bin/activate`、`python3 -m pip install -r tools/requirements.txt` を実行してください。
+
 1. apm（Agent Package Manager）をインストールする（どれか 1 つ）。
 
    ```bash
@@ -86,12 +88,14 @@ clone 後に一度だけ実行します。
 | spec と両 OS の同期を検査 | `python3 tools/check_spec_sync.py` |
 | 追従を記録 | `python3 tools/check_spec_sync.py --update both modules/features/items` |
 | モジュール依存ルールを検査 | `python3 tools/check_deps.py` |
-| iOS のテスト | `cd modules && swift test`（Xcode / macOS） |
+| iOS のテスト | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'`（Xcode / macOS） |
 | Android のテスト | `cd apps/android && gradle test`（Android SDK が必要） |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
 | スキルの原本を変更したあとに再配置 | `apm install` |
 
 作業の進め方は [AGENTS.md](AGENTS.md) を参照してください。
+
+iOS のテストは `Native build` ワークフローと同じく iOS Simulator 上で実行します。Xcode に iPhone 16 の Simulator がない場合は、`xcrun simctl list devices available` で利用可能な機種名を確認し、`name=` を置き換えてください。`swift test` はホストの macOS 向けにビルドするため、iOS 向けのこのパッケージのテストには使いません。
 
 ## 現状
 - 追加済み: 共通定義（OpenAPI サンプル、トークン）、トークンの Swift/Kotlin 生成、サンプル機能 `items`、同期/依存/生成差分の検査、CI の雛形。
