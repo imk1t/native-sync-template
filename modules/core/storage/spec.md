@@ -18,3 +18,4 @@
 ## OS 固有の差分
 - iOS の `KeyValueStore` は UserDefaults、Android は Preferences DataStore。DataStore は 1 ファイルにつき 1 インスタンスにする必要があるため、`DataStore<Preferences>` はアプリで 1 回だけ作って渡す（`DataStoreKeyValueStore.create(context, name)`）。
 - iOS の `SecureStore` は Keychain（`kSecClassGenericPassword`、`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`）。Android には Keychain に当たる値の保管庫が無いので、Android Keystore の AES-GCM 鍵で暗号化した値を DataStore に保存する。暗号化は `ValueCipher`（実装は `AndroidKeystoreCipher(alias)`）に分け、JVM のテストでは差し替える。
+- 同じ理由で iOS は SecItem の呼び出しを内部の `KeychainItems` に分け、テストでは差し替える。ホストアプリの無いパッケージのテストでは Keychain の entitlement が無く、本物の Keychain を使えない（`errSecMissingEntitlement`）ため。本物の Keychain の確認は、アプリをホストにしたテストで行う。
