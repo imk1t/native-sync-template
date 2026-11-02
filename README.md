@@ -84,10 +84,12 @@ clone 後に一度だけ実行します。
 ## よく使うコマンド
 | 目的 | コマンド |
 | --- | --- |
-| トークンから Swift/Kotlin を生成 | `python3 tools/generate.py` |
+| トークンと OpenAPI から Swift/Kotlin を生成 | `python3 tools/generate.py` |
 | spec と両 OS の同期を検査 | `python3 tools/check_spec_sync.py` |
 | 追従を記録 | `python3 tools/check_spec_sync.py --update both modules/features/items` |
 | モジュール依存ルールを検査 | `python3 tools/check_deps.py` |
+| 共通シナリオと両 OS のテストの対応を検査 | `python3 tools/check_scenarios.py` |
+| tools/ 自体のテスト | `python3 -m unittest discover -s tools/tests` |
 | iOS のテスト | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'`（Xcode / macOS） |
 | Android のテスト | `cd apps/android && gradle test`（Android SDK が必要） |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
@@ -98,5 +100,24 @@ clone 後に一度だけ実行します。
 iOS のテストは `Native build` ワークフローと同じく iOS Simulator 上で実行します。Xcode に iPhone 16 の Simulator がない場合は、`xcrun simctl list devices available` で利用可能な機種名を確認し、`name=` を置き換えてください。`swift test` はホストの macOS 向けにビルドするため、iOS 向けのこのパッケージのテストには使いません。
 
 ## 現状
-- 追加済み: 共通定義（OpenAPI サンプル、トークン）、トークンの Swift/Kotlin 生成、サンプル機能 `items`、同期/依存/生成差分の検査、CI の雛形。
-- 未実装: OpenAPI からの API クライアント生成（現状は手書きのインターフェースとフェイク）、共通シナリオを読むテストランナー（現状はシナリオと同じ内容を各 OS のテストに手書き）、Firebase 用ラッパーモジュール。
+- 追加済み: 共通定義（OpenAPI サンプル、トークン、シナリオ）、トークンと OpenAPI からの Swift/Kotlin 生成、サンプル機能 `items`、同期/依存/生成差分/シナリオの検査、CI の雛形。
+- 未実装: Firebase 用ラッパーモジュール。アプリは API サーバーが無いためフェイクの `ItemsAPI` を使っています（実サーバーができたら `DefaultItemsAPI(transport: URLSessionTransport(baseURL:))` / `DefaultItemsApi(UrlConnectionTransport(baseUrl))` に差し替えます）。
+
+## 共通定義からの生成と検査
+
+### OpenAPI → API クライアント
+`python3 tools/generate.py` が `shared/openapi/openapi.yaml` から、`core/network` に次を生成します（`Generated/`・`generated/` は手で編集しません）。
+
+| 生成物 | iOS | Android |
+| --- | --- | --- |
+| schema ごとの DTO | `struct ItemDTO: Codable` | `@Serializable data class ItemDTO` |
+| operation ごとのメソッド | `APIClient.listItems()` | `ApiClient.listItems()` |
+
+DTO とクライアントは `core/network` の内部（`internal`）に閉じ、手書きの `DefaultItemsAPI` / `DefaultItemsApi` がドメインモデル（`Item`）に変換して公開します。通信は `HTTPTransport` / `HttpTransport` に差し替えられ、テストではスタブを渡します。生成器が対応する OpenAPI の範囲は `tools/openapi_codegen.py` の先頭に書いてあり、範囲外の構文は生成時にエラーになります。
+
+### 共通シナリオ → 両 OS のテスト
+`shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`python3 tools/check_scenarios.py` は次を検査します。
+
+- すべての step が iOS と Android の両方のテストから参照されている
+- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている
+- 機能の `spec.md` がシナリオを参照している

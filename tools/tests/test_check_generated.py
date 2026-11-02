@@ -10,6 +10,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUTPUTS = (
     "modules/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift",
     "modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated/Tokens.kt",
+    "modules/core/network/ios/Sources/CoreNetwork/Generated/APIModels.swift",
+    "modules/core/network/ios/Sources/CoreNetwork/Generated/APIClient.swift",
+    "modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated/ApiModels.kt",
+    "modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated/ApiClient.kt",
 )
 
 
@@ -18,7 +22,8 @@ class CheckGeneratedTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.repo = pathlib.Path(temp.name)
-        for name in ("tools/generate.py", "tools/check_generated.sh", "shared/tokens/tokens.json", *OUTPUTS):
+        for name in ("tools/generate.py", "tools/openapi_codegen.py", "tools/check_generated.sh",
+                     "shared/tokens/tokens.json", "shared/openapi/openapi.yaml", *OUTPUTS):
             dest = self.repo / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, dest)
@@ -54,6 +59,16 @@ class CheckGeneratedTests(unittest.TestCase):
         self.git("add", ".")
         self.commit()
         self.assertEqual(self.check_generated().returncode, 1)
+
+    def test_committed_openapi_change_without_regeneration_fails(self):
+        path = self.repo / "shared/openapi/openapi.yaml"
+        path.write_text(path.read_text().replace("        title:\n          type: string\n",
+                                                 "        title:\n          type: string\n        note:\n          type: string\n"))
+        self.git("add", ".")
+        self.commit()
+        result = self.check_generated()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("APIModels.swift", result.stdout)
 
     def test_committed_deletion_of_either_output_fails(self):
         for output in OUTPUTS:

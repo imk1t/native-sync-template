@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
-"""shared/tokens から SwiftUI / Compose の定数を生成する。出力は決定的（再生成して差分が出ないこと）。"""
+"""shared/ の定義から Swift / Kotlin のコードを生成する。出力は決定的（再生成して差分が出ないこと）。
+
+- shared/tokens/tokens.json → designsystem の Tokens
+- shared/openapi/openapi.yaml → core/network の DTO と APIClient（tools/openapi_codegen.py）
+"""
 import json
 import pathlib
+import sys
+
+import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import openapi_codegen  # noqa: E402
+
 tokens = json.loads((ROOT / "shared/tokens/tokens.json").read_text(encoding="utf-8"))
 
 
@@ -50,4 +60,12 @@ def write(path, text):
 
 write("modules/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift", swift())
 write("modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated/Tokens.kt", kotlin())
+
+api = openapi_codegen.Spec(yaml.safe_load((ROOT / "shared/openapi/openapi.yaml").read_text(encoding="utf-8")))
+IOS_NETWORK = "modules/core/network/ios/Sources/CoreNetwork/Generated"
+ANDROID_NETWORK = "modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated"
+write(f"{IOS_NETWORK}/APIModels.swift", openapi_codegen.swift_models(api))
+write(f"{IOS_NETWORK}/APIClient.swift", openapi_codegen.swift_client(api))
+write(f"{ANDROID_NETWORK}/ApiModels.kt", openapi_codegen.kotlin_models(api, "com.example.corenetwork"))
+write(f"{ANDROID_NETWORK}/ApiClient.kt", openapi_codegen.kotlin_client(api, "com.example.corenetwork"))
 print("generated")

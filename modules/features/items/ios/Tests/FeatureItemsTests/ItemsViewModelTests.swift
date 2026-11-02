@@ -23,15 +23,17 @@ private actor CountingAPI: ItemsAPI {
     }
 }
 
-// shared/scenarios/items-list.yaml と同じ内容
+// shared/scenarios/items-list.yaml の各 step を実装する
 @MainActor
 struct ItemsViewModelTests {
+    // @scenario items-list/load-succeeds
     @Test func loadSucceeds() async {
         let vm = ItemsViewModel(api: StubAPI(result: .success([Item(id: "1", title: "First"), Item(id: "2", title: "Second")])))
         await vm.load()
         #expect(vm.state == .loaded([Item(id: "1", title: "First"), Item(id: "2", title: "Second")]))
     }
 
+    // @scenario items-list/load-fails
     @Test func loadFails() async {
         struct Boom: Error {}
         let vm = ItemsViewModel(api: StubAPI(result: .failure(Boom())))
@@ -39,6 +41,8 @@ struct ItemsViewModelTests {
         #expect(vm.state == .error)
     }
 
+    // @scenario items-list/reappear-in-same-scope
+    // @scenario items-list/explicit-reload
     @Test func repeatedAppearanceKeepsStateUntilExplicitReload() async {
         let api = CountingAPI()
         let vm = ItemsViewModel(api: api)
@@ -50,6 +54,7 @@ struct ItemsViewModelTests {
         #expect(await api.calls == 2)
     }
 
+    // @scenario items-list/cancel-initial-load
     @Test func cancelledInitialLoadCanBeRetried() async {
         let api = CountingAPI(suspendFirstCall: true)
         let vm = ItemsViewModel(api: api)
