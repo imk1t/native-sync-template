@@ -43,7 +43,7 @@ clone 後に一度だけ実行します。
    mise run setup            # bun install と bun tools/setup.ts（中身は apm install）
    ```
 
-   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。Claude Code では、Bun と apm が入っていればセッション開始時にスキルの配置が自動で実行されます。
+   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
 
 ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
 
