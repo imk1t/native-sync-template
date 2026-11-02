@@ -228,7 +228,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 ## コマンド一覧
 
-検査ツールは Bun（TypeScript）で書いています。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。
+検査ツールは Bun（TypeScript）で書いています。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。依存の取得は `.npmrc` と `bunfig.toml` で制限しています（公式レジストリのみ、ライフサイクルスクリプトを実行しない、バージョンは固定、公開から 7 日未満のバージョンは入れない）。CI では `bun audit` で既知の脆弱性も検査します。
 
 | 目的 | コマンド |
 | --- | --- |

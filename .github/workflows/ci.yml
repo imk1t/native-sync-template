@@ -15,6 +15,8 @@ jobs:
         with:
           install_args: bun
       - run: bun install --frozen-lockfile
+      # 依存（型検査用のみ）に既知の脆弱性がないか
+      - run: bun audit
       # 整形・型検査・tools のテスト・spec の同期・依存ルール・生成差分・共通シナリオ
       - run: mise run check
 

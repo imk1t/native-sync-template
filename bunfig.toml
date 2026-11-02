@@ -1,3 +1,9 @@
+# Bun の設定。レジストリ・スクリプト・バージョン固定は .npmrc に書く（Bun も読む）。
+
+[install]
+# 公開から 7 日（秒）未満のバージョンは入れない。乗っ取られたパッケージの悪性版は数日以内に取り下げられることが多いため
+minimumReleaseAge = 604800
+
 # bun fmt の設定（Prettier の既定値に上書きする分だけ書く）。対象は mise.toml の fmt タスクを参照。
 [fmt]
 printWidth = 120
