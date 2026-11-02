@@ -16,6 +16,7 @@ python3 tools/check_deps.py          # 依存ルール
 bash tools/check_generated.sh        # 生成物が最新か
 python3 tools/check_spec_sync.py     # spec と両 OS の追従
 python3 tools/check_scenarios.py     # シナリオと @scenario マーカー
+bash tools/lint.sh                   # SwiftLint・ktlint(Swift/Kotlin を変更したとき。要インストール)
 ```
 追従の記録: `python3 tools/check_spec_sync.py --update both <モジュールパス>`(実装していない OS は記録しない)。
 
