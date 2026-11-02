@@ -1,0 +1,23 @@
+# 両 OS のテストが同じ step を実装し、ItemDetailViewModel の状態を比べる。
+# 各テストに `@scenario item-detail/<id>` を書く（tools/check_scenarios.py が両 OS の参照を検査する）
+name: item-detail
+feature: features/items
+steps:
+  - id: load-succeeds
+    name: 読み込みに成功すると詳細が表示される
+    given:
+      getItem:
+        status: 200
+        body: { id: "1", title: "First" }
+    when: load(id 1)
+    then:
+      state: loaded
+      title: First
+  - id: load-fails
+    name: 読み込みに失敗するとエラーになる
+    given:
+      getItem:
+        status: 500
+    when: load(id 1)
+    then:
+      state: error

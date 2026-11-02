@@ -3,6 +3,7 @@
 
 - shared/tokens/tokens.json → designsystem の Tokens
 - shared/openapi/openapi.yaml → core/network の DTO と APIClient（tools/openapi_codegen.py）
+- shared/routes.yaml → core/navigation の Route と AppTab（tools/routes_codegen.py）
 """
 import json
 import pathlib
@@ -13,6 +14,7 @@ import yaml
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import openapi_codegen  # noqa: E402
+import routes_codegen  # noqa: E402
 
 tokens = json.loads((ROOT / "shared/tokens/tokens.json").read_text(encoding="utf-8"))
 
@@ -68,4 +70,8 @@ write(f"{IOS_NETWORK}/APIModels.swift", openapi_codegen.swift_models(api))
 write(f"{IOS_NETWORK}/APIClient.swift", openapi_codegen.swift_client(api))
 write(f"{ANDROID_NETWORK}/ApiModels.kt", openapi_codegen.kotlin_models(api, "com.example.corenetwork"))
 write(f"{ANDROID_NETWORK}/ApiClient.kt", openapi_codegen.kotlin_client(api, "com.example.corenetwork"))
+routes = routes_codegen.load(yaml.safe_load((ROOT / "shared/routes.yaml").read_text(encoding="utf-8")), ROOT)
+write("modules/core/navigation/ios/Sources/CoreNavigation/Generated/Routes.swift", routes_codegen.swift(routes))
+write("modules/core/navigation/android/src/main/kotlin/com/example/corenavigation/generated/Routes.kt",
+      routes_codegen.kotlin(routes, "com.example.corenavigation"))
 print("generated")

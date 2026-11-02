@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
+import com.example.corenavigation.Route
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import kotlinx.coroutines.CancellationException
@@ -18,16 +20,19 @@ sealed interface ItemsState {
     data object Error : ItemsState
 }
 
-class ItemsViewModel(private val api: ItemsApi) : ViewModel() {
+class ItemsViewModel(private val api: ItemsApi, private val navigator: Navigator) : ViewModel() {
     private val _state = MutableStateFlow<ItemsState>(ItemsState.Loading)
     val state: StateFlow<ItemsState> = _state
     private var initialLoadStarted = false
 
     companion object {
-        fun factory(api: ItemsApi): ViewModelProvider.Factory = viewModelFactory {
-            initializer { ItemsViewModel(api) }
+        fun factory(api: ItemsApi, navigator: Navigator): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ItemsViewModel(api, navigator) }
         }
     }
+
+    /** 詳細へ遷移する。 */
+    fun select(item: Item) = navigator.push(Route.ItemDetail(item.id))
 
     fun loadIfNeeded() {
         if (initialLoadStarted) return

@@ -7,6 +7,7 @@
 | 名前 | 内容 |
 | --- | --- |
 | `ItemsAPI.listItems()` | `shared/openapi` の `listItems` を呼び、`[Item]` を返す |
+| `ItemsAPI.getItem(id:)` | `shared/openapi` の `getItem` を呼び、`Item` を返す |
 | `Item` | `id: String`, `title: String` |
 | `DefaultItemsAPI(transport:)` | 生成された `APIClient` を使う `ItemsAPI` の実装 |
 | `HTTPTransport` | 通信の差し替え口。`send(HTTPRequest) -> HTTPResponse` |

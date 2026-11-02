@@ -16,6 +16,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Item"
+  /items/{id}:
+    get:
+      operationId: getItem
+      summary: アイテムを 1 件取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
 components:
   schemas:
     Item:

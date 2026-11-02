@@ -23,6 +23,13 @@ struct DefaultItemsAPITests {
         #expect(await transport.requests == [HTTPRequest(method: "GET", path: "/items")])
     }
 
+    @Test func getItemRequestsEscapedPath() async throws {
+        let transport = StubTransport(HTTPResponse(status: 200, body: Data(#"{"id":"a/1","title":"First"}"#.utf8)))
+        let item = try await DefaultItemsAPI(transport: transport).getItem(id: "a/1")
+        #expect(item == Item(id: "a/1", title: "First"))
+        #expect(await transport.requests == [HTTPRequest(method: "GET", path: "/items/a%2F1")])
+    }
+
     @Test func nonSuccessStatusThrowsAPIError() async {
         let transport = StubTransport(HTTPResponse(status: 500))
         await #expect(throws: APIError(status: 500)) {

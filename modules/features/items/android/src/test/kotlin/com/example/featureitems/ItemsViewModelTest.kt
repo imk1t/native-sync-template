@@ -2,6 +2,9 @@ package com.example.featureitems
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import com.example.corenavigation.AppTab
+import com.example.corenavigation.Navigator
+import com.example.corenavigation.Route
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import kotlin.test.Test
@@ -20,6 +23,8 @@ import kotlinx.coroutines.test.setMain
 
 private class StubApi(private val result: Result<List<Item>>) : ItemsApi {
     override suspend fun listItems(): List<Item> = result.getOrThrow()
+
+    override suspend fun getItem(id: String): Item = throw UnsupportedOperationException()
 }
 
 // shared/scenarios/items-list.yaml の各 step を実装する
@@ -29,7 +34,7 @@ class ItemsViewModelTest {
     @Test
     fun loadSucceeds() = runTest {
         val items = listOf(Item("1", "First"), Item("2", "Second"))
-        val vm = ItemsViewModel(StubApi(Result.success(items)))
+        val vm = ItemsViewModel(StubApi(Result.success(items)), Navigator())
         vm.loadNow()
         assertEquals(ItemsState.Loaded(items), vm.state.value)
     }
@@ -37,7 +42,7 @@ class ItemsViewModelTest {
     // @scenario items-list/load-fails
     @Test
     fun loadFails() = runTest {
-        val vm = ItemsViewModel(StubApi(Result.failure(RuntimeException())))
+        val vm = ItemsViewModel(StubApi(Result.failure(RuntimeException())), Navigator())
         vm.loadNow()
         assertEquals(ItemsState.Error, vm.state.value)
     }
@@ -55,8 +60,10 @@ class ItemsViewModelTest {
                     calls++
                     return listOf(Item("1", "First"))
                 }
+
+                override suspend fun getItem(id: String): Item = throw UnsupportedOperationException()
             }
-            val factory = ItemsViewModel.factory(api)
+            val factory = ItemsViewModel.factory(api, Navigator())
             val first = ViewModelProvider.create(store, factory)[ItemsViewModel::class]
             first.loadIfNeeded()
             advanceUntilIdle()
@@ -76,6 +83,15 @@ class ItemsViewModelTest {
         }
     }
 
+    // @scenario items-list/select-opens-detail
+    @Test
+    fun selectOpensDetail() {
+        val navigator = Navigator()
+        val viewModel = ItemsViewModel(StubApi(Result.success(emptyList())), navigator)
+        viewModel.select(Item("1", "First"))
+        assertEquals(listOf(Route.ItemDetail("1")), navigator.state.value.stack(AppTab.Home))
+    }
+
     // @scenario items-list/cancel-initial-load
     @Test
     fun clearingStoreCancelsPendingLoadWithoutShowingError() = runTest {
@@ -91,8 +107,10 @@ class ItemsViewModelTest {
                         cancelled = true
                     }
                 }
+
+                override suspend fun getItem(id: String): Item = throw UnsupportedOperationException()
             }
-            val vm = ViewModelProvider.create(store, ItemsViewModel.factory(api))[ItemsViewModel::class]
+            val vm = ViewModelProvider.create(store, ItemsViewModel.factory(api, Navigator()))[ItemsViewModel::class]
             vm.loadIfNeeded()
             runCurrent()
             store.clear()

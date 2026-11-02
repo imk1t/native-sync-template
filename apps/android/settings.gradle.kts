@@ -21,6 +21,7 @@ fun module(name: String, dir: String) {
     project(name).projectDir = file("../../modules/$dir/android")
 }
 module(":core:utils", "core/utils")
+module(":core:navigation", "core/navigation")
 module(":core:network", "core/network")
 module(":core:storage", "core/storage")
 module(":designsystem", "designsystem")

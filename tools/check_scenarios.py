@@ -3,6 +3,7 @@
 
 - 形式: name（ファイル名と一致）・feature・steps（id・name・given・when・then）
 - given のキーは shared/openapi の operationId。2xx の body はレスポンスの schema に合うこと
+  （`navigation` だけは画面遷移の初期状態として予約。辞書で書く）
 - feature の spec.md がシナリオを参照していること
 - 各 step が iOS と Android の両方のテストで `@scenario <name>/<step id>` として参照されていること
 """
@@ -18,6 +19,7 @@ import openapi_codegen  # noqa: E402
 
 MARKER = re.compile(r"@scenario\s+([\w-]+)/([\w-]+)")
 STEP_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+NAVIGATION = "navigation"
 TEST_GLOBS = {"ios": ("ios/Tests/**/*.swift",), "android": ("android/src/test/**/*.kt", "android/src/androidTest/**/*.kt")}
 
 
@@ -38,6 +40,10 @@ def check_given(spec, given, where):
     errors = []
     for op_id, stub in given.items():
         w = f"{where}.given.{op_id}"
+        if op_id == NAVIGATION:
+            if not isinstance(stub, dict):
+                errors.append(f"{w}: 画面遷移の初期状態を辞書で書いてください")
+            continue
         if op_id not in ops:
             errors.append(f"{w}: shared/openapi に無い operationId です")
             continue

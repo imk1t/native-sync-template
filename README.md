@@ -56,16 +56,18 @@ shared/
   openapi/              API スキーマ（単一の正）
   tokens/               デザイントークン（単一の正）
   scenarios/            両 OS のテストが実装する共通シナリオ
+  routes.yaml           画面の一覧（画面遷移の単一の正）
   third-party.yaml      外部ライブラリの両 OS 対応表
 modules/
   Package.swift         全 iOS モジュールをまとめた SwiftPM パッケージ
   core/
     utils/              何にも依存しない汎用コード
+    navigation/         画面遷移の状態と操作（Route は routes.yaml から生成）
     network/            OpenAPI から生成した API クライアントとそのラッパー
     storage/            UserDefaults / DataStore、Keychain / Keystore
   designsystem/         トークンから生成した値と共通 UI
   features/
-    items/              サンプル機能（一覧の取得と表示）
+    items/              サンプル機能（一覧と詳細）
 tools/                  コード生成と検査のスクリプト
 docs/adr/               設計判断の記録
 ```
@@ -139,10 +141,13 @@ flowchart TD
 flowchart TD
     app["App"] --> items["features/items"]
     app --> network["core/network"]
+    app --> navigation["core/navigation"]
     items --> network
+    items --> navigation
     items --> designsystem
     network --> utils["core/utils"]
     network -.->|生成コード| openapi[("shared/openapi")]
+    navigation -.->|生成コード| routes[("shared/routes.yaml")]
     designsystem -.->|生成コード| tokens[("shared/tokens")]
     storage["core/storage"]
 ```
@@ -150,6 +155,22 @@ flowchart TD
 点線は依存ではなく、`tools/generate.py` による生成元です。`core/storage` はまだ使う機能がないため、単独で置いています。
 
 `python3 tools/check_deps.py` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`shared/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
+
+### 画面遷移
+
+画面遷移は 1 通りだけです（[ADR 0002](docs/adr/0002-navigation.md)）。機能の中でも外でも、すべて `core/navigation` の `Navigator` に `Route` を渡して遷移します。`NavigationLink` などで画面を直接開きません。
+
+- 画面の一覧（名前・引数・タブ・ディープリンク）は `shared/routes.yaml` に書き、`python3 tools/generate.py` で両 OS の `Route` と `AppTab` を生成します。
+- 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル）として持ち、7 つの操作で書き換えます。
+
+| 操作 | 使いどころ |
+| --- | --- |
+| `push(route)` / `pop()` / `popToRoot()` | 一覧 → 詳細、戻る、先頭まで戻る（モーダル表示中はモーダルの中で） |
+| `present(route, style)` / `dismiss()` | ハーフシート（`sheet`）・全画面モーダル（`fullScreen`）と、それを閉じる |
+| `selectTab(tab)` | タブ切り替え（モーダルは閉じる） |
+| `reset(state)` | ログイン後のホームなど戻れない遷移、ディープリンク（`NavigationState.opening`） |
+
+`Route` から画面への対応と状態の描画はアプリ層だけが持ちます（iOS: `apps/ios/App/AppMain.swift`・`RootView.swift`、Android: `MainActivity.kt`・`AppRoot.kt`）。描画には iOS は `TabView` / `NavigationStack` / `.sheet`、Android は `NavigationSuiteScaffold` / Navigation 3 / ボトムシートを使い、タブバーや大画面のレイアウトは OS の部品に任せます。画面を足したら、`routes.yaml` に 1 件、アプリ層の対応に 1 行足します（足し忘れは `switch` / `when` の網羅チェックでビルドが落ちます）。
 
 ### 技術スタック
 
@@ -190,14 +211,14 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/openapi_codegen.py` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
-同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）も生成します。
+同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
 ### 共通シナリオを両 OS のテストで実装する
 
 `shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`python3 tools/check_scenarios.py` は次を検査します。
 
 - すべての step が、iOS と Android の両方のテストから参照されている
-- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている
+- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移の初期状態として予約）
 - 機能の `spec.md` がシナリオを参照している
 
 ### spec と実装の追従を記録する
@@ -229,12 +250,12 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | --- | --- | --- |
 | CI（`repo-checks`） | すべての PR と main への push | tools のテスト、spec の同期、依存ルール、生成差分、共通シナリオの検査（Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
-| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテスト / Android: `gradle test assembleDebug` |
+| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
 
 ## 現状
 
-- **実装済み**: 共通定義（OpenAPI のサンプル、トークン、シナリオ）、トークンと OpenAPI からの Swift / Kotlin 生成、`core/utils`・`core/network`・`core/storage`、サンプル機能 `items`、同期・依存・生成差分・シナリオの検査、CI。
+- **実装済み**: 共通定義（OpenAPI のサンプル、トークン、シナリオ）、トークンと OpenAPI からの Swift / Kotlin 生成、`core/utils`・`core/network`・`core/storage`・`core/navigation`（画面遷移）、サンプル機能 `items`（一覧と詳細）、同期・依存・生成差分・シナリオの検査、CI。
 - **未実装**: 外部 SDK を使うラッパーモジュールのサンプル（対象の SDK を検討中）。
 - アプリには API サーバーが無いため、フェイクの `ItemsAPI` を使っています。実サーバーができたら `DefaultItemsAPI(transport: URLSessionTransport(baseURL:))` / `DefaultItemsApi(UrlConnectionTransport(baseUrl))` に差し替えます。

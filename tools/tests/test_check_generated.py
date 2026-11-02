@@ -14,6 +14,8 @@ OUTPUTS = (
     "modules/core/network/ios/Sources/CoreNetwork/Generated/APIClient.swift",
     "modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated/ApiModels.kt",
     "modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated/ApiClient.kt",
+    "modules/core/navigation/ios/Sources/CoreNavigation/Generated/Routes.swift",
+    "modules/core/navigation/android/src/main/kotlin/com/example/corenavigation/generated/Routes.kt",
 )
 
 
@@ -22,8 +24,9 @@ class CheckGeneratedTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.repo = pathlib.Path(temp.name)
-        for name in ("tools/generate.py", "tools/openapi_codegen.py", "tools/check_generated.sh",
-                     "shared/tokens/tokens.json", "shared/openapi/openapi.yaml", *OUTPUTS):
+        for name in ("tools/generate.py", "tools/openapi_codegen.py", "tools/routes_codegen.py",
+                     "tools/check_generated.sh", "shared/tokens/tokens.json", "shared/openapi/openapi.yaml",
+                     "shared/routes.yaml", "modules/features/items/spec.md", *OUTPUTS):
             dest = self.repo / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, dest)
