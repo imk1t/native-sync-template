@@ -1,18 +1,18 @@
 package com.example.corenetwork
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URLEncoder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 /** 生成された ApiClient が組み立てるリクエスト。ベース URL は持たず、Transport が解決する。 */
 data class HttpRequest(
     val method: String,
     val path: String,
     val query: List<Pair<String, String>> = emptyList(),
-    val body: String? = null,
+    val body: String? = null
 )
 
 data class HttpResponse(val status: Int, val body: String = "")

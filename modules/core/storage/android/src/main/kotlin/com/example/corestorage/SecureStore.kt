@@ -33,7 +33,10 @@ class KeystoreSecureStore(dataStore: DataStore<Preferences>, private val cipher:
         store.get(key)?.let { String(cipher.decrypt(Base64.getDecoder().decode(it)), Charsets.UTF_8) }
 
     override suspend fun set(key: String, value: String?) {
-        store.set(key, value?.let { Base64.getEncoder().encodeToString(cipher.encrypt(it.toByteArray(Charsets.UTF_8))) })
+        val encoded = value?.let {
+            Base64.getEncoder().encodeToString(cipher.encrypt(it.toByteArray(Charsets.UTF_8)))
+        }
+        store.set(key, encoded)
     }
 }
 
@@ -48,7 +51,7 @@ class AndroidKeystoreCipher(private val alias: String) : ValueCipher {
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
-                .build(),
+                .build()
         )
         return generator.generateKey()
     }
@@ -60,7 +63,9 @@ class AndroidKeystoreCipher(private val alias: String) : ValueCipher {
 
     override fun decrypt(encrypted: ByteArray): ByteArray {
         val iv = encrypted.copyOfRange(0, IV_SIZE)
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply { init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, iv)) }
+        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
+            init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, iv))
+        }
         return cipher.doFinal(encrypted.copyOfRange(IV_SIZE, encrypted.size))
     }
 
