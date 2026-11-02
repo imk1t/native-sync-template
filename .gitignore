@@ -1,0 +1,23 @@
+.DS_Store
+.idea/
+*.iml
+build/
+.gradle/
+local.properties
+.build/
+xcuserdata/
+DerivedData/
+*.xcodeproj
+__pycache__/
+.venv/
+# 環境ごとの Firebase 設定は CI のシークレットから注入する
+GoogleService-Info.plist
+google-services.json
+
+
+# APM dependencies
+apm_modules/
+
+# apm が配置するスキル。原本は .apm/skills/。clone 後に tools/setup.sh（apm install）で作る
+.claude/skills/
+.agents/skills/

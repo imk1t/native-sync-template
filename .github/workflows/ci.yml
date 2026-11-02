@@ -1,0 +1,20 @@
+# 最小限の CI。数秒で終わる検査だけを PR ごとに実行する。
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  repo-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install -r tools/requirements.txt
+      - run: python3 -m unittest discover -s tools/tests -v
+      - run: python3 tools/check_spec_sync.py
+      - run: python3 tools/check_deps.py
+      - run: bash tools/check_generated.sh
