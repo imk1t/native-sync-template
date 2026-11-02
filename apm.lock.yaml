@@ -18,7 +18,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  content_hash: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
 - kind: project-relative
   target: claude
   value: .claude/skills/add-third-party
@@ -54,7 +54,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+  content_hash: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
 - kind: project-relative
   target: codex
   value: .agents/skills/add-module
@@ -72,7 +72,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  content_hash: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
 - kind: project-relative
   target: codex
   value: .agents/skills/add-third-party
@@ -108,7 +108,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+  content_hash: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
 local_deployed_files:
 - .agents/skills/add-module
 - .agents/skills/add-module/SKILL.md
@@ -123,9 +123,9 @@ local_deployed_files:
 - .claude/skills/sync-feature
 - .claude/skills/sync-feature/SKILL.md
 local_deployed_file_hashes:
-  .agents/skills/add-module/SKILL.md: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  .agents/skills/add-module/SKILL.md: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
   .agents/skills/add-third-party/SKILL.md: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
-  .agents/skills/sync-feature/SKILL.md: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
-  .claude/skills/add-module/SKILL.md: sha256:d5254e31a926bb7c12434d7bc6d375db94dd786ab93fb7ded216bec62f74c8d9
+  .agents/skills/sync-feature/SKILL.md: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
+  .claude/skills/add-module/SKILL.md: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
   .claude/skills/add-third-party/SKILL.md: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
-  .claude/skills/sync-feature/SKILL.md: sha256:082c2b5921190557c1cbc19100629ffd33eaed8ffc7c7356510c4b71041c2a1f
+  .claude/skills/sync-feature/SKILL.md: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
