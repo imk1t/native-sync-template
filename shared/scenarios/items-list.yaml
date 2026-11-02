@@ -1,5 +1,5 @@
 # 両 OS のテストが同じ step を実装し、ViewModel の状態を比べる。
-# 各テストに `@scenario items-list/<id>` を書く（tools/check_scenarios.py が両 OS の参照を検査する）
+# 各テストに `@scenario items-list/<id>` を書く（tools/check-scenarios.ts が両 OS の参照を検査する）
 name: items-list
 feature: features/items
 steps:

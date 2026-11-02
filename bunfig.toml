@@ -1,0 +1,3 @@
+# bun fmt の設定（Prettier の既定値に上書きする分だけ書く）。対象は mise.toml の fmt タスクを参照。
+[fmt]
+printWidth = 120

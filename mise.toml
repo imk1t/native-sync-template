@@ -1,0 +1,34 @@
+# 開発ツールのバージョン。`mise install` で入れる（mise 自体は各自でインストールする。README の「セットアップ」）。
+[tools]
+bun = "1.4.4"
+ktlint = "1.7.1"
+# SwiftLint は macOS のみ。CI（Linux）は Docker イメージ ghcr.io/realm/swiftlint を同じバージョンで使う。
+swiftlint = { version = "0.65.1", os = ["macos"] }
+
+[tasks.setup]
+description = "依存の取得とエージェント用スキルの配置（clone 後に一度）"
+run = ["bun install --frozen-lockfile", "bun tools/setup.ts"]
+
+[tasks.generate]
+description = "shared/ の定義から Swift / Kotlin を再生成する"
+run = "bun tools/generate.ts"
+
+[tasks.fmt]
+description = "tools/ の TypeScript と設定ファイルを整形する"
+run = "bun fmt tools package.json tsconfig.json"
+
+[tasks.check]
+description = "PR ごとの検査をすべて実行する（CI の repo-checks と同じ）"
+run = [
+  "bun fmt --check tools package.json tsconfig.json",
+  "bun x tsc --noEmit",
+  "bun test tools/tests",
+  "bun tools/check-spec-sync.ts",
+  "bun tools/check-deps.ts",
+  "bun tools/check-generated.ts",
+  "bun tools/check-scenarios.ts",
+]
+
+[tasks.lint]
+description = "SwiftLint と ktlint"
+run = "bun tools/lint.ts"

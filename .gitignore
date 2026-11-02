@@ -8,8 +8,7 @@ local.properties
 xcuserdata/
 DerivedData/
 *.xcodeproj
-__pycache__/
-.venv/
+node_modules/
 # 環境ごとの Firebase 設定は CI のシークレットから注入する
 GoogleService-Info.plist
 google-services.json
@@ -18,6 +17,6 @@ google-services.json
 # APM dependencies
 apm_modules/
 
-# apm が配置するスキル。原本は .apm/skills/。clone 後に tools/setup.sh（apm install）で作る
+# apm が配置するスキル。原本は .apm/skills/。clone 後に tools/setup.ts（apm install）で作る
 .claude/skills/
 .agents/skills/

@@ -2,7 +2,7 @@
 
 - 状態: 採用
 - 決定:
-  - 画面の一覧（名前・引数・タブ・ディープリンク）を `shared/routes.yaml` に集約し、両 OS の `Route` と `AppTab` を `tools/generate.py` で生成する。
+  - 画面の一覧（名前・引数・タブ・ディープリンク）を `shared/routes.yaml` に集約し、両 OS の `Route` と `AppTab` を `tools/generate.ts` で生成する。
   - 画面遷移は、機能の中でも外でも、すべて `core/navigation` の `Navigator` で行う。`NavigationLink` などで画面を直接開かない。
   - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル。モーダルはそれぞれ自分のスタックを持つ）として持ち、`Navigator` の 7 つの操作（`push` / `pop` / `popToRoot` / `present` / `dismiss` / `selectTab` / `reset`）で書き換える。push かモーダルかは呼ぶ側が決める。
   - `Route` から画面への対応と、状態の描画はアプリ層（`apps/*`）が持つ。iOS は `TabView` + `NavigationStack(path:)` + `.sheet` / `.fullScreenCover`、Android は `NavigationSuiteScaffold` + Navigation 3 の `NavDisplay` + ボトムシート / 全画面ダイアログ。

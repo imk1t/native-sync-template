@@ -1,7 +1,7 @@
 // swift-tools-version: 6.0
 // 全 iOS モジュールを 1 つのパッケージにまとめる。
 // 同名ディレクトリ（各モジュールの ios/）のローカルパッケージは SwiftPM で同一 ID として衝突するため。
-// 依存ルールは tools/check_deps.py が、このファイルの target 行（1 行 1 target）を読んで検査する。
+// 依存ルールは tools/check-deps.ts が、このファイルの target 行（1 行 1 target）を読んで検査する。
 import PackageDescription
 
 let package = Package(

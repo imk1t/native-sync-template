@@ -21,30 +21,31 @@ iOS（Swift）と Android（Kotlin）をそれぞれネイティブで実装し�
 
 clone 後に一度だけ実行します。
 
-1. 検査ツール用の Python 環境を用意します（Python 3.11 以降）。
+1. mise と apm（Agent Package Manager）をインストールします。どちらも各自で入れます。
 
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   python3 -m pip install -r tools/requirements.txt
+   brew install mise apm                      # macOS
+   curl https://mise.run | sh                 # Linux（mise）
+   curl -sSL https://aka.ms/apm-unix | sh     # Linux（apm）
    ```
 
-2. apm（Agent Package Manager）をインストールします。どちらか 1 つで構いません。
+   mise のシェル連携（`mise activate`）は [mise のドキュメント](https://mise.jdx.dev/getting-started.html)に沿って設定してください。
+
+2. `mise.toml` に書いたバージョンの Bun・ktlint・SwiftLint（macOS のみ）を入れます。
 
    ```bash
-   brew install apm          # macOS
-   pip install apm-cli       # Python がある環境
+   mise install
    ```
 
-3. エージェント用のスキルを配置します。
+3. 型定義などの依存を取得し、エージェント用のスキルを配置します。
 
    ```bash
-   bash tools/setup.sh       # 中身は apm install
+   mise run setup            # bun install と bun tools/setup.ts（中身は apm install）
    ```
 
-   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。Claude Code では、apm が入っていればセッション開始時に同じ処理が自動で実行されます。
+   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。Claude Code では、Bun と apm が入っていればセッション開始時にスキルの配置が自動で実行されます。
 
-ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。ローカルで Lint を実行するには SwiftLint と ktlint が必要です（`brew install swiftlint ktlint`）。
+ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
 
 ## ディレクトリ構成
 
@@ -68,7 +69,7 @@ modules/
   designsystem/         トークンから生成した値と共通 UI
   features/
     items/              サンプル機能（一覧と詳細）
-tools/                  コード生成と検査のスクリプト
+tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
 docs/adr/               設計判断の記録
 ```
 
@@ -93,7 +94,7 @@ modules/features/items/
 1. `spec.md` を更新する。必要なら `shared/` の OpenAPI・トークン・シナリオも更新する。
 2. 片方の OS を実装する。
 3. もう片方を同じ型名・同じ構造で実装する。意図した違いは `spec.md` の「OS 固有の差分」に書く。
-4. `python3 tools/check_spec_sync.py --update both <モジュールのパス>` で追従を記録する。
+4. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` で追従を記録する。
 5. 検査を通し、両 OS の変更を 1 つの PR にまとめる。
 
 ## アーキテクチャ
@@ -152,15 +153,15 @@ flowchart TD
     storage["core/storage"]
 ```
 
-点線は依存ではなく、`tools/generate.py` による生成元です。`core/storage` はまだ使う機能がないため、単独で置いています。
+点線は依存ではなく、`tools/generate.ts` による生成元です。`core/storage` はまだ使う機能がないため、単独で置いています。
 
-`python3 tools/check_deps.py` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`shared/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
+`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`shared/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
 
 ### 画面遷移
 
 画面遷移は 1 通りだけです（[ADR 0002](docs/adr/0002-navigation.md)）。機能の中でも外でも、すべて `core/navigation` の `Navigator` に `Route` を渡して遷移します。`NavigationLink` などで画面を直接開きません。
 
-- 画面の一覧（名前・引数・タブ・ディープリンク）は `shared/routes.yaml` に書き、`python3 tools/generate.py` で両 OS の `Route` と `AppTab` を生成します。
+- 画面の一覧（名前・引数・タブ・ディープリンク）は `shared/routes.yaml` に書き、`bun tools/generate.ts` で両 OS の `Route` と `AppTab` を生成します。
 - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル）として持ち、7 つの操作で書き換えます。
 
 | 操作 | 使いどころ |
@@ -200,7 +201,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 ### OpenAPI から API クライアントを生成する
 
-`python3 tools/generate.py` が `shared/openapi/openapi.yaml` から、`core/network` に次のコードを生成します。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
+`bun tools/generate.ts` が `shared/openapi/openapi.yaml` から、`core/network` に次のコードを生成します。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
 
 | 生成物 | iOS | Android |
 | --- | --- | --- |
@@ -209,13 +210,13 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 - DTO とクライアントは `core/network` の内部（`internal`）に閉じます。手書きの `DefaultItemsAPI` / `DefaultItemsApi` がドメインモデル（`Item`）に変換して公開します。
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
-- 生成器が対応する OpenAPI の範囲は `tools/openapi_codegen.py` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
+- 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
 同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
 ### 共通シナリオを両 OS のテストで実装する
 
-`shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`python3 tools/check_scenarios.py` は次を検査します。
+`shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`bun tools/check-scenarios.ts` は次を検査します。
 
 - すべての step が、iOS と Android の両方のテストから参照されている
 - `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移の初期状態として予約）
@@ -223,20 +224,25 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 ### spec と実装の追従を記録する
 
-各モジュールの `ios/.spec-sync` と `android/.spec-sync` に、その OS が追従した `spec.md` のハッシュを記録します。`python3 tools/check_spec_sync.py` は、片方でも古ければ失敗します。
+各モジュールの `ios/.spec-sync` と `android/.spec-sync` に、その OS が追従した `spec.md` のハッシュを記録します。`bun tools/check-spec-sync.ts` は、片方でも古ければ失敗します。
 
 ## コマンド一覧
 
+検査ツールは Bun（TypeScript）で書いています（[ADR 0003](docs/adr/0003-bun-tooling.md)）。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。
+
 | 目的 | コマンド |
 | --- | --- |
-| トークンと OpenAPI から Swift / Kotlin を生成 | `python3 tools/generate.py` |
-| spec と両 OS の同期を検査 | `python3 tools/check_spec_sync.py` |
-| 追従を記録 | `python3 tools/check_spec_sync.py --update both modules/features/items` |
-| モジュールの依存ルールを検査 | `python3 tools/check_deps.py` |
-| 生成コードが最新かを検査 | `bash tools/check_generated.sh` |
-| 共通シナリオと両 OS のテストの対応を検査 | `python3 tools/check_scenarios.py` |
-| tools/ 自体のテスト | `python3 -m unittest discover -s tools/tests` |
-| Swift と Kotlin の Lint（SwiftLint・ktlint が必要） | `bash tools/lint.sh` |
+| PR ごとの検査をすべて実行（CI の `repo-checks` と同じ） | `mise run check` |
+| トークンと OpenAPI から Swift / Kotlin を生成 | `bun tools/generate.ts` |
+| spec と両 OS の同期を検査 | `bun tools/check-spec-sync.ts` |
+| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/items` |
+| モジュールの依存ルールを検査 | `bun tools/check-deps.ts` |
+| 生成コードが最新かを検査 | `bun tools/check-generated.ts` |
+| 共通シナリオと両 OS のテストの対応を検査 | `bun tools/check-scenarios.ts` |
+| tools/ 自体のテスト | `bun test tools/tests` |
+| tools/ の型検査 | `bun x tsc --noEmit` |
+| tools/ の整形（`bun fmt`。設定は `bunfig.toml`） | `mise run fmt` |
+| Swift と Kotlin の Lint | `mise run lint` |
 | iOS のテスト（Xcode / macOS） | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'` |
 | Android のテスト（Android SDK が必要） | `cd apps/android && gradle test` |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
@@ -248,7 +254,7 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 
 | ワークフロー | タイミング | 内容 |
 | --- | --- | --- |
-| CI（`repo-checks`） | すべての PR と main への push | tools のテスト、spec の同期、依存ルール、生成差分、共通シナリオの検査（Linux、数秒） |
+| CI（`repo-checks`） | すべての PR と main への push | `mise run check`（tools の整形・型検査・テスト、spec の同期、依存ルール、生成差分、共通シナリオの検査。Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
 | Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
 

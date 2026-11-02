@@ -1,4 +1,4 @@
-# 画面の一覧。tools/generate.py が両 OS の Route と AppTab を生成する（docs/adr/0002）。
+# 画面の一覧。tools/generate.ts が両 OS の Route と AppTab を生成する（docs/adr/0002）。
 # - name: 両 OS の型名（iOS は Route.<name>、Android は Route.<Name>）
 # - feature: 画面を持つ機能モジュール。その spec.md の「画面遷移」に画面を書く
 # - params: 引数。string か integer。オブジェクトは渡さず ID を渡す
