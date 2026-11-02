@@ -44,7 +44,7 @@ clone 後に一度だけ実行します。
 
    `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。Claude Code では、apm が入っていればセッション開始時に同じ処理が自動で実行されます。
 
-ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。
+ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。ローカルで Lint を実行するには SwiftLint と ktlint が必要です（`brew install swiftlint ktlint`）。
 
 ## ディレクトリ構成
 
@@ -215,6 +215,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 | 生成コードが最新かを検査 | `bash tools/check_generated.sh` |
 | 共通シナリオと両 OS のテストの対応を検査 | `python3 tools/check_scenarios.py` |
 | tools/ 自体のテスト | `python3 -m unittest discover -s tools/tests` |
+| Swift と Kotlin の Lint（SwiftLint・ktlint が必要） | `bash tools/lint.sh` |
 | iOS のテスト（Xcode / macOS） | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'` |
 | Android のテスト（Android SDK が必要） | `cd apps/android && gradle test` |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
@@ -227,6 +228,7 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | ワークフロー | タイミング | 内容 |
 | --- | --- | --- |
 | CI（`repo-checks`） | すべての PR と main への push | tools のテスト、spec の同期、依存ルール、生成差分、共通シナリオの検査（Linux、数秒） |
+| CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
 | Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテスト / Android: `gradle test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。

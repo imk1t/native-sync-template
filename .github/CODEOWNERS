@@ -1,8 +1,0 @@
-# チームが決まったら実際のチーム名に置き換える。
-# 機能チームは modules/features/<機能>/ を丸ごと持つ（spec.md と両 OS の実装を同じチームが担当する）
-/shared/            @imk1t
-/modules/core/      @imk1t
-/modules/designsystem/ @imk1t
-/tools/             @imk1t
-/.github/           @imk1t
-# /modules/features/login/ @org/login-team

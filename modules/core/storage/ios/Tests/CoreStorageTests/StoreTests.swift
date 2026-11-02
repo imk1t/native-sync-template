@@ -68,7 +68,8 @@ struct KeychainSecureStoreTests {
         try await KeychainSecureStore(service: "app", items: keychain).set("token", "secret")
         let item = try #require(keychain.attributes(service: "app", account: "token"))
         #expect(item[kSecClass as String] as? String == kSecClassGenericPassword as String)
-        #expect(item[kSecAttrAccessible as String] as? String == kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String)
+        let accessible = item[kSecAttrAccessible as String] as? String
+        #expect(accessible == kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String)
     }
 
     @Test func keychainFailureIsThrown() async {

@@ -1,22 +1,22 @@
 package com.example.featureitems
 
-import com.example.corenetwork.Item
-import com.example.corenetwork.ItemsApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import com.example.corenetwork.Item
+import com.example.corenetwork.ItemsApi
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runCurrent
-import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import kotlinx.coroutines.test.setMain
 
 private class StubApi(private val result: Result<List<Item>>) : ItemsApi {
     override suspend fun listItems(): List<Item> = result.getOrThrow()

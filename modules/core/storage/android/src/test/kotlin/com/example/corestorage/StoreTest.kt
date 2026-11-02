@@ -1,10 +1,6 @@
 package com.example.corestorage
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.AfterTest
@@ -12,6 +8,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 
 /** 反転するだけの暗号。JVM には AndroidKeyStore が無いため、暗号化を経由していることだけを確かめる。 */
 private object ReversingCipher : ValueCipher {

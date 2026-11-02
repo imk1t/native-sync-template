@@ -1,0 +1,11 @@
+# Swift の静的解析。実行は tools/lint.sh か CI の lint ジョブ。
+included:
+  - modules
+  - apps/ios
+excluded:
+  - "**/Generated"   # tools/generate.py の生成物は手で直さないため対象外
+  - "**/.build"
+  - modules/Package.swift   # tools/module_manifest.py が 1 行 1 target で読むため、折り返せない
+line_length:
+  warning: 120
+  error: 160

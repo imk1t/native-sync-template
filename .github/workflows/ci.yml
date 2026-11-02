@@ -19,3 +19,19 @@ jobs:
       - run: python3 tools/check_deps.py
       - run: bash tools/check_generated.sh
       - run: python3 tools/check_scenarios.py
+
+  # Swift は SwiftLint、Kotlin は ktlint。設定は .swiftlint.yml と .editorconfig。
+  # どちらも Linux で動かせるため、macOS ランナーは使わない。
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SwiftLint
+        run: |
+          docker run --rm -v "$PWD":/work -w /work ghcr.io/realm/swiftlint:0.65.1 lint --strict
+      - name: ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.7.1/ktlint
+          echo "b596a05f09364e1997b644152683af12fef58944f3acfabdf78071f5a490eb98  ktlint" | sha256sum -c -
+          chmod +x ktlint
+          ./ktlint "**/*.kt" "**/*.kts" "!**/generated/**"
