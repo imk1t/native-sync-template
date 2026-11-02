@@ -35,6 +35,36 @@ tools/                          コード生成・同期/依存チェック
 | `core/utils` | なし（標準ライブラリの拡張など、機能を知らないコードだけ） |
 | `designsystem` | `core/utils` |
 
+依存してよい向き（矢印は「依存する」）:
+
+```mermaid
+flowchart TD
+    apps["apps/ios, apps/android"] --> features["features/*"]
+    apps --> designsystem
+    apps --> core["core/*"]
+    features --> designsystem
+    features --> core
+    features -.->|禁止| features
+    designsystem --> utils["core/utils"]
+    core --> utils
+    core -->|循環禁止| core
+```
+
+現在のモジュール（iOS と Android で同じ形）:
+
+```mermaid
+flowchart TD
+    app["App"] --> items["features/items"]
+    app --> network["core/network"]
+    items --> network
+    items --> designsystem
+    network --> utils["core/utils"]
+    network -.->|生成コード| openapi[("shared/openapi")]
+    designsystem -.->|生成コード| tokens[("shared/tokens")]
+```
+
+点線は依存ではなく、`tools/generate.py` による生成元です。
+
 `python3 tools/check_deps.py` がこのルールと、iOS と Android の依存関係が一致していることを検査します（CI でも実行）。
 
 ### 技術スタック
