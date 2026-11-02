@@ -5,7 +5,7 @@ Swift (iOS) と Kotlin (Android) をそれぞれネイティブで実装し、**
 ```
 apps/ios, apps/android          アプリ本体（組み立てだけ）
 shared/openapi, tokens, scenarios  共通で管理する定義
-modules/core/<x>                基盤（utils, network）  spec.md + ios/ + android/
+modules/core/<x>                基盤（utils, network, storage）  spec.md + ios/ + android/
 modules/designsystem            トークンから生成した値と共通 UI
 modules/features/<x>            機能（サンプル: items）
 tools/                          コード生成・同期/依存チェック
@@ -61,9 +61,10 @@ flowchart TD
     network --> utils["core/utils"]
     network -.->|生成コード| openapi[("shared/openapi")]
     designsystem -.->|生成コード| tokens[("shared/tokens")]
+    storage["core/storage"]
 ```
 
-点線は依存ではなく、`tools/generate.py` による生成元です。
+点線は依存ではなく、`tools/generate.py` による生成元です。`core/storage`（UserDefaults / DataStore と Keychain / Keystore）は、まだ使う機能がないため単独で置いています。
 
 `python3 tools/check_deps.py` がこのルールと、iOS と Android の依存関係が一致していることを検査します（CI でも実行）。
 
