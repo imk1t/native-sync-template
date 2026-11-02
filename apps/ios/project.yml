@@ -20,3 +20,5 @@ targets:
         product: FeatureItems
       - package: Modules
         product: CoreNetwork
+      - package: Modules
+        product: CoreNavigation

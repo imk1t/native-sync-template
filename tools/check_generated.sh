@@ -8,7 +8,9 @@ changes="$(git status --porcelain --untracked-files=all -- \
   modules/designsystem/ios/Sources/DesignSystem/Generated \
   modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated \
   modules/core/network/ios/Sources/CoreNetwork/Generated \
-  modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated)"
+  modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated \
+  modules/core/navigation/ios/Sources/CoreNavigation/Generated \
+  modules/core/navigation/android/src/main/kotlin/com/example/corenavigation/generated)"
 if [[ -n "$changes" ]]; then
   printf '%s\n' "$changes"
   echo "生成コードが最新ではありません。tools/generate.py を実行してコミットしてください"

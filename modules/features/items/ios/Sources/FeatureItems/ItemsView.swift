@@ -10,7 +10,10 @@ public struct ItemsView: View {
         Group {
             switch viewModel.state {
             case .loading: ProgressView()
-            case .loaded(let items): List(items, id: \.id) { Text($0.title) }
+            case .loaded(let items):
+                List(items, id: \.id) { item in
+                    Button(item.title) { viewModel.select(item) }
+                }
             case .error: Text("読み込みに失敗しました").foregroundStyle(Tokens.Color.primary)
             }
         }

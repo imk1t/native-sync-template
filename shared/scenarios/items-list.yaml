@@ -52,3 +52,12 @@ steps:
     when: cancel-owning-scope
     then:
       state: loading
+  - id: select-opens-detail
+    name: アイテムを選ぶと詳細へ遷移する
+    given:
+      listItems:
+        status: 200
+        body: [{ id: "1", title: "First" }]
+    when: select(id 1)
+    then:
+      navigation: push itemDetail(id 1)

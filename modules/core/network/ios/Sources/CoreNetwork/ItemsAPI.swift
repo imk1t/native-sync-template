@@ -6,6 +6,7 @@ public struct Item: Equatable, Sendable {
 
 public protocol ItemsAPI: Sendable {
     func listItems() async throws -> [Item]
+    func getItem(id: String) async throws -> Item
 }
 
 /// 生成された APIClient を包み、DTO をドメインモデルに変換する。
@@ -18,5 +19,10 @@ public struct DefaultItemsAPI: ItemsAPI {
 
     public func listItems() async throws -> [Item] {
         try await client.listItems().map { Item(id: $0.id, title: $0.title) }
+    }
+
+    public func getItem(id: String) async throws -> Item {
+        let dto = try await client.getItem(id: id)
+        return Item(id: dto.id, title: dto.title)
     }
 }

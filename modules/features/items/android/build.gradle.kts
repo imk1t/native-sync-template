@@ -14,6 +14,7 @@ android {
 }
 kotlin { jvmToolchain(17) }
 dependencies {
+    implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":designsystem"))
     implementation(platform(libs.compose.bom))

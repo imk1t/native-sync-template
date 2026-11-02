@@ -11,4 +11,11 @@ struct APIClient: Sendable {
         let request = HTTPRequest(method: "GET", path: "/items", query: query, body: nil)
         return try await transport.call(request, decoding: [ItemDTO].self)
     }
+
+    /// GET /items/{id}（operationId: getItem）
+    func getItem(id: String) async throws -> ItemDTO {
+        let query: [URLQueryItem] = []
+        let request = HTTPRequest(method: "GET", path: "/items/\(pathSegment(id))", query: query, body: nil)
+        return try await transport.call(request, decoding: ItemDTO.self)
+    }
 }

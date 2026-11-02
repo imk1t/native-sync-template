@@ -1,3 +1,4 @@
+import CoreNavigation
 import CoreNetwork
 import Foundation
 import Observation
@@ -13,9 +14,18 @@ public enum ItemsState: Equatable {
 public final class ItemsViewModel {
     public private(set) var state: ItemsState = .loading
     private let api: ItemsAPI
+    private let navigator: Navigator
     private var initialLoadStarted = false
 
-    public init(api: ItemsAPI) { self.api = api }
+    public init(api: ItemsAPI, navigator: Navigator) {
+        self.api = api
+        self.navigator = navigator
+    }
+
+    /// 詳細へ遷移する
+    public func select(_ item: Item) {
+        navigator.push(.itemDetail(id: item.id))
+    }
 
     public func loadIfNeeded() async {
         guard !initialLoadStarted else { return }

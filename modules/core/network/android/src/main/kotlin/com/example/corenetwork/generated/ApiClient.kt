@@ -9,4 +9,11 @@ internal class ApiClient(private val transport: HttpTransport) {
         val request = HttpRequest(method = "GET", path = "/items", query = query, body = null)
         return transport.call<List<ItemDTO>>(request)
     }
+
+    /** GET /items/{id}（operationId: getItem） */
+    suspend fun getItem(id: String): ItemDTO {
+        val query = emptyList<Pair<String, String>>()
+        val request = HttpRequest(method = "GET", path = "/items/${pathSegment(id.toString())}", query = query, body = null)
+        return transport.call<ItemDTO>(request)
+    }
 }

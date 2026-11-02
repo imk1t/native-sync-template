@@ -25,6 +25,14 @@ class DefaultItemsApiTest {
     }
 
     @Test
+    fun getItemRequestsEscapedPath() = runTest {
+        val transport = StubTransport(HttpResponse(200, """{"id":"a/1","title":"First"}"""))
+        val item = DefaultItemsApi(transport).getItem("a/1")
+        assertEquals(Item("a/1", "First"), item)
+        assertEquals(listOf(HttpRequest(method = "GET", path = "/items/a%2F1")), transport.requests)
+    }
+
+    @Test
     fun nonSuccessStatusThrowsApiException() = runTest {
         val transport = StubTransport(HttpResponse(500))
         val error = assertFailsWith<ApiException> { DefaultItemsApi(transport).listItems() }
