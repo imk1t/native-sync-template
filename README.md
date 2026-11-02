@@ -70,7 +70,19 @@ tools/                  コード生成と検査のスクリプト
 docs/adr/               設計判断の記録
 ```
 
-`modules/` の各モジュールは `spec.md`・`ios/`・`android/` を持ちます。`spec.md` が両 OS の同期の基準です。
+`modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。
+
+```
+modules/features/items/
+  spec.md                                  仕様（同期の基準）
+  ios/
+    Sources/FeatureItems/                  実装
+    Tests/FeatureItemsTests/               テスト（Swift Testing）
+  android/
+    build.gradle.kts
+    src/main/kotlin/com/example/featureitems/   実装
+    src/test/kotlin/com/example/featureitems/   テスト（JUnit）
+```
 
 ## 開発の流れ
 
