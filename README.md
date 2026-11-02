@@ -250,7 +250,7 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | --- | --- | --- |
 | CI（`repo-checks`） | すべての PR と main への push | tools のテスト、spec の同期、依存ルール、生成差分、共通シナリオの検査（Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
-| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテスト / Android: `gradle test assembleDebug` |
+| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
 
