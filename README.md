@@ -228,7 +228,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 ## コマンド一覧
 
-検査ツールは Bun（TypeScript）で書いています（[ADR 0003](docs/adr/0003-bun-tooling.md)）。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。
+検査ツールは Bun（TypeScript）で書いています。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。
 
 | 目的 | コマンド |
 | --- | --- |
