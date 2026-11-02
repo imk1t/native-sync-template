@@ -15,5 +15,6 @@ fun module(name: String, dir: String) {
 }
 module(":core:utils", "core/utils")
 module(":core:network", "core/network")
+module(":core:storage", "core/storage")
 module(":designsystem", "designsystem")
 module(":features:items", "features/items")
