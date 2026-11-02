@@ -31,7 +31,7 @@ public struct KeychainSecureStore: SecureStore {
         [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key
         ]
     }
 
@@ -42,6 +42,8 @@ public struct KeychainSecureStore: SecureStore {
         let (status, result) = items.copy(query)
         if status == errSecItemNotFound { return nil }
         guard status == errSecSuccess, let data = result as? Data else { throw KeychainError(status: status) }
+        // 不正な UTF-8 は置換文字に変換して返す（String(data:encoding:) は nil を返すため使わない）
+        // swiftlint:disable:next optional_data_string_conversion
         return String(decoding: data, as: UTF8.self)
     }
 

@@ -28,43 +28,44 @@ private actor CountingAPI: ItemsAPI {
 struct ItemsViewModelTests {
     // @scenario items-list/load-succeeds
     @Test func loadSucceeds() async {
-        let vm = ItemsViewModel(api: StubAPI(result: .success([Item(id: "1", title: "First"), Item(id: "2", title: "Second")])))
-        await vm.load()
-        #expect(vm.state == .loaded([Item(id: "1", title: "First"), Item(id: "2", title: "Second")]))
+        let items = [Item(id: "1", title: "First"), Item(id: "2", title: "Second")]
+        let viewModel = ItemsViewModel(api: StubAPI(result: .success(items)))
+        await viewModel.load()
+        #expect(viewModel.state == .loaded(items))
     }
 
     // @scenario items-list/load-fails
     @Test func loadFails() async {
         struct Boom: Error {}
-        let vm = ItemsViewModel(api: StubAPI(result: .failure(Boom())))
-        await vm.load()
-        #expect(vm.state == .error)
+        let viewModel = ItemsViewModel(api: StubAPI(result: .failure(Boom())))
+        await viewModel.load()
+        #expect(viewModel.state == .error)
     }
 
     // @scenario items-list/reappear-in-same-scope
     // @scenario items-list/explicit-reload
     @Test func repeatedAppearanceKeepsStateUntilExplicitReload() async {
         let api = CountingAPI()
-        let vm = ItemsViewModel(api: api)
-        await vm.loadIfNeeded()
-        await vm.loadIfNeeded()
+        let viewModel = ItemsViewModel(api: api)
+        await viewModel.loadIfNeeded()
+        await viewModel.loadIfNeeded()
         #expect(await api.calls == 1)
-        #expect(vm.state == .loaded([Item(id: "1", title: "First")]))
-        await vm.load()
+        #expect(viewModel.state == .loaded([Item(id: "1", title: "First")]))
+        await viewModel.load()
         #expect(await api.calls == 2)
     }
 
     // @scenario items-list/cancel-initial-load
     @Test func cancelledInitialLoadCanBeRetried() async {
         let api = CountingAPI(suspendFirstCall: true)
-        let vm = ItemsViewModel(api: api)
-        let task = Task { await vm.loadIfNeeded() }
+        let viewModel = ItemsViewModel(api: api)
+        let task = Task { await viewModel.loadIfNeeded() }
         while await api.calls == 0 { await Task.yield() }
         task.cancel()
         await task.value
-        #expect(vm.state == .loading)
-        await vm.loadIfNeeded()
+        #expect(viewModel.state == .loading)
+        await viewModel.loadIfNeeded()
         #expect(await api.calls == 2)
-        #expect(vm.state == .loaded([Item(id: "1", title: "First")]))
+        #expect(viewModel.state == .loaded([Item(id: "1", title: "First")]))
     }
 }
