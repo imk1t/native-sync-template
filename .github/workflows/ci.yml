@@ -18,3 +18,4 @@ jobs:
       - run: python3 tools/check_spec_sync.py
       - run: python3 tools/check_deps.py
       - run: bash tools/check_generated.sh
+      - run: python3 tools/check_scenarios.py

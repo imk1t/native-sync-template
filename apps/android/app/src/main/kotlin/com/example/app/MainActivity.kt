@@ -9,7 +9,7 @@ import com.example.corenetwork.ItemsApi
 import com.example.featureitems.ItemsScreen
 import com.example.featureitems.ItemsViewModel
 
-// 組み立てだけを行う。API の実装は生成クライアントに置き換える（tools/generate.py の拡張）。
+// 組み立てだけを行う。API サーバーができたら DefaultItemsApi(UrlConnectionTransport("https://...")) に置き換える（INTERNET 権限も追加する）。
 private object FakeItemsApi : ItemsApi {
     override suspend fun listItems() = listOf(Item("1", "First"), Item("2", "Second"))
 }

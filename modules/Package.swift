@@ -18,6 +18,7 @@ let package = Package(
         .target(name: "CoreNetwork", dependencies: ["CoreUtils"], path: "core/network/ios/Sources/CoreNetwork"),
         .target(name: "DesignSystem", path: "designsystem/ios/Sources/DesignSystem"),
         .target(name: "FeatureItems", dependencies: ["CoreNetwork", "DesignSystem"], path: "features/items/ios/Sources/FeatureItems"),
+        .testTarget(name: "CoreNetworkTests", dependencies: ["CoreNetwork"], path: "core/network/ios/Tests/CoreNetworkTests"),
         .testTarget(name: "FeatureItemsTests", dependencies: ["FeatureItems"], path: "features/items/ios/Tests/FeatureItemsTests"),
     ]
 )

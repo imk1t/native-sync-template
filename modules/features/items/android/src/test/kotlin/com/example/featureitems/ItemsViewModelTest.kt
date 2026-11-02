@@ -22,9 +22,10 @@ private class StubApi(private val result: Result<List<Item>>) : ItemsApi {
     override suspend fun listItems(): List<Item> = result.getOrThrow()
 }
 
-// shared/scenarios/items-list.yaml と同じ内容
+// shared/scenarios/items-list.yaml の各 step を実装する
 @OptIn(ExperimentalCoroutinesApi::class)
 class ItemsViewModelTest {
+    // @scenario items-list/load-succeeds
     @Test
     fun loadSucceeds() = runTest {
         val items = listOf(Item("1", "First"), Item("2", "Second"))
@@ -33,6 +34,7 @@ class ItemsViewModelTest {
         assertEquals(ItemsState.Loaded(items), vm.state.value)
     }
 
+    // @scenario items-list/load-fails
     @Test
     fun loadFails() = runTest {
         val vm = ItemsViewModel(StubApi(Result.failure(RuntimeException())))
@@ -40,6 +42,8 @@ class ItemsViewModelTest {
         assertEquals(ItemsState.Error, vm.state.value)
     }
 
+    // @scenario items-list/reappear-in-same-scope
+    // @scenario items-list/explicit-reload
     @Test
     fun sameStoreKeepsModelAndStateUntilExplicitReload() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
@@ -72,6 +76,7 @@ class ItemsViewModelTest {
         }
     }
 
+    // @scenario items-list/cancel-initial-load
     @Test
     fun clearingStoreCancelsPendingLoadWithoutShowingError() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))

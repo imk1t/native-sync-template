@@ -4,7 +4,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 tools/generate.py
 # diff だけでは、削除後に再生成された未追跡ファイルを検出できない。
-changes="$(git status --porcelain --untracked-files=all -- modules/designsystem)"
+changes="$(git status --porcelain --untracked-files=all -- \
+  modules/designsystem/ios/Sources/DesignSystem/Generated \
+  modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated \
+  modules/core/network/ios/Sources/CoreNetwork/Generated \
+  modules/core/network/android/src/main/kotlin/com/example/corenetwork/generated)"
 if [[ -n "$changes" ]]; then
   printf '%s\n' "$changes"
   echo "生成コードが最新ではありません。tools/generate.py を実行してコミットしてください"

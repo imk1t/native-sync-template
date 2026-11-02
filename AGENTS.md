@@ -10,11 +10,13 @@
 2. 片方の OS を実装する。
 3. もう片方を**同じ型名・同じ構造**で実装する。違いは spec.md の「OS 固有の差分」に書く。
 4. `python3 tools/check_spec_sync.py --update both <モジュールパス>` で追従を記録する。
-5. `python3 tools/check_deps.py`、`bash tools/check_generated.sh`、`python3 tools/check_spec_sync.py` を通す。
+5. `python3 tools/check_deps.py`、`bash tools/check_generated.sh`、`python3 tools/check_spec_sync.py`、`python3 tools/check_scenarios.py` を通す。
 6. 両 OS の変更を 1 つの PR にまとめる。
 
 ## 守ること
-- `Generated/` と `generated/` 配下は手で編集しない。`python3 tools/generate.py` で再生成する。
+- `Generated/` と `generated/` 配下は手で編集しない。`python3 tools/generate.py` で再生成する（トークン → designsystem、OpenAPI → core/network の DTO と APIClient）。
+- 生成された DTO・APIClient は `core/network` の外に出さない。手書きのラッパー（例: `DefaultItemsAPI`）でドメインモデルに変換して公開する。
+- `shared/scenarios` の各 step は、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書いて実装する。
 - 依存ルール: `core/utils` は何にも依存しない / `core/*` は他の `core/*` のみ / `designsystem` は `core/utils` のみ / `features/*` は `core/*` と `designsystem` のみ（features 同士は禁止）。
 - 外部ライブラリは `core/*` のラッパー経由で使い、`shared/third-party.yaml` に両 OS の対応を書く。
 - AndroidX・Kotlin・kotlinx は公式の基盤ライブラリとして `core/utils` 以外の各層から直接利用でき、外部 SDK の対応表の対象外。iOS の外部依存は `.product(name: ..., package: ...)` で明示する。
