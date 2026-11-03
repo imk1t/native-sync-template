@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
@@ -38,6 +39,8 @@ class MainActivity : ComponentActivity() {
     private val app: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // システムバーのアイコン色を背景の明暗に合わせる(Android 15 以降の強制 edge-to-edge でも必要)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) open(intent)
         setContent { AppRoot(app.navigator) { route -> Screen(route, app.navigator) } }
