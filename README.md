@@ -164,6 +164,8 @@ flowchart TD
 
 - 画面の一覧（名前・引数・タブ・ディープリンク）は `shared/routes.yaml` に書き、`bun tools/generate.ts` で両 OS の `Route` と `AppTab` を生成します。
 - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル）として持ち、7 つの操作で書き換えます。
+- スタックの要素は `NavigationEntry(id, route)` です。同じ Route を複数回開いても別の ID を持ち、戻る操作やタブ切り替えでは残った画面の ID を保ちます。タブの先頭エントリは `NavigationState.roots` が保持します。
+- URL から開くときは `Route(url:)` / `Route.fromUrl` を使います。エンコード済みパスを区切ってから一度だけデコードするため、ID に `/` や `%` が含まれていても保たれます。
 
 | 操作 | 使いどころ |
 | --- | --- |
@@ -245,7 +247,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 | tools/ の整形（`bun fmt`。設定は `bunfig.toml`） | `mise run fmt` |
 | Swift と Kotlin の Lint | `mise run lint` |
 | iOS のテスト（Xcode / macOS） | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'` |
-| Android のテスト（Android SDK が必要） | `cd apps/android && gradle test` |
+| Android のテスト（Android SDK と JDK 17 が必要。Gradle は wrapper で 8.14.3 に固定） | `cd apps/android && ./gradlew test` |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
 | スキルの原本を変更したあとの再配置 | `apm install` |
 
@@ -258,7 +260,7 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | CI（`repo-checks`） | すべての PR と main への push | `mise run check`（tools の整形・型検査・テスト、spec の同期、依存ルール、生成差分、共通シナリオの検査。Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
 | CI（`actions-lock`） | すべての PR と main への push | ワークフローの `uses:` が `actions.lock` と一致するか（`gh actions-lock --verify`） |
-| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
+| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `./gradlew test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
 

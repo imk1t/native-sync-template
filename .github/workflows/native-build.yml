@@ -65,8 +65,6 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4.4.3
-        with:
-          gradle-version: "8.14.3"
       - name: Test modules
         working-directory: apps/android
-        run: gradle test assembleDebug
+        run: ./gradlew test assembleDebug

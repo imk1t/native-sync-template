@@ -6,6 +6,7 @@ import java.nio.file.Files
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,6 +53,24 @@ class StoreTest {
         assertNotEquals("secret", DataStoreKeyValueStore(dataStore).get("token"))
         store.set("token", null)
         assertNull(store.get("token"))
+    }
+
+    @Test
+    fun failedOverwritePreservesExistingValue() = runTest(UnconfinedTestDispatcher()) {
+        var failEncryption = false
+        val cipher = object : ValueCipher {
+            override fun encrypt(plain: ByteArray): ByteArray {
+                check(!failEncryption) { "encryption failed" }
+                return ReversingCipher.encrypt(plain)
+            }
+
+            override fun decrypt(encrypted: ByteArray) = ReversingCipher.decrypt(encrypted)
+        }
+        val store = KeystoreSecureStore(dataStore("overwrite"), cipher)
+        store.set("token", "old-token")
+        failEncryption = true
+        assertFailsWith<IllegalStateException> { store.set("token", "new-token") }
+        assertEquals("old-token", store.get("token"))
     }
 
     @Test

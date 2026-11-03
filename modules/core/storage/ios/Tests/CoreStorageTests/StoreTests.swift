@@ -21,6 +21,7 @@ private final class FakeKeychain: KeychainItems, @unchecked Sendable {
     private let lock = NSLock()
     private var items: [String: [String: Any]] = [:]
     var failAddWith: OSStatus?
+    var failUpdateWith: OSStatus?
 
     private func id(_ query: [String: Any]) -> String {
         "\(query[kSecAttrService as String] ?? "")/\(query[kSecAttrAccount as String] ?? "")"
@@ -48,6 +49,15 @@ private final class FakeKeychain: KeychainItems, @unchecked Sendable {
 
     func delete(_ query: [String: Any]) -> OSStatus {
         lock.withLock { items.removeValue(forKey: id(query)) == nil ? errSecItemNotFound : errSecSuccess }
+    }
+
+    func update(_ query: [String: Any], attributes: [String: Any]) -> OSStatus {
+        lock.withLock {
+            if let failUpdateWith { return failUpdateWith }
+            guard let item = items[id(query)] else { return errSecItemNotFound }
+            items[id(query)] = item.merging(attributes) { _, new in new }
+            return errSecSuccess
+        }
     }
 }
 
@@ -78,6 +88,18 @@ struct KeychainSecureStoreTests {
         await #expect(throws: KeychainError(status: errSecInteractionNotAllowed)) {
             try await KeychainSecureStore(service: "app", items: keychain).set("token", "secret")
         }
+    }
+
+    @Test func failedOverwritePreservesExistingValue() async throws {
+        let keychain = FakeKeychain()
+        let store = KeychainSecureStore(service: "app", items: keychain)
+        try await store.set("token", "old-token")
+        keychain.failUpdateWith = errSecInteractionNotAllowed
+        keychain.failAddWith = errSecInteractionNotAllowed
+        await #expect(throws: KeychainError(status: errSecInteractionNotAllowed)) {
+            try await store.set("token", "new-token")
+        }
+        #expect(try await store.get("token") == "old-token")
     }
 }
 

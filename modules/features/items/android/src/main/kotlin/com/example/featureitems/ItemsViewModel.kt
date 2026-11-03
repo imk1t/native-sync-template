@@ -10,6 +10,8 @@ import com.example.corenavigation.Route
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -47,7 +49,9 @@ class ItemsViewModel(private val api: ItemsApi, private val navigator: Navigator
     internal suspend fun loadNow() {
         _state.value = ItemsState.Loading
         _state.value = try {
-            ItemsState.Loaded(api.listItems())
+            val items = api.listItems()
+            currentCoroutineContext().ensureActive()
+            ItemsState.Loaded(items)
         } catch (e: CancellationException) {
             initialLoadStarted = false
             throw e

@@ -2,8 +2,14 @@ package com.example.corenetwork
 
 import java.net.HttpURLConnection
 import java.net.URI
+import java.net.URL
 import java.net.URLEncoder
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
@@ -47,24 +53,53 @@ internal fun pathSegment(value: String): String = encode(value)
 
 private fun encode(value: String): String = URLEncoder.encode(value, "UTF-8").replace("+", "%20")
 
-class UrlConnectionTransport(private val baseUrl: String) : HttpTransport {
+class UrlConnectionTransport internal constructor(
+    private val baseUrl: String,
+    private val connectTimeoutMillis: Int,
+    private val readTimeoutMillis: Int,
+    private val openConnection: (URL) -> HttpURLConnection
+) : HttpTransport {
+    constructor(baseUrl: String, connectTimeoutMillis: Int = 15_000, readTimeoutMillis: Int = 30_000) :
+        this(baseUrl, connectTimeoutMillis, readTimeoutMillis, { it.openConnection() as HttpURLConnection })
+
+    init {
+        require(connectTimeoutMillis > 0 && readTimeoutMillis > 0) { "タイムアウトには正の値を指定してください" }
+    }
+
     override suspend fun send(request: HttpRequest): HttpResponse = withContext(Dispatchers.IO) {
         val query = request.query.joinToString("&") { (k, v) -> "${encode(k)}=${encode(v)}" }
         val url = baseUrl.trimEnd('/') + request.path + if (query.isEmpty()) "" else "?$query"
-        val connection = URI(url).toURL().openConnection() as HttpURLConnection
+        val connection = openConnection(URI(url).toURL())
         try {
-            connection.requestMethod = request.method
-            connection.setRequestProperty("Accept", "application/json")
-            request.body?.let { body ->
-                connection.doOutput = true
-                connection.setRequestProperty("Content-Type", "application/json")
-                connection.outputStream.use { it.write(body.toByteArray()) }
+            connection.connectTimeout = connectTimeoutMillis
+            connection.readTimeout = readTimeoutMillis
+            suspendCancellableCoroutine { continuation ->
+                // IO への切り替えだけでは通信は止まらない。割り込みと接続の切断を両方行う。
+                continuation.invokeOnCancellation { connection.disconnect() }
+                launch {
+                    try {
+                        val response = runInterruptible { exchange(connection, request) }
+                        continuation.resume(response)
+                    } catch (error: Exception) {
+                        continuation.resumeWithException(error)
+                    }
+                }
             }
-            val status = connection.responseCode
-            val stream = if (status in 200..299) connection.inputStream else connection.errorStream
-            HttpResponse(status, stream?.bufferedReader()?.use { it.readText() }.orEmpty())
         } finally {
             connection.disconnect()
         }
+    }
+
+    private fun exchange(connection: HttpURLConnection, request: HttpRequest): HttpResponse {
+        connection.requestMethod = request.method
+        connection.setRequestProperty("Accept", "application/json")
+        request.body?.let { body ->
+            connection.doOutput = true
+            connection.setRequestProperty("Content-Type", "application/json")
+            connection.outputStream.use { it.write(body.toByteArray()) }
+        }
+        val status = connection.responseCode
+        val stream = if (status in 200..299) connection.inputStream else connection.errorStream
+        return HttpResponse(status, stream?.bufferedReader()?.use { it.readText() }.orEmpty())
     }
 }

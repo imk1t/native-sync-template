@@ -30,6 +30,35 @@ private class StubApi(private val result: Result<List<Item>>) : ItemsApi {
 // shared/scenarios/items-list.yaml の各 step を実装する
 @OptIn(ExperimentalCoroutinesApi::class)
 class ItemsViewModelTest {
+    // @scenario items-list/transport-cancellation-retry
+    @Test
+    fun transportCancellationCanBeRetried() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
+            for (lateResponse in listOf(false, true)) {
+                val api = CancelledOnceApi(lateResponse)
+                val store = ViewModelStore()
+                try {
+                    val vm = ViewModelProvider.create(
+                        store,
+                        ItemsViewModel.factory(api, Navigator())
+                    )[ItemsViewModel::class]
+                    vm.loadIfNeeded()
+                    advanceUntilIdle()
+                    assertEquals(ItemsState.Loading, vm.state.value)
+                    vm.loadIfNeeded()
+                    advanceUntilIdle()
+                    assertEquals(2, api.calls)
+                    assertEquals(ItemsState.Loaded(listOf(Item("1", "First"))), vm.state.value)
+                } finally {
+                    store.clear()
+                }
+            }
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
     // @scenario items-list/load-succeeds
     @Test
     fun loadSucceeds() = runTest {
@@ -89,7 +118,7 @@ class ItemsViewModelTest {
         val navigator = Navigator()
         val viewModel = ItemsViewModel(StubApi(Result.success(emptyList())), navigator)
         viewModel.select(Item("1", "First"))
-        assertEquals(listOf(Route.ItemDetail("1")), navigator.state.value.stack(AppTab.Home))
+        assertEquals(listOf(Route.ItemDetail("1")), navigator.state.value.stack(AppTab.Home).map { it.route })
     }
 
     // @scenario items-list/cancel-initial-load

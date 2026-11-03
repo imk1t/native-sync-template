@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -42,7 +44,9 @@ class ItemDetailViewModel(private val id: String, private val api: ItemsApi) : V
     internal suspend fun loadNow() {
         _state.value = ItemDetailState.Loading
         _state.value = try {
-            ItemDetailState.Loaded(api.getItem(id))
+            val item = api.getItem(id)
+            currentCoroutineContext().ensureActive()
+            ItemDetailState.Loaded(item)
         } catch (e: CancellationException) {
             initialLoadStarted = false
             throw e

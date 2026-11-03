@@ -32,6 +32,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 - 依存: `core/utils` は何にも依存しない / `core/*` は他の `core/*` のみ / `designsystem` は `core/utils` のみ / `features/*` は `core/*` と `designsystem` のみ(features 同士は禁止)。
 - 外部ライブラリは `core/*` のラッパー経由で使い、`shared/third-party.yaml` に両 OS の対応を書く。AndroidX・Kotlin・kotlinx は公式基盤として `core/utils` 以外から直接使え、対応表の対象外。
 - iOS のモジュールと外部依存(`.product(name:package:)`)は `modules/Package.swift` に、Android は `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
+- Android のビルドは `apps/android` の `./gradlew` で行う(Gradle 8.14.3 を `gradle/wrapper` で固定。JDK 17 が必要)。Gradle のバージョンは `./gradlew wrapper --gradle-version <版>` で上げ、手元の `gradle` は使わない。
 - テストは OS 標準の場所に置く(iOS: `ios/Tests`、Android: `android/src/test`)。
 - 両 OS の変更は 1 つの PR にまとめる。
 - ワークフローの `uses:` は正確なバージョン(`@v4.4.0`)で書き、変えたら `gh actions-lock` で `.github/workflows/actions.lock` を更新する(手で編集しない)。

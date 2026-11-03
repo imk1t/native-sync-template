@@ -48,15 +48,24 @@ public struct KeychainSecureStore: SecureStore {
     }
 
     public func set(_ key: String, _ value: String?) async throws {
-        let deleteStatus = items.delete(query(key))
-        guard deleteStatus == errSecSuccess || deleteStatus == errSecItemNotFound else {
-            throw KeychainError(status: deleteStatus)
+        let query = query(key)
+        guard let value else {
+            let status = items.delete(query)
+            guard status == errSecSuccess || status == errSecItemNotFound else {
+                throw KeychainError(status: status)
+            }
+            return
         }
-        guard let value else { return }
-        var attributes = query(key)
-        attributes[kSecValueData as String] = Data(value.utf8)
-        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        let status = items.add(attributes)
+        let attributes: [String: Any] = [
+            kSecValueData as String: Data(value.utf8),
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+        var status = items.update(query, attributes: attributes)
+        if status == errSecItemNotFound {
+            status = items.add(query.merging(attributes) { _, new in new })
+            // 別の呼び出しが先に追加した場合も、既存値を削除せず更新する。
+            if status == errSecDuplicateItem { status = items.update(query, attributes: attributes) }
+        }
         guard status == errSecSuccess else { throw KeychainError(status: status) }
     }
 }
@@ -66,6 +75,7 @@ public struct KeychainSecureStore: SecureStore {
 protocol KeychainItems: Sendable {
     func copy(_ query: [String: Any]) -> (OSStatus, AnyObject?)
     func add(_ attributes: [String: Any]) -> OSStatus
+    func update(_ query: [String: Any], attributes: [String: Any]) -> OSStatus
     func delete(_ query: [String: Any]) -> OSStatus
 }
 
@@ -78,6 +88,10 @@ struct SystemKeychain: KeychainItems {
 
     func add(_ attributes: [String: Any]) -> OSStatus {
         SecItemAdd(attributes as CFDictionary, nil)
+    }
+
+    func update(_ query: [String: Any], attributes: [String: Any]) -> OSStatus {
+        SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
     }
 
     func delete(_ query: [String: Any]) -> OSStatus {

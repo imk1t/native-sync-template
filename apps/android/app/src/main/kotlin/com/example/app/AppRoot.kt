@@ -15,6 +15,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -25,6 +26,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.corenavigation.AppTab
 import com.example.corenavigation.Modal
 import com.example.corenavigation.ModalStyle
+import com.example.corenavigation.NavigationEntry
 import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
 
@@ -48,7 +50,9 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
         ) {
             // edge-to-edge なので、コンテンツがステータスバーやカメラ切り欠きに重ならないよう上端を避ける
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
-                Stack(listOf(state.selectedTab.root) + state.stack(state.selectedTab), navigator, screen)
+                key(state.selectedTab) {
+                    Stack(listOf(state.root(state.selectedTab)) + state.stack(state.selectedTab), navigator, screen)
+                }
             }
         }
         ModalLayer(state.modals, 0, navigator, screen)
@@ -57,7 +61,7 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
 
 /** スタック 1 本。戻る操作は Navigator.pop に渡す。 */
 @Composable
-private fun Stack(backStack: List<Route>, navigator: Navigator, screen: @Composable (Route) -> Unit) {
+private fun Stack(backStack: List<NavigationEntry>, navigator: Navigator, screen: @Composable (Route) -> Unit) {
     NavDisplay(
         backStack = backStack,
         onBack = { navigator.pop() },
@@ -65,7 +69,7 @@ private fun Stack(backStack: List<Route>, navigator: Navigator, screen: @Composa
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
-        entryProvider = { route -> NavEntry(route) { screen(route) } }
+        entryProvider = { entry -> NavEntry(entry, contentKey = entry.id) { screen(it.route) } }
     )
 }
 
@@ -75,8 +79,10 @@ private fun Stack(backStack: List<Route>, navigator: Navigator, screen: @Composa
 private fun ModalLayer(modals: List<Modal>, level: Int, navigator: Navigator, screen: @Composable (Route) -> Unit) {
     val modal = modals.getOrNull(level) ?: return
     val content: @Composable () -> Unit = {
-        Stack(modal.stack, navigator, screen)
-        ModalLayer(modals, level + 1, navigator, screen)
+        key(modal.stack.first().id) {
+            Stack(modal.stack, navigator, screen)
+            ModalLayer(modals, level + 1, navigator, screen)
+        }
     }
     when (modal.style) {
         ModalStyle.Sheet -> ModalBottomSheet(onDismissRequest = { navigator.dismiss() }) { content() }

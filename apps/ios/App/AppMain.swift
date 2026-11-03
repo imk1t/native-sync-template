@@ -27,7 +27,7 @@ struct AppMain: App {
             }
             // ディープリンク。URL スキームや Universal Links の登録はアプリごとに行う。
             .onOpenURL { url in
-                if let route = Route(path: url.path) {
+                if let route = Route(url: url) {
                     navigator.reset(.opening(route, in: navigator.state.selectedTab))
                 }
             }
