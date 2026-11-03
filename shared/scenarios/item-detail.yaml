@@ -21,3 +21,15 @@ steps:
     when: load(id 1)
     then:
       state: error
+  - id: transport-cancellation-retry
+    name: 通信のキャンセルとキャンセル後の応答はエラーにせず再試行できる
+    given:
+      getItem:
+        status: 200
+        body: { id: "1", title: "First" }
+    when: cancel-first-request-at-transport-or-response-then-reappear
+    then:
+      stateAfterCancellation: loading
+      state: loaded
+      title: First
+      requestCount: 2

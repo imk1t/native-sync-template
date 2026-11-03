@@ -36,11 +36,15 @@ public final class ItemsViewModel {
     public func load() async {
         state = .loading
         do {
-            state = .loaded(try await api.listItems())
-        } catch is CancellationError {
-            initialLoadStarted = false
+            let items = try await api.listItems()
+            try Task.checkCancellation()
+            state = .loaded(items)
         } catch {
-            state = .error
+            if error is CancellationError || (error as? URLError)?.code == .cancelled || Task.isCancelled {
+                initialLoadStarted = false
+            } else {
+                state = .error
+            }
         }
     }
 }

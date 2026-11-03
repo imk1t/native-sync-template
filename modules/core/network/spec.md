@@ -14,6 +14,9 @@
 | `URLSessionTransport(baseURL:)` | 本番用の `HTTPTransport` |
 | `APIError(status)` | 2xx 以外のレスポンスで投げるエラー |
 
+## キャンセルとタイムアウト
+呼び出し元のキャンセルは実際の通信にも伝え、接続を解放する。キャンセルされた応答を成功として返さない。接続・読み取りは有限のタイムアウトで終了させる。
+
 ## 内部（生成コード）
 `bun tools/generate.ts` が `Generated/`（iOS）・`generated/`（Android）に生成する。モジュールの外には公開しない。
 
@@ -23,3 +26,4 @@
 ## OS 固有の差分
 命名規約に合わせて、Android では略語を先頭だけ大文字にする: `ItemsApi` / `DefaultItemsApi` / `HttpTransport` / `HttpRequest` / `HttpResponse` / `ApiClient` / `ApiException`（iOS の `APIError`）/ `UrlConnectionTransport`（iOS の `URLSessionTransport`、ベース URL は `String`）。
 JSON は iOS が `Codable`（`JSONDecoder`）、Android が kotlinx.serialization。リクエスト・レスポンスの body は iOS が `Data`、Android が `String`。
+iOS は URLSession のキャンセルとタイムアウト設定に従い、キャンセルは `URLError.cancelled` または `CancellationError` として伝わる。Android は `CancellationException` を伝え、接続の切断とブロッキング処理の割り込みを行う。`UrlConnectionTransport` のタイムアウトは `connectTimeoutMillis`（既定 15,000 ms）と `readTimeoutMillis`（既定 30,000 ms）で指定し、0 以下は拒否する。

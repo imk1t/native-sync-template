@@ -1,10 +1,18 @@
 package com.example.featureitems
 
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 
 private class DetailStubApi(private val result: Result<Item>) : ItemsApi {
     override suspend fun listItems(): List<Item> = emptyList()
@@ -13,7 +21,35 @@ private class DetailStubApi(private val result: Result<Item>) : ItemsApi {
 }
 
 // shared/scenarios/item-detail.yaml の各 step を実装する
+@OptIn(ExperimentalCoroutinesApi::class)
 class ItemDetailViewModelTest {
+    // @scenario item-detail/transport-cancellation-retry
+    @Test
+    fun transportCancellationCanBeRetried() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
+            for (lateResponse in listOf(false, true)) {
+                val api = CancelledOnceApi(lateResponse)
+                val store = ViewModelStore()
+                try {
+                    val factory = ItemDetailViewModel.factory("1", api)
+                    val vm = ViewModelProvider.create(store, factory)[ItemDetailViewModel::class]
+                    vm.loadIfNeeded()
+                    advanceUntilIdle()
+                    assertEquals(ItemDetailState.Loading, vm.state.value)
+                    vm.loadIfNeeded()
+                    advanceUntilIdle()
+                    assertEquals(2, api.calls)
+                    assertEquals(ItemDetailState.Loaded(Item("1", "First")), vm.state.value)
+                } finally {
+                    store.clear()
+                }
+            }
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
     // @scenario item-detail/load-succeeds
     @Test
     fun loadSucceeds() = runTest {

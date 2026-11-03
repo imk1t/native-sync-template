@@ -61,3 +61,15 @@ steps:
     when: select(id 1)
     then:
       navigation: push itemDetail(id 1)
+  - id: transport-cancellation-retry
+    name: 通信のキャンセルとキャンセル後の応答はエラーにせず再試行できる
+    given:
+      listItems:
+        status: 200
+        body: [{ id: "1", title: "First" }]
+    when: cancel-first-request-at-transport-or-response-then-reappear
+    then:
+      stateAfterCancellation: loading
+      state: loaded
+      titles: ["First"]
+      requestCount: 2

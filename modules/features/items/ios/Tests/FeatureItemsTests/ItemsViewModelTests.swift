@@ -30,6 +30,19 @@ private actor CountingAPI: ItemsAPI {
 // shared/scenarios/items-list.yaml の各 step を実装する
 @MainActor
 struct ItemsViewModelTests {
+    // @scenario items-list/transport-cancellation-retry
+    @Test(arguments: CancelledOnceAPI.Mode.allCases)
+    func transportCancellationCanBeRetried(mode: CancelledOnceAPI.Mode) async {
+        let api = CancelledOnceAPI(mode: mode)
+        let viewModel = ItemsViewModel(api: api, navigator: Navigator())
+        let firstLoad = Task { await viewModel.loadIfNeeded() }
+        await firstLoad.value
+        #expect(viewModel.state == .loading)
+        await viewModel.loadIfNeeded()
+        #expect(await api.calls == 2)
+        #expect(viewModel.state == .loaded([Item(id: "1", title: "First")]))
+    }
+
     // @scenario items-list/load-succeeds
     @Test func loadSucceeds() async {
         let items = [Item(id: "1", title: "First"), Item(id: "2", title: "Second")]
@@ -64,7 +77,7 @@ struct ItemsViewModelTests {
         let navigator = Navigator()
         let viewModel = ItemsViewModel(api: StubAPI(result: .success([])), navigator: navigator)
         viewModel.select(Item(id: "1", title: "First"))
-        #expect(navigator.state.stacks[.home] == [.itemDetail(id: "1")])
+        #expect(navigator.state.stacks[.home]?.map(\.route) == [.itemDetail(id: "1")])
     }
 
     // @scenario items-list/cancel-initial-load

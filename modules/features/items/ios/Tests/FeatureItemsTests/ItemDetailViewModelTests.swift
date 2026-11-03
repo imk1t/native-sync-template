@@ -12,6 +12,19 @@ private struct DetailStubAPI: ItemsAPI {
 // shared/scenarios/item-detail.yaml の各 step を実装する
 @MainActor
 struct ItemDetailViewModelTests {
+    // @scenario item-detail/transport-cancellation-retry
+    @Test(arguments: CancelledOnceAPI.Mode.allCases)
+    func transportCancellationCanBeRetried(mode: CancelledOnceAPI.Mode) async {
+        let api = CancelledOnceAPI(mode: mode)
+        let viewModel = ItemDetailViewModel(id: "1", api: api)
+        let firstLoad = Task { await viewModel.loadIfNeeded() }
+        await firstLoad.value
+        #expect(viewModel.state == .loading)
+        await viewModel.loadIfNeeded()
+        #expect(await api.calls == 2)
+        #expect(viewModel.state == .loaded(Item(id: "1", title: "First")))
+    }
+
     // @scenario item-detail/load-succeeds
     @Test func loadSucceeds() async {
         let api = DetailStubAPI(result: .success(Item(id: "1", title: "First")))
