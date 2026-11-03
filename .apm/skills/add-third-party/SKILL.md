@@ -18,4 +18,4 @@ description: 外部ライブラリ（OSS・サードパーティ SDK）を iOS �
 4. `shared/third-party.yaml` に、役割・モジュール・iOS と Android それぞれのライブラリ名、ライセンス、担当を追記する。
 5. 分析イベント名や設定キーなど両 OS で一致すべき名前は `shared/` に定義し、定数を生成する。
 6. 環境ごとの設定ファイル（API キー、`GoogleService-Info.plist` や `google-services.json` など）はコミットしない。dev / prod をビルド設定（iOS の Configuration、Android の productFlavor）で切り替え、prod は CI のシークレットから注入する。
-7. `python3 tools/check_deps.py` を通す。
+7. `bun tools/check-deps.ts` を通す。

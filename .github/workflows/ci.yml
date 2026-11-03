@@ -1,4 +1,5 @@
 # 最小限の CI。数秒で終わる検査だけを PR ごとに実行する。
+# ツールのバージョンは mise.toml で管理し、jdx/mise-action で同じものを入れる。
 name: CI
 on:
   pull_request:
@@ -10,15 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: jdx/mise-action@v2
         with:
-          python-version: "3.12"
-      - run: python3 -m pip install -r tools/requirements.txt
-      - run: python3 -m unittest discover -s tools/tests -v
-      - run: python3 tools/check_spec_sync.py
-      - run: python3 tools/check_deps.py
-      - run: bash tools/check_generated.sh
-      - run: python3 tools/check_scenarios.py
+          install_args: bun
+      - run: bun install --frozen-lockfile
+      # 依存（型検査用のみ）に既知の脆弱性がないか
+      - run: bun audit
+      # 整形・型検査・tools のテスト・spec の同期・依存ルール・生成差分・共通シナリオ
+      - run: mise run check
 
   # Swift は SwiftLint、Kotlin は ktlint。設定は .swiftlint.yml と .editorconfig。
   # どちらも Linux で動かせるため、macOS ランナーは使わない。
@@ -27,11 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: SwiftLint
+        # mise.toml の swiftlint と同じバージョンにそろえる。
         run: |
           docker run --rm -v "$PWD":/work -w /work ghcr.io/realm/swiftlint:0.65.1 lint --strict
+      - uses: jdx/mise-action@v2
+        with:
+          install_args: ktlint
       - name: ktlint
-        run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.7.1/ktlint
-          echo "b596a05f09364e1997b644152683af12fef58944f3acfabdf78071f5a490eb98  ktlint" | sha256sum -c -
-          chmod +x ktlint
-          ./ktlint "**/*.kt" "**/*.kts" "!**/generated/**"
+        run: ktlint "**/*.kt" "**/*.kts" "!**/generated/**"

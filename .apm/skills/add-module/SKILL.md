@@ -16,5 +16,5 @@ description: modules/ 配下に新しいモジュール（features/<名前>、co
 4. Android: `modules/<module>/android/build.gradle.kts` を作り（実装は `src/main/kotlin/`、テストは `src/test/kotlin/`）、`apps/android/settings.gradle.kts` に `module(":<名前>", "<module のパス>")` を足す。JVM ターゲットは 17（`kotlin { jvmToolchain(17) }`）。
 5. 他モジュールへの依存は、iOS は `Package.swift` の `dependencies`、Android は `project(":...")` で書き、**両 OS で同じ依存**にする。
 6. 画面から使うなら `apps/ios` と `apps/android` に組み立てだけを足す。
-7. `python3 tools/check_spec_sync.py --update both <モジュールのパス>` を実行し、`check_deps.py` と `check_spec_sync.py` を通す。
+7. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` を実行し、`bun tools/check-deps.ts` と `bun tools/check-spec-sync.ts` を通す。
 8. 機能の中身は `sync-feature` の手順で実装する。

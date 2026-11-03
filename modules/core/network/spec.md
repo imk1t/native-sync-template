@@ -15,7 +15,7 @@
 | `APIError(status)` | 2xx 以外のレスポンスで投げるエラー |
 
 ## 内部（生成コード）
-`python3 tools/generate.py` が `Generated/`（iOS）・`generated/`（Android）に生成する。モジュールの外には公開しない。
+`bun tools/generate.ts` が `Generated/`（iOS）・`generated/`（Android）に生成する。モジュールの外には公開しない。
 
 - schema ごとの DTO（`ItemDTO`）。JSON の未知のキーは無視し、省略可能な値は null を出力しない。
 - operation ごとのメソッドを持つ `APIClient`。2xx 以外は `APIError` を投げる。パスに埋め込む値は 1 区切りとしてエンコードする（`/` もエスケープ）。
