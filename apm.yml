@@ -7,7 +7,23 @@ targets:
   - codex
 
 dependencies:
-  apm: []
+  apm:
+    # 共通の Skill・MCP
+    - imk1t/apm-shared#v0.1.4
+    # Android（Google 公式 android/skills）。タグがないためコミットで固定する
+    - android/skills/jetpack-compose/adaptive#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/jetpack-compose/jetpack-compose-performance#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/navigation/navigation-3#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/navigation/navigation-event#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/testing/testing-setup#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/performance/anr-audit-and-fix#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/performance/r8-analyzer#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/security/android-intent-security#6daa53ef27fa2aa87827d183a85c06cedceca833
+    - android/skills/security/android-permissions-security#6daa53ef27fa2aa87827d183a85c06cedceca833
+    # iOS（Paul Hudson の Agent Skill、MIT）。同じくコミットで固定する
+    - twostraws/SwiftUI-Agent-Skill/swiftui-pro#f2920b63995263f57b3e198674e89a602efba6d2
+    - twostraws/Swift-Concurrency-Agent-Skill/swift-concurrency-pro#bee3f69ba17142da148d3c5406f148ed62592b69
+    - twostraws/Swift-Testing-Agent-Skill/swift-testing-pro#2d6bba14a3c8bf3694f218b92fffe617c41ae43e
   mcp: []
 includes: auto
 scripts: {}
