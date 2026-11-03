@@ -45,6 +45,7 @@ clone 後に一度だけ実行します。
 
    `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
    あわせて `apm.yml` の依存（共通の `apm-shared`、Android 公式の `android/skills`、SwiftUI Pro スキル）も配置されます。
+   あわせて MCP 設定（`.mcp.json`、`.codex/config.toml`）と `apm.lock.yaml` も生成されますが、すべてコミットしません（`.gitignore` 済み）。
 
 ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
 

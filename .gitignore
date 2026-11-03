@@ -20,3 +20,11 @@ apm_modules/
 # apm が配置するスキル。原本は .apm/skills/。clone 後に tools/setup.ts（apm install）で作る
 .claude/skills/
 .agents/skills/
+
+# apm が生成する MCP 設定（apm.yml / apm-shared の mcp 依存から作られる。skills と同じく clone 後に作る）
+/.mcp.json
+.codex/
+
+# apm のロックファイル。依存は apm.yml でタグ・コミットに固定済みで、
+# 配置先（gitignore 済み）のハッシュと apm のバージョンで毎回差分が出るためコミットしない
+apm.lock.yaml
