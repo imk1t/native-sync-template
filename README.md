@@ -256,9 +256,20 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | --- | --- | --- |
 | CI（`repo-checks`） | すべての PR と main への push | `mise run check`（tools の整形・型検査・テスト、spec の同期、依存ルール、生成差分、共通シナリオの検査。Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
+| CI（`actions-lock`） | すべての PR と main への push | ワークフローの `uses:` が `actions.lock` と一致するか（`gh actions-lock --verify`） |
 | Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
+
+### アクションの固定（actions.lock）
+
+ワークフローで使うアクションは、GitHub 公式の lockfile `.github/workflows/actions.lock` で固定しています。各 `uses:` のタグが指すコミットを（アクションが内部で使うアクションも含めて）記録し、実行時はそのコミットだけが動きます。タグを書き換えられても、記録と違うコミットは実行されません。
+
+- `uses:` を追加・変更したら、手元で `gh actions-lock` を実行し、ワークフローと `actions.lock` の差分を確認してコミットします。手で編集しないでください。
+- 拡張は `gh extension install github/gh-actions-lock --pin v0.4.0` で入れます（CI と同じバージョン）。
+- `uses:` には `@v4` ではなく `@v4.4.0` のように正確なバージョンを書きます（`gh actions-lock` も書き換えます）。
+- Docker イメージ（`docker run` や `container:`）とスクリプトでのダウンロードは対象外です。
+- lockfile のない状態での実行を禁止するには、リポジトリの設定で「Require lockfile」ポリシーを有効にします。
 
 ## 現状
 
