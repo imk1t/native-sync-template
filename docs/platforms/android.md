@@ -16,7 +16,7 @@ adb shell am start -n com.example.app/.MainActivity
 
 ## 画面まわり
 - edge-to-edge で描画されるため、コンテンツはシステムバーの下まで描かれる。`AppRoot` が `safeDrawing` の上端 inset をスタックに適用している。下端はボトムバー(`NavigationSuiteScaffold`)が扱う。
-- ステータスバーのアイコン色は `enableEdgeToEdge` で指定しないと、明るい背景で薄く見える(未対応)。
+- システムバーのアイコン色は、`MainActivity.onCreate` の `enableEdgeToEdge()` で背景の明暗に合わせる。`targetSdk = 36` では OS が edge-to-edge を強制するが、アイコン色は自動では切り替わらない。
 
 ## 落とし穴
 - Gradle 9.x では、実在しないディレクトリ `:core`(`settings.gradle.kts` の中間プロジェクト)が設定エラーになる。8.14.3 を使う。
