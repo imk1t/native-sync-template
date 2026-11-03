@@ -10,8 +10,8 @@ jobs:
   repo-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@v4.4.0
+      - uses: jdx/mise-action@v2.4.4
         with:
           install_args: bun
       - run: bun install --frozen-lockfile
@@ -25,12 +25,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
       - name: SwiftLint
         # mise.toml の swiftlint と同じバージョンにそろえる。
         run: |
           docker run --rm -v "$PWD":/work -w /work ghcr.io/realm/swiftlint:0.65.1 lint --strict
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v2.4.4
         with:
           install_args: ktlint
       - name: ktlint
