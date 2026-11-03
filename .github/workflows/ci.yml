@@ -35,3 +35,19 @@ jobs:
           install_args: ktlint
       - name: ktlint
         run: ktlint "**/*.kt" "**/*.kts" "!**/generated/**"
+
+  # uses: のアクションが .github/workflows/actions.lock に記録したコミットと一致するか。
+  # uses: を変えたら手元で `gh actions-lock` を実行して lockfile を更新する。
+  actions-lock:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4.4.0
+      - name: Verify actions.lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # 拡張はまだ 0.x のため、バージョンを固定する（手元で使うものとそろえる）。
+        run: |
+          gh extension install github/gh-actions-lock --pin v0.4.0
+          gh actions-lock --verify

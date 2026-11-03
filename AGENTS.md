@@ -34,6 +34,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 - iOS のモジュールと外部依存(`.product(name:package:)`)は `modules/Package.swift` に、Android は `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
 - テストは OS 標準の場所に置く(iOS: `ios/Tests`、Android: `android/src/test`)。
 - 両 OS の変更は 1 つの PR にまとめる。
+- ワークフローの `uses:` は正確なバージョン(`@v4.4.0`)で書き、変えたら `gh actions-lock` で `.github/workflows/actions.lock` を更新する(手で編集しない)。
 
 ## スキルの管理(apm)
 - 原本は `.apm/skills/<名前>/SKILL.md`。配置先の `.claude/skills/`・`.agents/skills/` はコミットせず、手で編集しない。原本を直したら `apm install` をやり直す。
