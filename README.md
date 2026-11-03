@@ -72,6 +72,7 @@ modules/
     items/              サンプル機能（一覧と詳細）
 tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
 docs/adr/               設計判断の記録
+docs/platforms/         OS 固有の設定・環境・注意点（ios.md, android.md）
 ```
 
 `modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。

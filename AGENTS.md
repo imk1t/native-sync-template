@@ -7,6 +7,7 @@ iOS(Swift)と Android(Kotlin)をネイティブで同時に開発するモノレ
 - `shared/`: 単一の正。`openapi`(API)、`tokens`(デザイントークン)、`routes.yaml`(画面の一覧)、`scenarios`(共通シナリオ)、`third-party.yaml`(外部ライブラリ対応表)。
 - `modules/<core|designsystem|features>/<名前>/{spec.md, ios, android}`: 機能・基盤。`spec.md` が同期の基準。
 - `docs/adr/`: 設計判断の記録。
+- `docs/platforms/{ios,android}.md`: OS 固有の設定・環境・注意点。OS 固有の設定や落とし穴を見つけたらここに書く。
 
 ## コマンド
 ツールのバージョンは `mise.toml`、検査スクリプトは Bun(TypeScript)。変更後は次を通す。
