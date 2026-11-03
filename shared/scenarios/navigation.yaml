@@ -71,3 +71,20 @@ steps:
       "/items/a%2F1": { stacks: { home: [itemDetail(id a/1)] } }
       "/items": { stacks: { home: [] } }
       "/unknown": no route
+  - id: open-url-with-encoded-id
+    name: URL のパスの区切りごとに一度だけデコードする
+    given:
+      navigation: {}
+    when: open URL then create NavigationState
+    then:
+      "https://example.com/items/a%2F1?source=test#detail": { id: "a/1" }
+      "https://example.com/items/a%252F1?source=test#detail": { id: "a%2F1" }
+      "https://example.com/items/a%2B1?source=test#detail": { id: "a+1" }
+  - id: duplicate-route-entries
+    name: 同じ画面を重ねてもエントリ ID を共有しない
+    given:
+      navigation: {}
+    when: push same route twice, pop, push again; present and push same route, popToRoot
+    then:
+      entryIds: unique-per-opening
+      remainingEntryIds: unchanged

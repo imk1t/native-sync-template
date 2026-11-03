@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.corenavigation.NavigationState
 import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
+import com.example.corenavigation.fromUrl
 import com.example.corenetwork.ApiException
 import com.example.corenetwork.Item
 import com.example.corenetwork.ItemsApi
@@ -49,7 +50,7 @@ class MainActivity : ComponentActivity() {
 
     // ディープリンク。intent-filter（URL スキームや App Links）の登録はアプリごとに行う。
     private fun open(intent: Intent?) {
-        val route = intent?.data?.path?.let(Route::fromPath) ?: return
+        val route = intent?.data?.toString()?.let(Route::fromUrl) ?: return
         app.navigator.reset(NavigationState.opening(route, app.navigator.state.value.selectedTab))
     }
 }

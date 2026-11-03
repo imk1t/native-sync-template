@@ -15,7 +15,11 @@ struct RootView<Screen: View>: View {
         TabView(selection: $navigator.state.selectedTab) {
             ForEach(AppTab.allCases, id: \.self) { tab in
                 NavigationStack(path: path(of: tab)) {
-                    screen(tab.root).navigationDestination(for: Route.self) { screen($0) }
+                    screen(tab.root)
+                        .id(navigator.state.root(tab).id)
+                        .navigationDestination(for: NavigationEntry.self) { entry in
+                            screen(entry.route).id(entry.id)
+                        }
                 }
                 .tabItem { Text(tab.title) }
                 .tag(tab)
@@ -25,7 +29,7 @@ struct RootView<Screen: View>: View {
     }
 
     /// スワイプで戻る操作なども状態に書き戻す
-    private func path(of tab: AppTab) -> Binding<[Route]> {
+    private func path(of tab: AppTab) -> Binding<[NavigationEntry]> {
         Binding(
             get: { navigator.state.stacks[tab] ?? [] },
             set: { navigator.state.stacks[tab] = $0 }
@@ -61,7 +65,7 @@ private struct ModalLayer<Screen: View>: ViewModifier {
         )
     }
 
-    private var path: Binding<[Route]> {
+    private var path: Binding<[NavigationEntry]> {
         Binding(
             get: { Array(current?.stack.dropFirst() ?? []) },
             set: { newPath in
@@ -76,7 +80,11 @@ private struct ModalLayer<Screen: View>: ViewModifier {
         AnyView(
             NavigationStack(path: path) {
                 if let root = current?.stack.first {
-                    screen(root).navigationDestination(for: Route.self) { screen($0) }
+                    screen(root.route)
+                        .id(root.id)
+                        .navigationDestination(for: NavigationEntry.self) { entry in
+                            screen(entry.route).id(entry.id)
+                        }
                 }
             }
             .modifier(ModalLayer(navigator: navigator, level: level + 1, screen: screen))
