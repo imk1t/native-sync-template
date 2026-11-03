@@ -10,9 +10,11 @@ const FILES = [
   "tools/check-generated.ts",
   "tools/lib",
   "shared/tokens/tokens.json",
-  "shared/openapi/openapi.yaml",
+  "shared/openapi",
+  "shared/fixtures",
   "shared/routes.yaml",
-  "modules/features/items/spec.md",
+  "modules/features/github/spec.md",
+  "modules/features/settings/spec.md",
   ...Object.values(OUTPUTS),
 ];
 
@@ -69,11 +71,10 @@ describe("check-generated", () => {
   });
 
   test("OpenAPI を変えて再生成しないと失敗する", () => {
-    const path = join(repo, "shared/openapi/openapi.yaml");
-    const text = readFileSync(path, "utf-8");
-    const before = "        title:\n          type: string\n";
-    expect(text).toContain(before);
-    writeFileSync(path, text.replace(before, `${before}        note:\n          type: string\n`));
+    const path = join(repo, "shared/openapi/github-selection.json");
+    const selection = JSON.parse(readFileSync(path, "utf-8"));
+    selection.schemas.Repository.fields.push("archived");
+    writeFileSync(path, JSON.stringify(selection));
     git("add", ".");
     commit();
     const { code, output } = checkGenerated();

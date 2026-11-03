@@ -17,7 +17,11 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - package: Modules
-        product: FeatureItems
+        product: FeatureGitHub
+      - package: Modules
+        product: FeatureSettings
+      - package: Modules
+        product: CoreStorage
       - package: Modules
         product: CoreNetwork
       - package: Modules

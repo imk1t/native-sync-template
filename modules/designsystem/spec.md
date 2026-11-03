@@ -8,5 +8,8 @@
 | --- | --- |
 | `Tokens` | 色・余白の定数（`tools/generate.ts` で生成。手で編集しない） |
 
+## 共通 UI
+LoadingIndicator、EmptyState、ErrorState、StatusBadge を提供する。エラーは読み上げ可能な文言と再試行操作を持つ。バッジは色だけに依存せず文字でも状態を示す。文字サイズは OS の設定に従う。
+
 ## OS 固有の差分
 iOS 26 以降は Liquid Glass を使う部品を `#available` で分岐し、このモジュールの中に閉じ込める。

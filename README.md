@@ -69,7 +69,8 @@ modules/
     storage/            UserDefaults / DataStore、Keychain / Keystore
   designsystem/         トークンから生成した値と共通 UI
   features/
-    items/              サンプル機能（一覧と詳細）
+    github/             リポジトリ検索・Issue・保存済み・メモ
+    settings/           説明文表示設定とアプリ情報
 tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
 docs/adr/               設計判断の記録
 ```
@@ -77,15 +78,15 @@ docs/adr/               設計判断の記録
 `modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。
 
 ```
-modules/features/items/
+modules/features/github/
   spec.md                                  仕様（同期の基準）
   ios/
-    Sources/FeatureItems/                  実装
-    Tests/FeatureItemsTests/               テスト（Swift Testing）
+    Sources/FeatureGitHub/                  実装
+    Tests/FeatureGitHubTests/               テスト（Swift Testing）
   android/
     build.gradle.kts
-    src/main/kotlin/com/example/featureitems/   実装
-    src/test/kotlin/com/example/featureitems/   テスト（JUnit）
+    src/main/kotlin/com/example/featuregithub/   実装
+    src/test/kotlin/com/example/featuregithub/   テスト（JUnit）
 ```
 
 ## 開発の流れ
@@ -106,11 +107,11 @@ modules/features/items/
 
 | レイヤー | 責務 | iOS の型 | Android の型 |
 | --- | --- | --- | --- |
-| Presentation | 画面と画面状態 | `ItemsView` + `ItemsViewModel`（`@Observable`） | `ItemsScreen` + `ItemsViewModel`（`StateFlow`） |
-| Domain | ビジネスルール、モデル、Repository の契約 | `ItemsUseCase`、`protocol ItemsRepository` | `ItemsUseCase`、`interface ItemsRepository` |
-| Data | Repository の実装、API・DB の型との変換 | `ItemsRepositoryImpl` | `ItemsRepositoryImpl` |
+| Presentation | 画面と画面状態 | `RepositorySearchView` + `RepositorySearchViewModel`（`@Observable`） | `RepositorySearchScreen` + `RepositorySearchViewModel`（`StateFlow`） |
+| Domain | ビジネスルール、モデル、Repository の契約 | `Bookmark`、`protocol GitHubRepository` | `Bookmark`、`interface GitHubRepository` |
+| Data | Repository の実装、API・DB の型との変換 | `GitHubRepositoryImpl` | `GitHubRepositoryImpl` |
 
-型名とファイル名は両 OS で同じにします。各レイヤーは自分より内側にだけ依存できます（Presentation → Domain ← Data）。サンプルの `features/items` は小さいため、今は ViewModel と View だけで構成しています。
+画面は Swift の View / Kotlin の Screen、API の略語は API / Api とし、Domain と Data の責務・型名はそろえます。リモート取得は Domain の `GitHubRepository` を経由し、Data の実装をアプリ層から注入します。端末内保存は共有する `BookmarkRepository` と `DisplaySettings` を購読します。
 
 ### モジュール間の依存ルール
 
@@ -141,20 +142,25 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    app["App"] --> items["features/items"]
+    app["App"] --> github["features/github"]
+    app --> settings["features/settings"]
     app --> network["core/network"]
     app --> navigation["core/navigation"]
-    items --> network
-    items --> navigation
-    items --> designsystem
+    app --> storage["core/storage"]
+    github --> network
+    github --> navigation
+    github --> storage
+    github --> designsystem
+    settings --> storage
+    settings --> navigation
+    settings --> designsystem
     network --> utils["core/utils"]
     network -.->|生成コード| openapi[("shared/openapi")]
     navigation -.->|生成コード| routes[("shared/routes.yaml")]
     designsystem -.->|生成コード| tokens[("shared/tokens")]
-    storage["core/storage"]
 ```
 
-点線は依存ではなく、`tools/generate.ts` による生成元です。`core/storage` はまだ使う機能がないため、単独で置いています。
+点線は依存ではなく、`tools/generate.ts` による生成元です。ブックマーク・メモ・表示設定は `core/storage` に永続化します。
 
 `bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`shared/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
 
@@ -183,7 +189,7 @@ flowchart TD
 | UI | SwiftUI（必要な箇所だけ UIKit） | Jetpack Compose |
 | 状態管理 | Observation（`@Observable`） | ViewModel + StateFlow |
 | 非同期 | Swift Concurrency | Kotlin Coroutines / Flow |
-| DI | イニシャライザ注入（必要なら swift-dependencies） | Hilt |
+| DI | イニシャライザ注入 | コンストラクタ注入・ViewModel Factory |
 | 通信 | 生成クライアント + URLSession | 生成クライアント + HttpURLConnection |
 | キー・値の保存 | UserDefaults | DataStore |
 | 秘密情報の保存 | Keychain | Keystore で暗号化して DataStore |
@@ -192,7 +198,7 @@ flowchart TD
 | UI テスト | XCUITest | Compose UI Test |
 | 静的解析 | SwiftLint / swift-format | ktlint / detekt |
 
-DI、構造化データの保存、UI テスト、静的解析は方針だけで、テンプレートにはまだ組み込んでいません。
+構造化データの保存、UI テスト、detekt は拡張候補です。現在の永続化は小規模な JSON を KeyValueStore に保存し、静的解析は SwiftLint / ktlint を実行します。
 
 ### 最低対応バージョン（案）
 
@@ -204,16 +210,18 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 
 ### OpenAPI から API クライアントを生成する
 
-`bun tools/generate.ts` が `shared/openapi/openapi.yaml` から、`core/network` に次のコードを生成します。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
+`bun tools/generate.ts` が固定した GitHub 公式 OpenAPI のスナップショットとフィールド選択から `shared/openapi/openapi.yaml` を生成し、その契約から、`core/network` に次のコードを生成します。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
 
 | 生成物 | iOS | Android |
 | --- | --- | --- |
-| schema ごとの DTO | `struct ItemDTO: Codable` | `@Serializable data class ItemDTO` |
-| operation ごとのメソッド | `APIClient.listItems()` | `ApiClient.listItems()` |
+| schema ごとの DTO | `struct RepoSummaryDTO: Codable` | `@Serializable data class RepoSummaryDTO` |
+| operation ごとのメソッド | `APIClient.searchRepos(q:)` | `ApiClient.searchRepos(q)` |
 
-- DTO とクライアントは `core/network` の内部（`internal`）に閉じます。手書きの `DefaultItemsAPI` / `DefaultItemsApi` がドメインモデル（`Item`）に変換して公開します。
+- DTO とクライアントは `core/network` の内部（`internal`）に閉じます。手書きの `DefaultGitHubAPI` / `DefaultGitHubApi` がドメインモデル（`RepositorySummary`・`GitHubIssue`）に変換して公開します。
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
+
+通常の生成はオフラインで動作します。公式定義を更新するときだけ `bun tools/sync-github-openapi.ts <公式リポジトリの40桁SHA>` を実行し、`bun tools/generate.ts` で再生成します。固定元・チェックサム・ライセンスと選択ルールは `shared/openapi`、詳細は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
 
 同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
@@ -222,7 +230,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 `shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`bun tools/check-scenarios.ts` は次を検査します。
 
 - すべての step が、iOS と Android の両方のテストから参照されている
-- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移の初期状態として予約）
+- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移、`localState` は保存値と読み書きの失敗条件。API は文字列の `headers` と辞書のエラー `body` も指定可能）
 - 機能の `spec.md` がシナリオを参照している
 
 ### spec と実装の追従を記録する
@@ -238,7 +246,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 | PR ごとの検査をすべて実行（CI の `repo-checks` と同じ） | `mise run check` |
 | トークンと OpenAPI から Swift / Kotlin を生成 | `bun tools/generate.ts` |
 | spec と両 OS の同期を検査 | `bun tools/check-spec-sync.ts` |
-| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/items` |
+| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/github` |
 | モジュールの依存ルールを検査 | `bun tools/check-deps.ts` |
 | 生成コードが最新かを検査 | `bun tools/check-generated.ts` |
 | 共通シナリオと両 OS のテストの対応を検査 | `bun tools/check-scenarios.ts` |
@@ -274,8 +282,27 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 - Docker イメージ（`docker run` や `container:`）とスクリプトでのダウンロードは対象外です。
 - lockfile のない状態での実行を禁止するには、リポジトリの設定で「Require lockfile」ポリシーを有効にします。
 
+## サンプルアプリの実行
+
+「探す」「保存済み」「設定」の3タブです。探す → リポジトリ詳細 → Issue一覧 → Issue詳細へ進み、保存済みからメモ編集シートを開けます。保存済み一覧にはスナップショットを表示するため、一覧のための通信は不要です。メモは最大1,000コードポイント、保存は最大100件です。
+
+通常起動は認証なしの GitHub REST API（`2026-03-10`）を使用します。GitHubへの変更操作はありません。検索は確定時のみ送信し、取得結果を5分キャッシュします。手動更新はキャッシュを迂回しますが、レート制限は守ります。403/429の制限中は再試行可能時刻を表示し、送信を抑制します。検索は最大1,000件、Issue一覧のPRは表示対象外です。
+
+```sh
+# iOS: XcodeGenで生成後、XcodeでApp schemeを実行
+cd apps/ios
+xcodegen generate
+
+# Android: JDK17とAndroid SDKを設定して実行
+cd apps/android
+./gradlew test assembleDebug
+```
+
+固定データで確認する場合は、iOSのLaunch Argumentsへ `--demo` を指定します。Androidはインストール後に `adb shell am start -n com.example.app/.MainActivity --ez demo true` で起動します。`shared/fixtures/github.json` を両OS共通のTransportへ生成し、実際のDTOデコード・変換を通します。デモは保存先もメモリのため、通常起動の保存データを変更しません。デモの検索は同じ1件を返し、アバターは代替表示です。
+
+`TS2688: Cannot find type definition file for 'bun'` が出る場合は、`bun install --frozen-lockfile` で型検査依存を復元してから `mise run check` を実行してください。型定義は `package.json` / `bun.lock` に固定済みです。
+
 ## 現状
 
-- **実装済み**: 共通定義（OpenAPI のサンプル、トークン、シナリオ）、トークンと OpenAPI からの Swift / Kotlin 生成、`core/utils`・`core/network`・`core/storage`・`core/navigation`（画面遷移）、サンプル機能 `items`（一覧と詳細）、同期・依存・生成差分・シナリオの検査、CI。
-- **未実装**: 外部 SDK を使うラッパーモジュールのサンプル（対象の SDK を検討中）。
-- アプリには API サーバーが無いため、フェイクの `ItemsAPI` を使っています。実サーバーができたら `DefaultItemsAPI(transport: URLSessionTransport(baseURL:))` / `DefaultItemsApi(UrlConnectionTransport(baseUrl))` に差し替えます。
+- **実装済み**: GitHub検索・詳細・Issue、ローカルブックマークとメモ、表示設定、3タブとシート、公式OpenAPIの抽出と両OSコード生成、キャッシュ・ページング・レート制限、共通シナリオと両OSテスト、同期・依存・生成差分検査、CI。
+- **拡張候補**: 認証、READMEやIssueのMarkdown表示、外部SDKラッパーのサンプル。

@@ -182,7 +182,7 @@ export function swift(model: RoutesModel): string {
     "}",
     "",
     "extension Route {",
-    "    /// ディープリンクのパス（例: /items/1）から Route を作る。一致しなければ nil。",
+    "    /// ディープリンクのパス（例: /repositories/owner/repo）から Route を作る。一致しなければ nil。",
     "    public init?(path: String) {",
     '        let segments = path.split(separator: "/").map { String($0).removingPercentEncoding ?? String($0) }',
   );
@@ -233,7 +233,7 @@ export function kotlin(model: RoutesModel, pkg: string): string {
   out.push(
     "",
     "    companion object {",
-    "        /** ディープリンクのパス（例: /items/1）から Route を作る。一致しなければ null。 */",
+    "        /** ディープリンクのパス（例: /repositories/owner/repo）から Route を作る。一致しなければ null。 */",
     "        fun fromPath(path: String): Route? {",
     '            val segments = path.split("/").filter { it.isNotEmpty() }.map(::decode)',
   );

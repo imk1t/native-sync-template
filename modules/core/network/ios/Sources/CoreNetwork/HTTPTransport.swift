@@ -6,29 +6,41 @@ public struct HTTPRequest: Equatable, Sendable {
     public var path: String
     public var query: [URLQueryItem]
     public var body: Data?
+    public var headers: [String: String]
 
-    public init(method: String, path: String, query: [URLQueryItem] = [], body: Data? = nil) {
+    public init(
+        method: String, path: String, query: [URLQueryItem] = [], body: Data? = nil, headers: [String: String] = [:]
+    ) {
         self.method = method
         self.path = path
         self.query = query
         self.body = body
+        self.headers = headers
     }
 }
 
 public struct HTTPResponse: Equatable, Sendable {
     public var status: Int
     public var body: Data
+    public var headers: [String: String]
 
-    public init(status: Int, body: Data = Data()) {
+    public init(status: Int, body: Data = Data(), headers: [String: String] = [:]) {
         self.status = status
         self.body = body
+        self.headers = Dictionary(headers.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { _, new in new })
     }
 }
 
 /// 2xx 以外のレスポンス。
 public struct APIError: Error, Equatable, Sendable {
     public let status: Int
-    public init(status: Int) { self.status = status }
+    public let headers: [String: String]
+    public let body: Data
+    public init(status: Int, headers: [String: String] = [:], body: Data = Data()) {
+        self.status = status
+        self.headers = headers
+        self.body = body
+    }
 }
 
 /// 通信の差し替え口。本番は URLSessionTransport、テストはスタブを渡す。
@@ -37,15 +49,19 @@ public protocol HTTPTransport: Sendable {
 }
 
 extension HTTPTransport {
-    func call<T: Decodable>(_ request: HTTPRequest, decoding type: T.Type) async throws -> T {
+    func call<T: Decodable & Sendable>(_ request: HTTPRequest, decoding type: T.Type) async throws -> APIResponse<T> {
         let response = try await send(request)
-        guard (200..<300).contains(response.status) else { throw APIError(status: response.status) }
-        return try JSONDecoder().decode(T.self, from: response.body)
+        guard (200..<300).contains(response.status) else {
+            throw APIError(status: response.status, headers: response.headers, body: response.body)
+        }
+        return APIResponse(value: try JSONDecoder().decode(T.self, from: response.body), headers: response.headers)
     }
 
     func call(_ request: HTTPRequest) async throws {
         let response = try await send(request)
-        guard (200..<300).contains(response.status) else { throw APIError(status: response.status) }
+        guard (200..<300).contains(response.status) else {
+            throw APIError(status: response.status, headers: response.headers, body: response.body)
+        }
     }
 }
 
@@ -76,14 +92,18 @@ public struct URLSessionTransport: HTTPTransport {
             urlRequest.httpBody = body
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
+        for (key, value) in request.headers { urlRequest.setValue(value, forHTTPHeaderField: key) }
         let (data, response) = try await session.data(for: urlRequest)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
-        return HTTPResponse(status: http.statusCode, body: data)
+        let headers = http.allHeaderFields.reduce(into: [String: String]()) { result, entry in
+            result[String(describing: entry.key)] = String(describing: entry.value)
+        }
+        return HTTPResponse(status: http.statusCode, body: data, headers: headers)
     }
 }
 
-private extension String {
-    func trimmingSuffix(_ suffix: String) -> String {
+extension String {
+    fileprivate func trimmingSuffix(_ suffix: String) -> String {
         hasSuffix(suffix) ? String(dropLast(suffix.count)) : self
     }
 }

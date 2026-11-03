@@ -12,7 +12,10 @@ struct RootView<Screen: View>: View {
     }
 
     var body: some View {
-        TabView(selection: $navigator.state.selectedTab) {
+        TabView(selection: Binding(
+            get: { navigator.state.selectedTab },
+            set: { navigator.selectTab($0) }
+        )) {
             ForEach(AppTab.allCases, id: \.self) { tab in
                 NavigationStack(path: path(of: tab)) {
                     screen(tab.root)
@@ -21,11 +24,19 @@ struct RootView<Screen: View>: View {
                             screen(entry.route).id(entry.id)
                         }
                 }
-                .tabItem { Text(tab.title) }
+                .tabItem { Label(tab.title, systemImage: tabIcon(tab)) }
                 .tag(tab)
             }
         }
         .modifier(ModalLayer(navigator: navigator, level: 0, screen: screen))
+    }
+
+    private func tabIcon(_ tab: AppTab) -> String {
+        switch tab {
+        case .home: "magnifyingglass"
+        case .saved: "bookmark"
+        case .settings: "gearshape"
+        }
     }
 
     /// スワイプで戻る操作なども状態に書き戻す

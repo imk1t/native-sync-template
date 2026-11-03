@@ -25,7 +25,9 @@ describe("repo checks", () => {
   const write = (name: string, text: string) => writeFileSync(join(root, name), text);
 
   function addSdk(mod = "core/network", register = true) {
-    const target = { "core/network": "CoreNetwork", "core/utils": "CoreUtils", "features/items": "FeatureItems" }[mod];
+    const target = { "core/network": "CoreNetwork", "core/utils": "CoreUtils", "features/github": "FeatureGitHub" }[
+      mod
+    ];
     const product = '.product(name: "ExampleSDK", package: "example-sdk")';
     const rows = read("modules/Package.swift")
       .split("\n")
@@ -80,7 +82,7 @@ describe("repo checks", () => {
     expect(output).toContain("android: core/network");
   });
 
-  test.each(["features/items", "core/utils"])("%s は SDK に直接依存できない", (mod) => {
+  test.each(["features/github", "core/utils"])("%s は SDK に直接依存できない", (mod) => {
     const errors = deps.checkExternal({ ios: new Set([`${mod}\texample-sdk`]), android: new Set() }, root);
     expect(errors.some((error) => error.includes("直接依存できません"))).toBe(true);
   });
@@ -156,8 +158,8 @@ describe("repo checks", () => {
   });
 
   test("実装を消してもビルド定義に残るモジュールを検出する", () => {
-    rmSync(join(root, "modules/features/items"), { recursive: true });
-    expect(check(root)).toContain("modules/features/items: spec.md がありません");
+    rmSync(join(root, "modules/features/github"), { recursive: true });
+    expect(check(root)).toContain("modules/features/github: spec.md がありません");
   });
 
   test("登録されていない実装にも spec.md が必要", () => {
@@ -166,7 +168,7 @@ describe("repo checks", () => {
   });
 
   test("spec の変更には両 OS の記録が必要", () => {
-    const spec = "modules/features/items/spec.md";
+    const spec = "modules/features/github/spec.md";
     write(spec, `${read(spec)}\n変更\n`);
     expect(check(root).filter((error) => error.includes("追従していません"))).toHaveLength(2);
   });

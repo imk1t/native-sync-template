@@ -42,3 +42,5 @@
 
 ## シナリオ
 `shared/scenarios/navigation.yaml`
+
+Android のアプリ層は各タブの decorated entries を常時保持し、表示する NavDisplay だけを切り替える。タブを離れてもエントリの ViewModelStore と取得済み状態を保持する。

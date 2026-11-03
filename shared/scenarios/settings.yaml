@@ -1,0 +1,2 @@
+# 両 OS のテストに同名の @scenario マーカーを記載する。
+{name: settings,feature: features/settings,steps: [{id: save-restore,name: 説明文表示を保存し共有状態と復元値へ反映する,given: {localState: {values: {}}},when: 説明文表示をOFFにしてStoreを再生成する,then: {showDescriptions: false}},{id: write-fails,name: 失敗時は前の表示設定を保つ,given: {localState: {writeFails: true}},when: 説明文表示を変更する,then: {showDescriptions: true,error: true}}]}

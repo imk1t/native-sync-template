@@ -25,7 +25,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 
 ## ルール
 - `Generated/` と `generated/` 配下は手で編集しない。`tools/generate.ts` で再生成する。
-- 生成された DTO・APIClient は `core/network` の外に出さない。手書きのラッパー(例: `DefaultItemsAPI`)でドメインモデルに変換して公開する。
+- 生成された DTO・APIClient は `core/network` の外に出さない。手書きのラッパー(例: `DefaultGitHubAPI`)でドメインモデルに変換して公開する。
 - 画面遷移はすべて `core/navigation` の `Navigator`(`push`・`present` など)で行う。`NavigationLink` などで画面を直接開かない。画面を足すときは `shared/routes.yaml` に足し、その機能の spec.md の「画面遷移」に書き、アプリ層の `Route` → 画面の対応に足す(`docs/adr/0002`)。
 - OS 間の意図した違いは `spec.md` の「OS 固有の差分」に書く。書かれていない違いはバグ。
 - `shared/scenarios` の各 step は、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書いて実装する。

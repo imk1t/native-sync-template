@@ -1,0 +1,15 @@
+import SwiftUI
+
+public struct StatusBadge: View {
+    let text: String
+    let emphasized: Bool
+    public init(_ text: String, emphasized: Bool = false) {
+        self.text = text
+        self.emphasized = emphasized
+    }
+    public var body: some View {
+        Text(text).font(.caption).bold().padding(.horizontal, 10).padding(.vertical, 5)
+            .foregroundStyle(emphasized ? Color.green : Color.secondary)
+            .background((emphasized ? Color.green : Color.secondary).opacity(0.12), in: Capsule())
+    }
+}

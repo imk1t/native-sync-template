@@ -3,7 +3,7 @@
  *
  * - 形式: name（ファイル名と一致）・feature・steps（id・name・given・when・then）
  * - given のキーは shared/openapi の operationId。2xx の body はレスポンスの schema に合うこと
- *   （`navigation` だけは画面遷移の初期状態として予約。辞書で書く）
+ *   （`navigation` は画面遷移、`localState` は保存値・読み書き失敗の初期状態）
  * - feature の spec.md がシナリオを参照していること
  * - 各 step が iOS と Android の両方のテストで `@scenario <name>/<step id>` として参照されていること
  */
@@ -54,6 +54,20 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       if (!isDict(stub)) errors.push(`${w}: 画面遷移の初期状態を辞書で書いてください`);
       continue;
     }
+    if (opId === "localState") {
+      if (!isDict(stub)) errors.push(`${w}: ローカル保存の初期状態を辞書で書いてください`);
+      else {
+        for (const [key, value] of Object.entries(stub)) {
+          if (!["values", "readFails", "writeFails"].includes(key)) errors.push(`${w}.${key}: 未知のキーです`);
+          else if (key === "values") {
+            if (!isDict(value) || Object.values(value).some((v) => typeof v !== "string" && v !== null)) {
+              errors.push(`${w}.values: 保存キーと文字列または null の辞書が必要です`);
+            }
+          } else if (typeof value !== "boolean") errors.push(`${w}.${key}: boolean が必要です`);
+        }
+      }
+      continue;
+    }
     const op = ops.get(opId);
     if (!op) {
       errors.push(`${w}: shared/openapi に無い operationId です`);
@@ -63,11 +77,17 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       errors.push(`${w}: status か pending が必要です`);
       continue;
     }
-    const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending"].includes(key)));
+    const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending", "headers"].includes(key)));
     if (unknown.length > 0) errors.push(`${w}: 未知のキーです: ${JSON.stringify(unknown)}`);
     if (stub.pending === true) {
       if (Object.keys(stub).join() !== "pending") errors.push(`${w}: pending: true は単独で書いてください`);
       continue;
+    }
+    if (
+      "headers" in stub &&
+      (!isDict(stub.headers) || Object.values(stub.headers).some((v) => typeof v !== "string"))
+    ) {
+      errors.push(`${w}.headers: 文字列の辞書が必要です`);
     }
     const status = stub.status;
     if (typeof status !== "number" || !Number.isInteger(status) || status < 100 || status > 599) {
@@ -84,8 +104,10 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       } catch (error) {
         errors.push(error instanceof Error ? error.message : String(error));
       }
-    } else if ("body" in stub) {
-      errors.push(`${w}.body: この status では body を検査できません。エラー body は書かないでください`);
+    } else if ("body" in stub && status >= 400 && !isDict(stub.body)) {
+      errors.push(`${w}.body: エラー body は辞書で書いてください`);
+    } else if ("body" in stub && status < 400) {
+      errors.push(`${w}.body: この status では body を検査できません`);
     }
   }
   return errors;

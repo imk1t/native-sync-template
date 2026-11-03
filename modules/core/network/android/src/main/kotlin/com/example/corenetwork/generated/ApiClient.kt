@@ -3,17 +3,39 @@ package com.example.corenetwork
 
 /** shared/openapi の operation を 1 メソッドずつ持つ。通信は HttpTransport に任せる。 */
 internal class ApiClient(private val transport: HttpTransport) {
-    /** GET /items（operationId: listItems） */
-    suspend fun listItems(): List<ItemDTO> {
+    /** GET /repos/{owner}/{repo}（operationId: repos/get） */
+    suspend fun reposGet(owner: String, repo: String): ApiResponse<RepositoryDTO> {
         val query = emptyList<Pair<String, String>>()
-        val request = HttpRequest(method = "GET", path = "/items", query = query, body = null)
-        return transport.call<List<ItemDTO>>(request)
+        val request = HttpRequest(method = "GET", path = "/repos/${pathSegment(owner.toString())}/${pathSegment(repo.toString())}", query = query, body = null)
+        return transport.call<RepositoryDTO>(request)
     }
 
-    /** GET /items/{id}（operationId: getItem） */
-    suspend fun getItem(id: String): ItemDTO {
+    /** GET /repos/{owner}/{repo}/issues（operationId: issues/list-for-repo） */
+    suspend fun issuesListForRepo(owner: String, repo: String, state: String? = null, perPage: Int? = null, page: Int? = null): ApiResponse<List<IssueDTO>> {
+        val query = mutableListOf<Pair<String, String>>()
+        if (state != null) query.add("state" to state.toString())
+        if (perPage != null) query.add("per_page" to perPage.toString())
+        if (page != null) query.add("page" to page.toString())
+        val request = HttpRequest(method = "GET", path = "/repos/${pathSegment(owner.toString())}/${pathSegment(repo.toString())}/issues", query = query, body = null)
+        return transport.call<List<IssueDTO>>(request)
+    }
+
+    /** GET /repos/{owner}/{repo}/issues/{issue_number}（operationId: issues/get） */
+    suspend fun issuesGet(owner: String, repo: String, issueNumber: Int): ApiResponse<IssueDTO> {
         val query = emptyList<Pair<String, String>>()
-        val request = HttpRequest(method = "GET", path = "/items/${pathSegment(id.toString())}", query = query, body = null)
-        return transport.call<ItemDTO>(request)
+        val request = HttpRequest(method = "GET", path = "/repos/${pathSegment(owner.toString())}/${pathSegment(repo.toString())}/issues/${pathSegment(issueNumber.toString())}", query = query, body = null)
+        return transport.call<IssueDTO>(request)
+    }
+
+    /** GET /search/repositories（operationId: search/repos） */
+    suspend fun searchRepos(q: String, sort: String? = null, order: String? = null, perPage: Int? = null, page: Int? = null): ApiResponse<SearchResultDTO> {
+        val query = mutableListOf<Pair<String, String>>()
+        query.add("q" to q.toString())
+        if (sort != null) query.add("sort" to sort.toString())
+        if (order != null) query.add("order" to order.toString())
+        if (perPage != null) query.add("per_page" to perPage.toString())
+        if (page != null) query.add("page" to page.toString())
+        val request = HttpRequest(method = "GET", path = "/search/repositories", query = query, body = null)
+        return transport.call<SearchResultDTO>(request)
     }
 }

@@ -8,24 +8,24 @@ steps:
     name: モーダルが無ければ選択中のタブのスタックに積む
     given:
       navigation: {}
-    when: push itemDetail(id 1)
+    when: push repositoryDetail(owner owner, repo 1)
     then:
-      stacks: { home: [itemDetail(id 1)] }
+      stacks: { home: [repositoryDetail(owner owner, repo 1)] }
       modals: []
   - id: push-inside-modal
     name: モーダル表示中の push はそのモーダルのスタックに積む
     given:
       navigation:
-        modals: [{ style: sheet, stack: [items] }]
-    when: push itemDetail(id 1)
+        modals: [{ style: sheet, stack: [repositorySearch] }]
+    when: push repositoryDetail(owner owner, repo 1)
     then:
       stacks: { home: [] }
-      modals: [{ style: sheet, stack: [items, itemDetail(id 1)] }]
+      modals: [{ style: sheet, stack: [repositorySearch, repositoryDetail(owner owner, repo 1)] }]
   - id: pop-modal-root-dismisses
     name: モーダルの先頭で pop するとモーダルを閉じる
     given:
       navigation:
-        modals: [{ style: sheet, stack: [items] }]
+        modals: [{ style: sheet, stack: [repositorySearch] }]
     when: pop
     then:
       modals: []
@@ -40,7 +40,7 @@ steps:
     name: popToRoot でタブのスタックを空にする
     given:
       navigation:
-        stacks: { home: [itemDetail(id 1), itemDetail(id 2)] }
+        stacks: { home: [repositoryDetail(owner owner, repo 1), repositoryDetail(owner owner, repo 2)] }
     when: popToRoot
     then:
       stacks: { home: [] }
@@ -48,19 +48,19 @@ steps:
     name: present でモーダルを重ね、dismiss で一番上を閉じる
     given:
       navigation: {}
-    when: present itemDetail(id 1) fullScreen, present items sheet, dismiss
+    when: present repositoryDetail(owner owner, repo 1) fullScreen, present repositorySearch sheet, dismiss
     then:
-      modals: [{ style: fullScreen, stack: [itemDetail(id 1)] }]
+      modals: [{ style: fullScreen, stack: [repositoryDetail(owner owner, repo 1)] }]
   - id: select-tab-dismisses-modals
     name: タブを選ぶとモーダルをすべて閉じ、スタックは保つ
     given:
       navigation:
-        stacks: { home: [itemDetail(id 1)] }
-        modals: [{ style: sheet, stack: [items] }]
+        stacks: { home: [repositoryDetail(owner owner, repo 1)] }
+        modals: [{ style: sheet, stack: [repositorySearch] }]
     when: selectTab home
     then:
       selectedTab: home
-      stacks: { home: [itemDetail(id 1)] }
+      stacks: { home: [repositoryDetail(owner owner, repo 1)] }
       modals: []
   - id: open-deep-link
     name: ディープリンクのパスから開く状態を作る
@@ -68,8 +68,8 @@ steps:
       navigation: {}
     when: opening(Route(path)) in home
     then:
-      "/items/a%2F1": { stacks: { home: [itemDetail(id a/1)] } }
-      "/items": { stacks: { home: [] } }
+      "/repositories/owner/a%2F1": { stacks: { home: [repositoryDetail(owner owner, repo a/1)] } }
+      "/search": { stacks: { home: [] } }
       "/unknown": no route
   - id: open-url-with-encoded-id
     name: URL のパスの区切りごとに一度だけデコードする
@@ -77,9 +77,9 @@ steps:
       navigation: {}
     when: open URL then create NavigationState
     then:
-      "https://example.com/items/a%2F1?source=test#detail": { id: "a/1" }
-      "https://example.com/items/a%252F1?source=test#detail": { id: "a%2F1" }
-      "https://example.com/items/a%2B1?source=test#detail": { id: "a+1" }
+      "https://example.com/repositories/owner/a%2F1?source=test#detail": { id: "a/1" }
+      "https://example.com/repositories/owner/a%252F1?source=test#detail": { id: "a%2F1" }
+      "https://example.com/repositories/owner/a%2B1?source=test#detail": { id: "a+1" }
   - id: duplicate-route-entries
     name: 同じ画面を重ねてもエントリ ID を共有しない
     given:

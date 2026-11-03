@@ -1,6 +1,7 @@
 package com.example.app
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,19 +9,23 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.corenavigation.AppTab
@@ -34,6 +39,19 @@ import com.example.corenavigation.Route
 @Composable
 fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
     val state by navigator.state.collectAsState()
+    // 非表示のタブも decorator を保持し、切り替え時に ViewModelStore を破棄しない。
+    val entriesByTab = AppTab.entries.associateWith { tab ->
+        key(tab) {
+            rememberDecoratedNavEntries(
+                backStack = listOf(state.root(tab)) + state.stack(tab),
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator()
+                ),
+                entryProvider = { entry -> NavEntry(entry, contentKey = entry.id) { screen(it.route) } }
+            )
+        }
+    }
     Box(Modifier.fillMaxSize()) {
         // 画面幅に応じてボトムバー・レール・ドロワーを切り替える
         NavigationSuiteScaffold(
@@ -42,7 +60,14 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
                     item(
                         selected = tab == state.selectedTab,
                         onClick = { navigator.selectTab(tab) },
-                        icon = {},
+                        icon = {
+                            val icon = when (tab) {
+                                AppTab.Home -> android.R.drawable.ic_menu_search
+                                AppTab.Saved -> android.R.drawable.ic_menu_save
+                                AppTab.Settings -> android.R.drawable.ic_menu_preferences
+                            }
+                            Icon(painterResource(icon), contentDescription = null)
+                        },
                         label = { Text(tab.title) }
                     )
                 }
@@ -50,8 +75,11 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
         ) {
             // edge-to-edge なので、コンテンツがステータスバーやカメラ切り欠きに重ならないよう上端を避ける
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
-                key(state.selectedTab) {
-                    Stack(listOf(state.root(state.selectedTab)) + state.stack(state.selectedTab), navigator, screen)
+                Column {
+                    if (state.stack(state.selectedTab).isNotEmpty()) {
+                        TextButton(onClick = navigator::pop) { Text("戻る") }
+                    }
+                    NavDisplay(entries = entriesByTab.getValue(state.selectedTab), onBack = navigator::pop)
                 }
             }
         }

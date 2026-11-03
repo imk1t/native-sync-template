@@ -1,19 +1,36 @@
-# 画面の一覧。tools/generate.ts が両 OS の Route と AppTab を生成する（docs/adr/0002）。
-# - name: 両 OS の型名（iOS は Route.<name>、Android は Route.<Name>）
-# - feature: 画面を持つ機能モジュール。その spec.md の「画面遷移」に画面を書く
-# - params: 引数。string か integer。オブジェクトは渡さず ID を渡す
-# - deepLink: ディープリンクのパス。{引数名} は params と一致させる
-# push かモーダルかは呼ぶ側が Navigator で決めるので、ここには書かない。
+# 画面遷移の単一の正。生成物は tools/generate.ts で更新する。
 tabs:
   - id: home
-    title: ホーム
-    root: items
+    title: 探す
+    root: repositorySearch
+  - id: saved
+    title: 保存済み
+    root: bookmarks
+  - id: settings
+    title: 設定
+    root: settings
 routes:
-  - name: items
-    feature: features/items
-    deepLink: /items
-  - name: itemDetail
-    feature: features/items
-    params:
-      id: string
-    deepLink: /items/{id}
+  - name: repositorySearch
+    feature: features/github
+    deepLink: /search
+  - name: repositoryDetail
+    feature: features/github
+    params: { owner: string, repo: string }
+    deepLink: /repositories/{owner}/{repo}
+  - name: repositoryIssues
+    feature: features/github
+    params: { owner: string, repo: string }
+    deepLink: /repositories/{owner}/{repo}/issues
+  - name: issueDetail
+    feature: features/github
+    params: { owner: string, repo: string, number: integer }
+    deepLink: /repositories/{owner}/{repo}/issues/{number}
+  - name: bookmarks
+    feature: features/github
+    deepLink: /saved
+  - name: bookmarkNote
+    feature: features/github
+    params: { repositoryId: string }
+  - name: settings
+    feature: features/settings
+    deepLink: /settings

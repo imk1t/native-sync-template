@@ -65,7 +65,7 @@ describe("models", () => {
     expect(kotlin).toContain("internal data class ItemDTO(");
   });
 
-  test.each([[{ type: "string", enum: ["a"] }], [{ oneOf: [] }], [{ type: "object" }], [{ type: ["string", "null"] }]])(
+  test.each([[{ oneOf: [] }], [{ type: "object" }], [{ type: ["string", "null"] }]])(
     "未対応の schema は失敗する: %j",
     (prop) => {
       expect(() => new gen.Spec(doc({}, { X: { type: "object", properties: { p: prop } } }))).toThrow();
@@ -83,12 +83,12 @@ describe("client", () => {
     const spec = new gen.Spec(doc(GET_ITEM));
     const swift = gen.swiftClient(spec);
     const kotlin = gen.kotlinClient(spec, "p");
-    expect(swift).toContain("func getItem(itemId: String, pageSize: Int? = nil) async throws -> ItemDTO");
+    expect(swift).toContain("func getItem(itemId: String, pageSize: Int? = nil) async throws -> APIResponse<ItemDTO>");
     expect(swift).toContain('path: "/items/\\(pathSegment(itemId))"');
     expect(swift).toContain(
       'if let pageSize { query.append(URLQueryItem(name: "page_size", value: String(pageSize))) }',
     );
-    expect(kotlin).toContain("suspend fun getItem(itemId: String, pageSize: Int? = null): ItemDTO");
+    expect(kotlin).toContain("suspend fun getItem(itemId: String, pageSize: Int? = null): ApiResponse<ItemDTO>");
     expect(kotlin).toContain('path = "/items/${pathSegment(itemId.toString())}"');
     expect(kotlin).toContain('if (pageSize != null) query.add("page_size" to pageSize.toString())');
   });

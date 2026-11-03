@@ -1,0 +1,25 @@
+import CoreNavigation
+import FeatureGitHub
+import SwiftUI
+
+struct Screen: View {
+    let route: Route
+    let dependencies: GitHubDependencies
+    let navigator: Navigator
+
+    var body: some View {
+        switch route {
+        case .repositorySearch: RepositorySearchScreen(dependencies: dependencies, navigator: navigator)
+        case .repositoryDetail(let owner, let repo):
+            RepositoryDetailScreen(owner: owner, repo: repo, dependencies: dependencies, navigator: navigator)
+        case .repositoryIssues(let owner, let repo):
+            RepositoryIssuesScreen(owner: owner, repo: repo, dependencies: dependencies, navigator: navigator)
+        case .issueDetail(let owner, let repo, let number):
+            IssueDetailScreen(owner: owner, repo: repo, number: number, dependencies: dependencies)
+        case .bookmarks: BookmarksScreen(dependencies: dependencies, navigator: navigator)
+        case .bookmarkNote(let repositoryId):
+            BookmarkNoteScreen(repositoryId: repositoryId, dependencies: dependencies, navigator: navigator)
+        case .settings: SettingsScreen(dependencies: dependencies)
+        }
+    }
+}

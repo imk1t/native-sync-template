@@ -16,8 +16,11 @@
 値は文字列だけを扱う。数値や構造体は呼び出し側で文字列（JSON など）にする。両 OS で保存できる型を揃えるため。
 `SecureStore.set` は既存値を先に削除しない。更新が失敗した場合は例外を返し、更新前の値を保持する。削除するのは value が null の場合だけ。
 
+## 表示設定
+DisplaySettings は一覧の説明文を表示する showDescriptions（初期 true）を KeyValueStore に保存する。初回読み込みを共有し、書き込みを直列化する。書き込み成功後だけ公開状態を更新する。読み込み・保存に失敗した場合は呼び出し側へ例外を返す。iOS は @MainActor / Observation、Android は StateFlow を使って全画面に反映する。
+
 ## OS 固有の差分
-- iOS の `KeyValueStore` は UserDefaults、Android は Preferences DataStore。DataStore は 1 ファイルにつき 1 インスタンスにする必要があるため、`DataStore<Preferences>` はアプリで 1 回だけ作って渡す（`DataStoreKeyValueStore.create(context, name)`）。
+- iOS の `KeyValueStore` は UserDefaults、Android は Preferences DataStore。DataStore は 1 ファイルにつき 1 インスタンスにする必要があるため、Application の依存グラフで `DataStoreKeyValueStore.persistent(context, name)` を 1 回だけ呼んで共有する。DataStoreを直接注入する場合は `create(context, name)` を使う。
 - iOS の `SecureStore` は Keychain（`kSecClassGenericPassword`、`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`）。Android には Keychain に当たる値の保管庫が無いので、Android Keystore の AES-GCM 鍵で暗号化した値を DataStore に保存する。暗号化は `ValueCipher`（実装は `AndroidKeystoreCipher(alias)`）に分け、JVM のテストでは差し替える。
 - iOS の更新は SecItemUpdate を使い、未登録のキーだけ SecItemAdd で追加する。Android は暗号化の成功後に DataStore のトランザクションで更新する。
 - 同じ理由で iOS は SecItem の呼び出しを内部の `KeychainItems` に分け、テストでは差し替える。ホストアプリの無いパッケージのテストでは Keychain の entitlement が無く、本物の Keychain を使えない（`errSecMissingEntitlement`）ため。本物の Keychain の確認は、アプリをホストにしたテストで行う。

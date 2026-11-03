@@ -5,17 +5,31 @@ import java.net.URLDecoder
 
 /** shared/routes.yaml の画面。 */
 sealed interface Route {
-    /** features/items */
-    data object Items : Route
-    /** features/items */
-    data class ItemDetail(val id: String) : Route
+    /** features/github */
+    data object RepositorySearch : Route
+    /** features/github */
+    data class RepositoryDetail(val owner: String, val repo: String) : Route
+    /** features/github */
+    data class RepositoryIssues(val owner: String, val repo: String) : Route
+    /** features/github */
+    data class IssueDetail(val owner: String, val repo: String, val number: Long) : Route
+    /** features/github */
+    data object Bookmarks : Route
+    /** features/github */
+    data class BookmarkNote(val repositoryId: String) : Route
+    /** features/settings */
+    data object Settings : Route
 
     companion object {
-        /** ディープリンクのパス（例: /items/1）から Route を作る。一致しなければ null。 */
+        /** ディープリンクのパス（例: /repositories/owner/repo）から Route を作る。一致しなければ null。 */
         fun fromPath(path: String): Route? {
             val segments = path.split("/").filter { it.isNotEmpty() }.map(::decode)
-            if (segments.size == 1 && segments[0] == "items") return Items
-            if (segments.size == 2 && segments[0] == "items") return ItemDetail(segments[1])
+            if (segments.size == 1 && segments[0] == "search") return RepositorySearch
+            if (segments.size == 1 && segments[0] == "saved") return Bookmarks
+            if (segments.size == 1 && segments[0] == "settings") return Settings
+            if (segments.size == 3 && segments[0] == "repositories") return RepositoryDetail(segments[1], segments[2])
+            if (segments.size == 4 && segments[0] == "repositories" && segments[3] == "issues") return RepositoryIssues(segments[1], segments[2])
+            if (segments.size == 5 && segments[0] == "repositories" && segments[3] == "issues" && segments[4].toLongOrNull() != null) return IssueDetail(segments[1], segments[2], segments[4].toLong())
             return null
         }
 
@@ -27,5 +41,7 @@ sealed interface Route {
 
 /** shared/routes.yaml のタブ。 */
 enum class AppTab(val root: Route, val title: String) {
-    Home(Route.Items, "ホーム"),
+    Home(Route.RepositorySearch, "探す"),
+    Saved(Route.Bookmarks, "保存済み"),
+    Settings(Route.Settings, "設定"),
 }

@@ -22,7 +22,9 @@ kotlin { jvmToolchain(17) }
 dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
-    implementation(project(":features:items"))
+    implementation(project(":features:github"))
+    implementation(project(":features:settings"))
+    implementation(project(":core:storage"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.navigation.suite)

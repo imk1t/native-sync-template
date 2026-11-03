@@ -31,6 +31,8 @@ class DataStoreKeyValueStore(private val dataStore: DataStore<Preferences>) : Ke
     }
 
     companion object {
+        fun persistent(context: Context, name: String): KeyValueStore = DataStoreKeyValueStore(create(context, name))
+
         /** DataStore は 1 ファイルにつき 1 インスタンスにする必要がある。アプリで 1 回だけ呼んで使い回す。 */
         fun create(context: Context, name: String): DataStore<Preferences> =
             PreferenceDataStoreFactory.create { context.applicationContext.preferencesDataStoreFile(name) }

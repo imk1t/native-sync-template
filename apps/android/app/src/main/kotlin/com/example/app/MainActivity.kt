@@ -1,49 +1,90 @@
 package com.example.app
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.corenavigation.NavigationState
 import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
 import com.example.corenavigation.fromUrl
-import com.example.corenetwork.ApiException
-import com.example.corenetwork.Item
-import com.example.corenetwork.ItemsApi
-import com.example.featureitems.ItemDetailScreen
-import com.example.featureitems.ItemDetailViewModel
-import com.example.featureitems.ItemsScreen
-import com.example.featureitems.ItemsViewModel
+import com.example.corenetwork.DefaultGitHubApi
+import com.example.corenetwork.DemoGitHubTransport
+import com.example.corenetwork.GitHubTransport
+import com.example.corenetwork.UrlConnectionTransport
+import com.example.corestorage.DataStoreKeyValueStore
+import com.example.corestorage.DisplaySettings
+import com.example.corestorage.InMemoryKeyValueStore
+import com.example.featuregithub.BookmarkNoteScreen
+import com.example.featuregithub.BookmarkNoteViewModel
+import com.example.featuregithub.BookmarkRepository
+import com.example.featuregithub.BookmarksScreen
+import com.example.featuregithub.BookmarksViewModel
+import com.example.featuregithub.GitHubDependencies
+import com.example.featuregithub.GitHubRepositoryImpl
+import com.example.featuregithub.IssueDetailScreen
+import com.example.featuregithub.IssueDetailViewModel
+import com.example.featuregithub.RepositoryDetailScreen
+import com.example.featuregithub.RepositoryDetailViewModel
+import com.example.featuregithub.RepositoryIssuesScreen
+import com.example.featuregithub.RepositoryIssuesViewModel
+import com.example.featuregithub.RepositorySearchScreen
+import com.example.featuregithub.RepositorySearchViewModel
+import com.example.featuresettings.SettingsScreen
+import com.example.featuresettings.SettingsViewModel
 
-// 組み立てだけを行う。API サーバーができたら DefaultItemsApi(UrlConnectionTransport("https://...")) に置き換える。
-private object FakeItemsApi : ItemsApi {
-    private val items = listOf(Item("1", "First"), Item("2", "Second"))
+/** アプリの寿命で共有する依存を組み立てる。複数の Activity からも同じ Store を使う。 */
+class SampleApplication : Application() {
+    val github by lazy { dependencies(demo = false) }
+    val demo by lazy { dependencies(demo = true) }
 
-    override suspend fun listItems() = items
-
-    override suspend fun getItem(id: String) = items.firstOrNull { it.id == id } ?: throw ApiException(404)
+    private fun dependencies(demo: Boolean): GitHubDependencies {
+        val store = if (demo) {
+            InMemoryKeyValueStore()
+        } else {
+            DataStoreKeyValueStore.persistent(this, "github-explorer")
+        }
+        val transport = if (demo) DemoGitHubTransport() else UrlConnectionTransport("https://api.github.com")
+        return GitHubDependencies(
+            GitHubRepositoryImpl(DefaultGitHubApi(GitHubTransport(transport))),
+            BookmarkRepository(store),
+            DisplaySettings(store)
+        )
+    }
 }
 
-/** Navigator を Activity の ViewModelStore に置き、構成変更でも遷移の状態を保つ。 */
-class AppViewModel : ViewModel() {
+class AppViewModel(application: Application) : AndroidViewModel(application) {
     val navigator = Navigator()
+    lateinit var dependencies: GitHubDependencies
+        private set
+
+    fun configure(demo: Boolean) {
+        if (::dependencies.isInitialized) return
+        val application = getApplication<SampleApplication>()
+        dependencies = if (demo) application.demo else application.github
+    }
 }
 
 class MainActivity : ComponentActivity() {
     private val app: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // システムバーのアイコン色を背景の明暗に合わせる(Android 15 以降の強制 edge-to-edge でも必要)
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        app.configure(intent?.getBooleanExtra("demo", false) == true)
         if (savedInstanceState == null) open(intent)
-        setContent { AppRoot(app.navigator) { route -> Screen(route, app.navigator) } }
+        setContent {
+            MaterialTheme { AppRoot(app.navigator) { route -> Screen(route, app.dependencies, app.navigator) } }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -51,22 +92,65 @@ class MainActivity : ComponentActivity() {
         open(intent)
     }
 
-    // ディープリンク。intent-filter（URL スキームや App Links）の登録はアプリごとに行う。
     private fun open(intent: Intent?) {
         val route = intent?.data?.toString()?.let(Route::fromUrl) ?: return
         app.navigator.reset(NavigationState.opening(route, app.navigator.state.value.selectedTab))
     }
 }
 
-/**
- * Route → 画面の対応。全機能の画面を知っているのはここだけ（docs/adr/0002）。
- * ViewModel は Navigation 3 のエントリごとの ViewModelStore に置かれ、スタックから外れると破棄される。
- */
 @Composable
-private fun Screen(route: Route, navigator: Navigator) {
+private fun Screen(route: Route, dependencies: GitHubDependencies, navigator: Navigator) {
     when (route) {
-        Route.Items -> ItemsScreen(viewModel(factory = ItemsViewModel.factory(FakeItemsApi, navigator)))
-        is Route.ItemDetail ->
-            ItemDetailScreen(viewModel(factory = ItemDetailViewModel.factory(route.id, FakeItemsApi)))
+        Route.RepositorySearch -> RepositorySearchScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { RepositorySearchViewModel(dependencies, navigator) }
+                }
+            )
+        )
+        is Route.RepositoryDetail -> RepositoryDetailScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { RepositoryDetailViewModel(route.owner, route.repo, dependencies, navigator) }
+                }
+            )
+        )
+        is Route.RepositoryIssues -> RepositoryIssuesScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer {
+                        RepositoryIssuesViewModel(route.owner, route.repo, dependencies.repository, navigator)
+                    }
+                }
+            )
+        )
+        is Route.IssueDetail -> IssueDetailScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { IssueDetailViewModel(route.owner, route.repo, route.number, dependencies.repository) }
+                }
+            )
+        )
+        Route.Bookmarks -> BookmarksScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { BookmarksViewModel(dependencies, navigator) }
+                }
+            )
+        )
+        is Route.BookmarkNote -> BookmarkNoteScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { BookmarkNoteViewModel(route.repositoryId, dependencies.bookmarks, navigator) }
+                }
+            )
+        )
+        Route.Settings -> SettingsScreen(
+            viewModel(
+                factory = viewModelFactory {
+                    initializer { SettingsViewModel(dependencies.settings) }
+                }
+            )
+        )
     }
 }
