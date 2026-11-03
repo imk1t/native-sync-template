@@ -245,7 +245,7 @@ DI、構造化データの保存、UI テスト、静的解析は方針だけで
 | tools/ の整形（`bun fmt`。設定は `bunfig.toml`） | `mise run fmt` |
 | Swift と Kotlin の Lint | `mise run lint` |
 | iOS のテスト（Xcode / macOS） | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'` |
-| Android のテスト（Android SDK が必要） | `cd apps/android && gradle test` |
+| Android のテスト（Android SDK と JDK 17 が必要。Gradle は wrapper で 8.14.3 に固定） | `cd apps/android && ./gradlew test` |
 | iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
 | スキルの原本を変更したあとの再配置 | `apm install` |
 
@@ -258,7 +258,7 @@ iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulato
 | CI（`repo-checks`） | すべての PR と main への push | `mise run check`（tools の整形・型検査・テスト、spec の同期、依存ルール、生成差分、共通シナリオの検査。Linux、数秒） |
 | CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
 | CI（`actions-lock`） | すべての PR と main への push | ワークフローの `uses:` が `actions.lock` と一致するか（`gh actions-lock --verify`） |
-| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `gradle test assembleDebug` |
+| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `./gradlew test assembleDebug` |
 
 ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
 
