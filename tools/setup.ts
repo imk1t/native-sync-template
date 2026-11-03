@@ -6,9 +6,7 @@ import { ROOT } from "./lib/util";
 
 const apm = Bun.which("apm");
 if (!apm) {
-  console.error(
-    "apm が見つかりません。`mise install` で apm を入れてから、`mise run setup` で再実行してください。",
-  );
+  console.error("apm が見つかりません。`mise install` で apm を入れてから、`mise run setup` で再実行してください。");
   process.exit(1);
 }
 const result = Bun.spawnSync([apm, "install"], { cwd: ROOT, stdout: "inherit", stderr: "inherit" });
