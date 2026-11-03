@@ -1,7 +1,12 @@
 package com.example.app
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -41,7 +46,10 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
                 }
             }
         ) {
-            Stack(listOf(state.selectedTab.root) + state.stack(state.selectedTab), navigator, screen)
+            // edge-to-edge なので、コンテンツがステータスバーやカメラ切り欠きに重ならないよう上端を避ける
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
+                Stack(listOf(state.selectedTab.root) + state.stack(state.selectedTab), navigator, screen)
+            }
         }
         ModalLayer(state.modals, 0, navigator, screen)
     }
