@@ -39,6 +39,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 
 ## スキルの管理(apm)
 - 原本は `.apm/skills/<名前>/SKILL.md`。配置先の `.claude/skills/`・`.agents/skills/` はコミットせず、手で編集しない。原本を直したら `apm install` をやり直す。
-- clone 後は `mise install` と `mise run setup`。mise・apm のインストールは利用者が行う(README の「セットアップ」)。エージェントは mise・apm をインストールしない。
+- clone 後は `mise install` と `mise run setup`。mise のインストールは利用者が行う(README の「セットアップ」)。apm は `mise.toml` で版を固定している。エージェントは mise・apm をインストールしない。
+- `apm.lock.yaml` はコミットする。`.mcp.json`・`.codex/` は apm の生成物なのでコミットしない。
 - `apm compile` は実行しない(この AGENTS.md は手書きのため)。
 - スキルは短く保ち、`description` に「何をするか」と「いつ使うか」を書く。

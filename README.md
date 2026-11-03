@@ -21,17 +21,16 @@ iOS（Swift）と Android（Kotlin）をそれぞれネイティブで実装し�
 
 clone 後に一度だけ実行します。
 
-1. mise と apm（Agent Package Manager）をインストールします。どちらも各自で入れます。
+1. mise をインストールします。各自で入れます（apm は手順 2 の `mise install` で入ります）。
 
    ```bash
-   brew install mise apm                      # macOS
-   curl https://mise.run | sh                 # Linux（mise）
-   curl -sSL https://aka.ms/apm-unix | sh     # Linux（apm）
+   brew install mise                          # macOS
+   curl https://mise.run | sh                 # Linux
    ```
 
    mise のシェル連携（`mise activate`）は [mise のドキュメント](https://mise.jdx.dev/getting-started.html)に沿って設定してください。
 
-2. `mise.toml` に書いたバージョンの Bun・ktlint・SwiftLint（macOS のみ）を入れます。
+2. `mise.toml` に書いたバージョンの Bun・apm・ktlint・SwiftLint（macOS のみ）を入れます。
 
    ```bash
    mise install
@@ -45,7 +44,7 @@ clone 後に一度だけ実行します。
 
    `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
    あわせて `apm.yml` の依存（共通の `apm-shared`、Android 公式の `android/skills`、SwiftUI Pro スキル）も配置されます。
-   あわせて MCP 設定（`.mcp.json`、`.codex/config.toml`）と `apm.lock.yaml` も生成されますが、すべてコミットしません（`.gitignore` 済み）。
+   あわせて MCP 設定（`.mcp.json`、`.codex/config.toml`）も生成されますが、コミットしません（`.gitignore` 済み）。依存の解決結果は `apm.lock.yaml` に記録されるので、依存や apm の版を変えたらコミットします。
 
 ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
 
