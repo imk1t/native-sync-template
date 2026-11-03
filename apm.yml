@@ -20,10 +20,9 @@ dependencies:
     - android/skills/performance/r8-analyzer#6daa53ef27fa2aa87827d183a85c06cedceca833
     - android/skills/security/android-intent-security#6daa53ef27fa2aa87827d183a85c06cedceca833
     - android/skills/security/android-permissions-security#6daa53ef27fa2aa87827d183a85c06cedceca833
-    # iOS（Paul Hudson の Agent Skill、MIT）。同じくコミットで固定する
+    # iOS（Paul Hudson の Agent Skill、MIT）。同じくコミットで固定する。
+    # swift-concurrency-pro と swift-testing-pro は apm が取り込めないため .apm/skills/ に写してある
     - twostraws/SwiftUI-Agent-Skill/swiftui-pro#f2920b63995263f57b3e198674e89a602efba6d2
-    - twostraws/Swift-Concurrency-Agent-Skill/swift-concurrency-pro#bee3f69ba17142da148d3c5406f148ed62592b69
-    - twostraws/Swift-Testing-Agent-Skill/swift-testing-pro#2d6bba14a3c8bf3694f218b92fffe617c41ae43e
   mcp: []
 includes: auto
 scripts: {}
