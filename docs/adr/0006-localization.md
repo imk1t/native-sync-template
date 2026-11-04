@@ -35,12 +35,12 @@ specs/localization/
   messages-en.yaml
 modules/core/localization/
   spec.md
-  ios/Sources/CoreLocalization/
+  ios/Sources/Core/Localization/
     LocalizationResources.swift
     Generated/
       Message.swift
       Resources/Localizable.xcstrings
-  ios/Tests/CoreLocalizationTests/MessageTests.swift
+  ios/Tests/Core/Localization/MessageTests.swift
   android/
     build.gradle.kts
     src/main/kotlin/com/example/core/localization/Localized.kt

@@ -6,7 +6,7 @@ import { main } from "../check-scenarios";
 import { capture, copyRepo, replace } from "./helpers";
 
 const SCENARIO = "specs/scenarios/github-search.yaml";
-const IOS_TEST = "modules/features/search/ios/Tests/FeatureSearchTests/RepositorySearchViewModelTests.swift";
+const IOS_TEST = "modules/features/search/ios/Tests/Features/Search/RepositorySearchViewModelTests.swift";
 const ANDROID_TEST =
   "modules/features/search/android/src/test/kotlin/com/example/features/search/RepositorySearchViewModelTest.kt";
 

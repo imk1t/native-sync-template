@@ -35,7 +35,7 @@
 - 共通 UI は `shared/designsystem` の行・状態表示・バッジを利用する。
 
 ## OS 固有の差分
-- モジュール名は iOS が `FeatureSearch`、Android のパッケージは `com.example.features.search`。
+- モジュール名は iOS が `FeatureSearch`、Android のパッケージは `com.example.features.search`。 iOS の実装は `Sources/Features/Search`、テストは `Tests/Features/Search` に配置する。
 - iOS は @MainActor / Observation と画面ごとの @State、Android は ViewModel / StateFlow と Navigation 3 のエントリごとの ViewModelStore。iOS の task と Android の viewModelScope で取得を所有する。
 - 公開入口は両 OS とも Screen。内部の描画は Swift の View / Kotlin の Content、API の略語は GitHubAPI / GitHubApi。Domain と Data の責務と型名は両 OS で揃える。
 - iOS の List / Picker と Android の LazyColumn / 選択チップを使う。読み上げラベルと文字拡大に対応する。プロセス終了後の画面スタック復元は対象外。

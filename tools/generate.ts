@@ -12,19 +12,19 @@ import * as openapi from "./lib/openapi";
 import * as routes from "./lib/routes";
 import { compare, type Dict, isDict, join, readText, readYaml, ROOT } from "./lib/util";
 
-const IOS_NETWORK = "modules/core/network/ios/Sources/CoreNetwork/Generated";
+const IOS_NETWORK = "modules/core/network/ios/Sources/Core/Network/Generated";
 const ANDROID_NETWORK = "modules/core/network/android/src/main/kotlin/com/example/core/network/generated";
 
 /** 生成先のファイル。tools/check-generated.ts もこの一覧を使う。 */
 export const OUTPUTS = {
-  iosTokens: "modules/shared/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift",
+  iosTokens: "modules/shared/designsystem/ios/Sources/Shared/DesignSystem/Generated/Tokens.swift",
   androidTokens:
     "modules/shared/designsystem/android/src/main/kotlin/com/example/shared/designsystem/generated/Tokens.kt",
   iosModels: `${IOS_NETWORK}/APIModels.swift`,
   iosClient: `${IOS_NETWORK}/APIClient.swift`,
   androidModels: `${ANDROID_NETWORK}/ApiModels.kt`,
   androidClient: `${ANDROID_NETWORK}/ApiClient.kt`,
-  iosRoutes: "modules/core/navigation/ios/Sources/CoreNavigation/Generated/Routes.swift",
+  iosRoutes: "modules/core/navigation/ios/Sources/Core/Navigation/Generated/Routes.swift",
   androidRoutes: "modules/core/navigation/android/src/main/kotlin/com/example/core/navigation/generated/Routes.kt",
 } as const;
 

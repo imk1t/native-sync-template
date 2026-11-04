@@ -4,7 +4,7 @@ import { readdirSync, rmSync } from "node:fs";
 import { isDict, join, readText, type Dict } from "./util";
 
 export const DEFAULT_LOCALE = "ja";
-export const IOS = "modules/core/localization/ios/Sources/CoreLocalization/Generated";
+export const IOS = "modules/core/localization/ios/Sources/Core/Localization/Generated";
 export const ANDROID = "modules/core/localization/android/src/main/generated";
 export const ROOTS = [
   IOS,

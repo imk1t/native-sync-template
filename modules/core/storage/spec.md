@@ -20,7 +20,7 @@
 DisplaySettings は一覧の説明文を表示する showDescriptions（初期 true）を KeyValueStore に保存する。初回読み込みを共有し、書き込みを直列化する。書き込み成功後だけ公開状態を更新する。読み込み・保存に失敗した場合は呼び出し側へ例外を返す。iOS は @MainActor / Observation、Android は StateFlow を使って全画面に反映する。
 
 ## OS 固有の差分
-- モジュール名は iOS が `CoreStorage`、Android のパッケージは `com.example.core.storage`。
+- モジュール名は iOS が `CoreStorage`、Android のパッケージは `com.example.core.storage`。 iOS の実装は `Sources/Core/Storage`、テストは `Tests/Core/Storage` に配置する。
 - iOS の `KeyValueStore` は UserDefaults、Android は Preferences DataStore。DataStore は 1 ファイルにつき 1 インスタンスにする必要があるため、Application の依存グラフで `DataStoreKeyValueStore.persistent(context, name)` を 1 回だけ呼んで共有する。DataStoreを直接注入する場合は `create(context, name)` を使う。
 - iOS の `SecureStore` は Keychain（`kSecClassGenericPassword`、`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`）。Android には Keychain に当たる値の保管庫が無いので、Android Keystore の AES-GCM 鍵で暗号化した値を DataStore に保存する。暗号化は `ValueCipher`（実装は `AndroidKeystoreCipher(alias)`）に分け、JVM のテストでは差し替える。
 - iOS の更新は SecItemUpdate を使い、未登録のキーだけ SecItemAdd で追加する。Android は暗号化の成功後に DataStore のトランザクションで更新する。

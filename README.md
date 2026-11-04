@@ -85,8 +85,8 @@ docs/platforms/         OS 固有の設定・環境・注意点（ios.md, androi
 modules/features/search/
   spec.md                                  仕様（同期の基準）
   ios/
-    Sources/FeatureSearch/                  実装
-    Tests/FeatureSearchTests/               テスト（Swift Testing）
+    Sources/Features/Search/                実装
+    Tests/Features/Search/                  テスト（Swift Testing）
   android/
     build.gradle.kts
     src/main/kotlin/com/example/features/search/   実装

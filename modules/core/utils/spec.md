@@ -9,4 +9,4 @@
 | `String.isBlankOrEmpty` | 空文字または空白のみなら true |
 
 ## OS 固有の差分
-モジュール名は iOS が `CoreUtils`、Android のパッケージは `com.example.core.utils`。
+モジュール名は iOS が `CoreUtils`、Android のパッケージは `com.example.core.utils`。 iOS の実装は `Sources/Core/Utils`、テストは `Tests/Core/Utils` に配置する。

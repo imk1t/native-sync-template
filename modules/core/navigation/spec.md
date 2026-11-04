@@ -33,7 +33,7 @@
 ディープリンクのパスにはエンコード済みの文字列を渡す。たとえば `/items/a%2F1` の ID は `a/1`、`/items/a%252F1` の ID は `a%2F1` となる。
 
 ## OS 固有の差分
-- モジュール名は iOS が `CoreNavigation`、Android のパッケージは `com.example.core.navigation`。
+- モジュール名は iOS が `CoreNavigation`、Android のパッケージは `com.example.core.navigation`。 iOS の実装は `Sources/Core/Navigation`、テストは `Tests/Core/Navigation` に配置する。
 - 命名: Android は Kotlin の規約に合わせて先頭を大文字にする（`Route.ItemDetail(id)`、`AppTab.Home`、`ModalStyle.Sheet`）。`Route(path:)` は Android では `Route.fromPath(path)`、`opening(route, in:)` は `NavigationState.opening(route, tab)`。
 - URL の入口は iOS が `Route(url: URL)`（URLComponents.percentEncodedPath）、Android が `Route.fromUrl(String)`（java.net.URI.rawPath）。Android アプリは Intent の URI 全体を文字列として渡す。
 - 引数の `integer` は iOS が `Int`、Android が `Long`（どちらも 64 bit）。
