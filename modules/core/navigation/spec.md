@@ -1,12 +1,12 @@
 # core/navigation
 
 ## 概要
-画面遷移の状態と操作を持つ（docs/adr/0002）。画面の一覧は `shared/routes.yaml` から生成する。描画はアプリ層が各 OS の部品で行い、このモジュールは UI に依存しない。
+画面遷移の状態と操作を持つ（docs/adr/0002）。画面の一覧は `specs/routes.yaml` から生成する。描画はアプリ層が各 OS の部品で行い、このモジュールは UI に依存しない。
 
 ## 提供するもの
 | 名前 | 内容 |
 | --- | --- |
-| `Route`（生成） | `shared/routes.yaml` の画面。引数を持つ画面は引数付き |
+| `Route`（生成） | `specs/routes.yaml` の画面。引数を持つ画面は引数付き |
 | `AppTab`（生成） | タブ。`root`（タブの先頭の画面）と `title` を持つ |
 | `Route(path:)`（生成） | ディープリンクのパスから `Route` を作る。一致しなければ無し |
 | `Route(url:)` | URL のエンコード済みパスを `Route(path:)` に渡す。パスを区切ってから各区切りを 1 回だけデコードする |
@@ -41,4 +41,4 @@
 - 描画（アプリ層の AppRoot）: Android は各タブの decorated entries と ViewModelStore を常時保持し、表示する NavDisplay だけを切り替える。iOS の TabView も各タブの画面を保持する。各 feature の Screen がそのエントリ内で ViewModel を生成・保持し、タブを離れても取得済み状態を維持する。
 
 ## シナリオ
-`shared/scenarios/navigation.yaml`
+`specs/scenarios/navigation.yaml`

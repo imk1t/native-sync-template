@@ -6,7 +6,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
-// shared/scenarios/navigation.yaml の各 step を実装する
+// specs/scenarios/navigation.yaml の各 step を実装する
 class NavigatorTest {
     private val searchSheet = Modal(ModalStyle.Sheet, listOf(NavigationEntry(Route.RepositorySearch)))
 

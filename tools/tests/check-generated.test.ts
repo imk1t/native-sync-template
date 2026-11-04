@@ -9,10 +9,11 @@ const FILES = [
   "tools/generate.ts",
   "tools/check-generated.ts",
   "tools/lib",
-  "shared/tokens/tokens.json",
-  "shared/openapi",
-  "shared/routes.yaml",
-  "modules/features/github/spec.md",
+  "specs/tokens/tokens.json",
+  "specs/openapi",
+  "specs/routes.yaml",
+  "modules/features/search/spec.md",
+  "modules/features/bookmarks/spec.md",
   "modules/features/settings/spec.md",
   ...Object.values(OUTPUTS),
 ];
@@ -60,7 +61,7 @@ describe("check-generated", () => {
   });
 
   test("トークンを変えて再生成しないと失敗する", () => {
-    const path = join(repo, "shared/tokens/tokens.json");
+    const path = join(repo, "specs/tokens/tokens.json");
     const tokens = JSON.parse(readFileSync(path, "utf-8"));
     tokens.spacing.medium.$value = "20";
     writeFileSync(path, JSON.stringify(tokens));
@@ -70,7 +71,7 @@ describe("check-generated", () => {
   });
 
   test("OpenAPI を変えて再生成しないと失敗する", () => {
-    const path = join(repo, "shared/openapi/openapi.yaml");
+    const path = join(repo, "specs/openapi/openapi.yaml");
     const api = Bun.YAML.parse(readFileSync(path, "utf-8")) as {
       components: { schemas: { Repository: { properties: Record<string, unknown> } } };
     };
@@ -84,7 +85,7 @@ describe("check-generated", () => {
   });
 
   test("生成は入力の OpenAPI 契約を書き換えない", () => {
-    const path = join(repo, "shared/openapi/openapi.yaml");
+    const path = join(repo, "specs/openapi/openapi.yaml");
     const before = readFileSync(path, "utf-8");
     const result = Bun.spawnSync(["bun", "tools/generate.ts"], { cwd: repo });
     expect(result.exitCode, result.stderr.toString()).toBe(0);

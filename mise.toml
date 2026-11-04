@@ -10,7 +10,7 @@ description = "依存の取得とエージェント用スキルの配置（clone
 run = ["bun install --frozen-lockfile", "bun tools/setup.ts"]
 
 [tasks.generate]
-description = "shared/ の定義から Swift / Kotlin を再生成する"
+description = "specs/ の定義から Swift / Kotlin を再生成する"
 run = "bun tools/generate.ts"
 
 [tasks.fmt]

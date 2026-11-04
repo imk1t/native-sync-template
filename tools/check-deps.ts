@@ -4,7 +4,8 @@
  *   core/utils      -> 何にも依存しない
  *   core/*          -> 他の core/* のみ（循環禁止）
  *   designsystem    -> core/utils のみ
- *   features/*      -> core/*, designsystem（features 同士は禁止）
+ *   shared/*        -> core/*
+ *   features/*      -> shared/*, core/*, designsystem（features 同士は禁止）
  */
 import { androidModules, iosTargets } from "./lib/manifest";
 import { compare, glob, isDict, join, readText, readYaml, ROOT, sorted } from "./lib/util";
@@ -99,7 +100,7 @@ function nonEmptyStrings(value: unknown, keys: string[]): boolean {
 }
 
 export function checkExternal(used: { ios: External; android: External }, root: string = ROOT): string[] {
-  const document = readYaml(join(root, "shared/third-party.yaml"));
+  const document = readYaml(join(root, "specs/third-party.yaml"));
   if (!isDict(document) || !Array.isArray(document.libraries)) {
     throw new Error("third-party.yaml の libraries は配列にしてください");
   }
@@ -139,7 +140,10 @@ export function allowed(src: string, dst: string): boolean {
   if (src === dst || src === "core/utils") return false;
   if (src.startsWith("core/")) return dst.startsWith("core/");
   if (src === "designsystem") return dst === "core/utils";
-  if (src.startsWith("features/")) return dst.startsWith("core/") || dst === "designsystem";
+  if (src.startsWith("shared/")) return dst.startsWith("core/");
+  if (src.startsWith("features/")) {
+    return dst.startsWith("shared/") || dst.startsWith("core/") || dst === "designsystem";
+  }
   return false;
 }
 

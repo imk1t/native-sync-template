@@ -22,7 +22,9 @@ kotlin { jvmToolchain(17) }
 dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
-    implementation(project(":features:github"))
+    implementation(project(":shared:bookmarks"))
+    implementation(project(":features:bookmarks"))
+    implementation(project(":features:search"))
     implementation(project(":features:settings"))
     implementation(project(":core:storage"))
     implementation(platform(libs.compose.bom))

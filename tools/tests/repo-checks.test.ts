@@ -15,7 +15,7 @@ describe("repo checks", () => {
       "modules",
       "apps/android/settings.gradle.kts",
       "apps/android/gradle/libs.versions.toml",
-      "shared/third-party.yaml",
+      "specs/third-party.yaml",
     ]));
   });
   afterEach(() => cleanup());
@@ -25,7 +25,7 @@ describe("repo checks", () => {
   const write = (name: string, text: string) => writeFileSync(join(root, name), text);
 
   function addSdk(mod = "core/network", register = true) {
-    const target = { "core/network": "CoreNetwork", "core/utils": "CoreUtils", "features/github": "FeatureGitHub" }[
+    const target = { "core/network": "CoreNetwork", "core/utils": "CoreUtils", "features/search": "FeatureSearch" }[
       mod
     ];
     const product = '.product(name: "ExampleSDK", package: "example-sdk")';
@@ -56,7 +56,7 @@ describe("repo checks", () => {
         ios: { name: "example-sdk", license: "Apache-2.0" },
         android: { name: "example-sdk", license: "Apache-2.0" },
       };
-      write("shared/third-party.yaml", JSON.stringify({ libraries: [entry] }));
+      write("specs/third-party.yaml", JSON.stringify({ libraries: [entry] }));
     }
   }
 
@@ -82,9 +82,25 @@ describe("repo checks", () => {
     expect(output).toContain("android: core/network");
   });
 
-  test.each(["features/github", "core/utils"])("%s は SDK に直接依存できない", (mod) => {
+  test.each(["features/search", "shared/bookmarks", "core/utils"])("%s は SDK に直接依存できない", (mod) => {
     const errors = deps.checkExternal({ ios: new Set([`${mod}\texample-sdk`]), android: new Set() }, root);
     expect(errors.some((error) => error.includes("直接依存できません"))).toBe(true);
+  });
+
+  test.each([
+    ["features/search", "shared/bookmarks", true],
+    ["features/bookmarks", "shared/bookmarks", true],
+    ["shared/bookmarks", "core/storage", true],
+    ["shared/bookmarks", "core/network", true],
+    ["core/storage", "shared/bookmarks", false],
+    ["designsystem", "shared/bookmarks", false],
+    ["shared/bookmarks", "features/bookmarks", false],
+    ["shared/bookmarks", "designsystem", false],
+    ["shared/bookmarks", "shared/other", false],
+    ["shared/bookmarks", "shared/bookmarks", false],
+    ["features/search", "features/bookmarks", false],
+  ] as const)("依存境界 %s → %s は %s", (source, target, expected) => {
+    expect(deps.allowed(source, target)).toBe(expected);
   });
 
   test("対応表にあっても Android の依存が無いと失敗する", () => {
@@ -158,8 +174,8 @@ describe("repo checks", () => {
   });
 
   test("実装を消してもビルド定義に残るモジュールを検出する", () => {
-    rmSync(join(root, "modules/features/github"), { recursive: true });
-    expect(check(root)).toContain("modules/features/github: spec.md がありません");
+    rmSync(join(root, "modules/features/search"), { recursive: true });
+    expect(check(root)).toContain("modules/features/search: spec.md がありません");
   });
 
   test("登録されていない実装にも spec.md が必要", () => {
@@ -168,7 +184,7 @@ describe("repo checks", () => {
   });
 
   test("spec の変更には両 OS の記録が必要", () => {
-    const spec = "modules/features/github/spec.md";
+    const spec = "modules/features/search/spec.md";
     write(spec, `${read(spec)}\n変更\n`);
     expect(check(root).filter((error) => error.includes("追従していません"))).toHaveLength(2);
   });

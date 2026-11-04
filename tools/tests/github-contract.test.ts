@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { Spec, validateValue, type ApiType, swiftModels, kotlinModels } from "../lib/openapi";
 import { type Dict, readYaml, ROOT, join } from "../lib/util";
 
-const contract = () => readYaml(join(ROOT, "shared/openapi/openapi.yaml")) as Dict;
+const contract = () => readYaml(join(ROOT, "specs/openapi/openapi.yaml")) as Dict;
 
 test("API 契約がサンプルで使用する4操作を定義する", () => {
   const spec = new Spec(contract());

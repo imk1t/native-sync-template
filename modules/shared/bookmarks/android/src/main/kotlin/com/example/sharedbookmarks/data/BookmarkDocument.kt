@@ -1,0 +1,7 @@
+package com.example.sharedbookmarks
+
+import kotlinx.serialization.Required
+import kotlinx.serialization.Serializable
+
+@Serializable
+internal data class BookmarkDocument(@Required val version: Int = 1, val items: List<Bookmark>)

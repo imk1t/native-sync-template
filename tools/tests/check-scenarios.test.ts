@@ -5,16 +5,16 @@ import { join } from "node:path";
 import { main } from "../check-scenarios";
 import { capture, copyRepo, replace } from "./helpers";
 
-const SCENARIO = "shared/scenarios/github-search.yaml";
-const IOS_TEST = "modules/features/github/ios/Tests/FeatureGitHubTests/RepositorySearchViewModelTests.swift";
+const SCENARIO = "specs/scenarios/github-search.yaml";
+const IOS_TEST = "modules/features/search/ios/Tests/FeatureSearchTests/RepositorySearchViewModelTests.swift";
 const ANDROID_TEST =
-  "modules/features/github/android/src/test/kotlin/com/example/featuregithub/RepositorySearchViewModelTest.kt";
+  "modules/features/search/android/src/test/kotlin/com/example/featuresearch/RepositorySearchViewModelTest.kt";
 
 describe("check-scenarios", () => {
   let root: string;
   let cleanup: () => void;
   beforeEach(() => {
-    ({ root, cleanup } = copyRepo(["shared", "modules"]));
+    ({ root, cleanup } = copyRepo(["specs", "modules"]));
   });
   afterEach(() => cleanup());
 
@@ -38,7 +38,7 @@ describe("check-scenarios", () => {
     [ANDROID_TEST, "android"],
   ])("片方の OS に step が無いと失敗する: %s", (file, platform) => {
     replace(root, file, "// @scenario github-search/load-fails\n", "");
-    expectFails(`features/github/${platform}: \`@scenario github-search/load-fails\``);
+    expectFails(`features/search/${platform}: \`@scenario github-search/load-fails\``);
   });
   test("存在しない step への参照は失敗する", () => {
     replace(root, IOS_TEST, "// @scenario github-search/load-fails", "// @scenario github-search/typo");
@@ -46,7 +46,7 @@ describe("check-scenarios", () => {
   });
   test("存在しない operationId は失敗する", () => {
     updateGiven({ listThings: { status: 200, body: [] } });
-    expectFails("shared/openapi に無い operationId です");
+    expectFails("specs/openapi に無い operationId です");
   });
   test("schema に合わない body は失敗する", () => {
     updateGiven({ "search/repos": { status: 200, body: { total_count: "1", incomplete_results: false, items: [] } } });
@@ -57,8 +57,8 @@ describe("check-scenarios", () => {
     expectFails("重複しています: load-succeeds");
   });
   test("spec.md がシナリオを参照していること", () => {
-    replace(root, "modules/features/github/spec.md", "`shared/scenarios/github-search.yaml`", "なし");
-    expectFails("shared/scenarios/github-search.yaml を参照してください");
+    replace(root, "modules/features/search/spec.md", "`specs/scenarios/github-search.yaml`", "なし");
+    expectFails("specs/scenarios/github-search.yaml を参照してください");
   });
   test.each([
     [{ localState: { values: { key: 1 } } }, "保存キーと文字列"],

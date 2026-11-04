@@ -2,14 +2,14 @@
 
 - 状態: 採用
 - 決定:
-  - 画面の一覧（名前・引数・タブ・ディープリンク）を `shared/routes.yaml` に集約し、両 OS の `Route` と `AppTab` を `tools/generate.ts` で生成する。
+  - 画面の一覧（名前・引数・タブ・ディープリンク）を `specs/routes.yaml` に集約し、両 OS の `Route` と `AppTab` を `tools/generate.ts` で生成する。
   - 画面遷移は、機能の中でも外でも、すべて `core/navigation` の `Navigator` で行う。`NavigationLink` などで画面を直接開かない。
   - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル。モーダルはそれぞれ自分のスタックを持つ）として持ち、`Navigator` の 7 つの操作（`push` / `pop` / `popToRoot` / `present` / `dismiss` / `selectTab` / `reset`）で書き換える。push かモーダルかは呼ぶ側が決める。
   - スタックは `NavigationEntry(id, route)` を保持する。Route は遷移先、id は画面インスタンスを表す。同じ Route の push ごとに UUID を発行し、戻る操作で残るエントリは同じ ID を保つ。タブの先頭も NavigationState がエントリとして所有する。
   - 描画時はエントリ ID に画面状態を紐付ける。iOS は NavigationStack の要素と View の `.id`、Android は NavEntry の `contentKey` に使用する。
   - アプリ層（`apps/*`）は起動処理・共有依存の組み立て（AppDependencies）・Route と公開入口の対応（AppRouter）・タブとスタックとモーダルの枠（AppRoot）を持つ。個別画面と ViewModel の生成・保持は各 feature の公開入口 `*Screen` に閉じる。
   - 枠の描画は iOS が `TabView` + `NavigationStack(path:)` + `.sheet` / `.fullScreenCover`、Android が `NavigationSuiteScaffold` + Navigation 3 の `NavDisplay` + ボトムシート / 全画面ダイアログ。feature の入口で作る ViewModel も、その枠が提供する画面エントリの寿命に従う。
-  - AppDependencies は設定画面へ DisplaySettings を直接渡す。GitHubDependencies にも同じインスタンスを渡して変更を共有し、features 同士を依存させない。
+  - AppDependencies は設定画面へ DisplaySettings を直接渡す。SearchDependencies と BookmarksDependencies にも同じインスタンスを渡す。shared/bookmarks の BookmarkRepository と画像キャッシュも両者で共有し、features 同士を依存させない。
 - 理由:
   - やり方を 1 つにすると、どこで書くかの判断が要らず、機能を足しても書き方がぶれない。
   - features 同士の依存を禁止したまま（相互遷移で循環しない）、機能をまたぐ遷移とディープリンクを書ける。

@@ -17,7 +17,11 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - package: Modules
-        product: FeatureGitHub
+        product: FeatureSearch
+      - package: Modules
+        product: FeatureBookmarks
+      - package: Modules
+        product: SharedBookmarks
       - package: Modules
         product: FeatureSettings
       - package: Modules

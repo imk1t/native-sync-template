@@ -1,8 +1,8 @@
 /**
- * shared/scenarios の共通シナリオを検査する。
+ * specs/scenarios の共通シナリオを検査する。
  *
  * - 形式: name（ファイル名と一致）・feature・steps（id・name・given・when・then）
- * - given のキーは shared/openapi の operationId。2xx の body はレスポンスの schema に合うこと
+ * - given のキーは specs/openapi の operationId。2xx の body はレスポンスの schema に合うこと
  *   （`navigation` は画面遷移、`localState` は保存値・読み書き失敗の初期状態）
  * - feature の spec.md がシナリオを参照していること
  * - 各 step が iOS と Android の両方のテストで `@scenario <name>/<step id>` として参照されていること
@@ -70,7 +70,7 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
     }
     const op = ops.get(opId);
     if (!op) {
-      errors.push(`${w}: shared/openapi に無い operationId です`);
+      errors.push(`${w}: specs/openapi に無い operationId です`);
       continue;
     }
     if (!isDict(stub)) {
@@ -130,8 +130,8 @@ function checkFile(root: string, path: string, spec: Spec): [string[], Scenario 
   if (moduleDir === null || !isFile(join(moduleDir, "spec.md"))) {
     errors.push(`${rel}: feature は spec.md のあるモジュールのパスにしてください: ${JSON.stringify(feature ?? null)}`);
     moduleDir = null;
-  } else if (!readText(join(moduleDir, "spec.md")).includes(`shared/scenarios/${basename(path)}`)) {
-    errors.push(`modules/${feature}/spec.md: shared/scenarios/${basename(path)} を参照してください`);
+  } else if (!readText(join(moduleDir, "spec.md")).includes(`specs/scenarios/${basename(path)}`)) {
+    errors.push(`modules/${feature}/spec.md: specs/scenarios/${basename(path)} を参照してください`);
   }
   const steps = doc.steps;
   if (!Array.isArray(steps) || steps.length === 0) {
@@ -162,11 +162,11 @@ function checkFile(root: string, path: string, spec: Spec): [string[], Scenario 
 }
 
 export function main(root: string = ROOT, log: (line: string) => void = console.log): number {
-  const api = readYaml(join(root, "shared/openapi/openapi.yaml"));
+  const api = readYaml(join(root, "specs/openapi/openapi.yaml"));
   const spec = new Spec(isDict(api) ? api : ({} as Dict));
   const errors: string[] = [];
   const scenarios = new Map<string, Scenario>();
-  const dir = join(root, "shared/scenarios");
+  const dir = join(root, "specs/scenarios");
   for (const path of glob(dir, "*.yaml", { dot: true })) {
     const [fileErrors, info] = checkFile(root, join(dir, path), spec);
     errors.push(...fileErrors);
@@ -189,8 +189,8 @@ export function main(root: string = ROOT, log: (line: string) => void = console.
   const modules = join(root, "modules");
   for (const path of glob(modules, "**/spec.md")) {
     const specMd = join(modules, path);
-    for (const [, ref] of readText(specMd).matchAll(/shared\/scenarios\/([\w-]+\.yaml)/g)) {
-      if (!isFile(join(root, "shared/scenarios", ref as string))) {
+    for (const [, ref] of readText(specMd).matchAll(/specs\/scenarios\/([\w-]+\.yaml)/g)) {
+      if (!isFile(join(root, "specs/scenarios", ref as string))) {
         errors.push(`${relative(root, specMd)}: 存在しないシナリオを参照しています: ${ref}`);
       }
     }

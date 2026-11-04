@@ -13,7 +13,7 @@ GitHub 公式 OpenAPI を元に必要な範囲を直接管理する API 契約�
 - ImageLoader は HTTPS 画像のデータを取得し、サイズを制限したメモリキャッシュを持つ。UI には依存しない。
 
 ## 生成とエラー
-shared/openapi/openapi.yaml を API 契約の正として直接編集し、bun tools/generate.ts で両 OS の DTO と APIClient を生成する。生成処理は契約を書き換えず、オフラインで完結する。CI は再生成による差分と共通シナリオの契約適合を検査する。元になった公式定義と更新方法は docs/adr/0003-github-openapi.md に記録し、ライセンスは shared/openapi/GITHUB-LICENSE.md に保持する。
+specs/openapi/openapi.yaml を API 契約の正として直接編集し、bun tools/generate.ts で両 OS の DTO と APIClient を生成する。生成処理は契約を書き換えず、オフラインで完結する。CI は再生成による差分と共通シナリオの契約適合を検査する。元になった公式定義と更新方法は docs/adr/0003-github-openapi.md に記録し、ライセンスは specs/openapi/GITHUB-LICENSE.md に保持する。
 
 省略可能と null 許容を別々に検証する。入力 enum の値は契約検査で確認する。レスポンスの未知のキーは無視し、状態文字列の未知値はそのまま表示する。空本文・不明な投稿者も表示可能。Issue 一覧から pull_request を除外するが、次ページ情報は除外前の HTTP ヘッダーに従う。
 
@@ -21,4 +21,4 @@ shared/openapi/openapi.yaml を API 契約の正として直接編集し、bun t
 略語は Swift の API / HTTP と Kotlin の Api / Http。JSON は Codable / kotlinx.serialization。HTTP は URLSession / HttpURLConnection。Android は接続 15 秒・読み込み 30 秒のタイムアウトを持ち、キャンセル時は接続を切断・割り込みする。iOS は URLSession の task キャンセルに従う。画像データは Data / ByteArray。
 
 ## シナリオ
-- `shared/scenarios/github-network.yaml`
+- `specs/scenarios/github-network.yaml`

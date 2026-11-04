@@ -3,7 +3,7 @@ import Testing
 
 @testable import CoreNavigation
 
-// shared/scenarios/navigation.yaml の各 step を実装する
+// specs/scenarios/navigation.yaml の各 step を実装する
 @MainActor
 struct NavigatorTests {
     private let searchSheet = Modal(style: .sheet, stack: [NavigationEntry(.repositorySearch)])

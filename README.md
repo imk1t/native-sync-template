@@ -54,7 +54,7 @@ clone 後に一度だけ実行します。
 apps/
   ios/                  iOS アプリ（XcodeGen）。モジュールを組み立てるだけ
   android/              Gradle のルートと app モジュール。組み立てるだけ
-shared/
+specs/
   openapi/              API スキーマ（単一の正）
   tokens/               デザイントークン（単一の正）
   scenarios/            両 OS のテストが実装する共通シナリオ
@@ -68,8 +68,11 @@ modules/
     network/            OpenAPI から生成した API クライアントとそのラッパー
     storage/            UserDefaults / DataStore、Keychain / Keystore
   designsystem/         トークンから生成した値と共通 UI
+  shared/               複数 feature で使う共通実装（OS ごとに実装）
+    bookmarks/          保存 Key・JSON・更新と通知をまとめる BookmarkRepository
   features/
-    github/             リポジトリ検索・Issue・保存済み・メモ
+    search/             探す・リポジトリ詳細・Issue一覧と詳細
+    bookmarks/          保存済み一覧・メモ編集
     settings/           説明文表示設定とアプリ情報
 tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
 docs/adr/               設計判断の記録
@@ -78,22 +81,22 @@ docs/adr/               設計判断の記録
 `modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。
 
 ```
-modules/features/github/
+modules/features/search/
   spec.md                                  仕様（同期の基準）
   ios/
-    Sources/FeatureGitHub/                  実装
-    Tests/FeatureGitHubTests/               テスト（Swift Testing）
+    Sources/FeatureSearch/                  実装
+    Tests/FeatureSearchTests/               テスト（Swift Testing）
   android/
     build.gradle.kts
-    src/main/kotlin/com/example/featuregithub/   実装
-    src/test/kotlin/com/example/featuregithub/   テスト（JUnit）
+    src/main/kotlin/com/example/featuresearch/   実装
+    src/test/kotlin/com/example/featuresearch/   テスト（JUnit）
 ```
 
 ## 開発の流れ
 
 機能を追加・変更するときは、次の順に進めます（詳しくは [AGENTS.md](AGENTS.md) とスキル `sync-feature`）。
 
-1. `spec.md` を更新する。必要なら `shared/` の OpenAPI・トークン・シナリオも更新する。
+1. `spec.md` を更新する。必要なら `specs/` の OpenAPI・トークン・シナリオも更新する。
 2. 片方の OS を実装する。
 3. もう片方を同じ型名・同じ構造で実装する。意図した違いは `spec.md` の「OS 固有の差分」に書く。
 4. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` で追従を記録する。
@@ -111,14 +114,15 @@ modules/features/github/
 | Domain | ビジネスルール、モデル、Repository の契約 | `Bookmark`、`protocol GitHubRepository` | `Bookmark`、`interface GitHubRepository` |
 | Data | Repository の実装、API・DB の型との変換 | `GitHubRepositoryImpl` | `GitHubRepositoryImpl` |
 
-画面は Swift の View / Kotlin の Screen、API の略語は API / Api とし、Domain と Data の責務・型名はそろえます。リモート取得は Domain の `GitHubRepository` を経由し、Data の実装をアプリ層から注入します。端末内保存は共有する `BookmarkRepository` と `DisplaySettings` を購読します。
+画面は Swift の View / Kotlin の Screen、API の略語は API / Api とし、Domain と Data の責務・型名はそろえます。リモート取得は Domain の `GitHubRepository` を経由し、Data の実装をアプリ層から注入します。端末内保存は `shared/bookmarks` の `BookmarkRepository` と `core/storage` の `DisplaySettings` を購読します。`core/storage` の KeyValueStore は Key による保存・取得だけを提供し、ブックマークの保存形式と更新通知は共通ラッパーに閉じます。
 
 ### モジュール間の依存ルール
 
 | モジュール | 依存してよい先 |
 | --- | --- |
 | `apps/*` | すべて（DI の組み立てと画面遷移の配線だけを持つ） |
-| `features/*` | `core/*`、`designsystem`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
+| `shared/*` | `core/*`（画面を持たず、features と他の shared には依存しない） |
+| `features/*` | `shared/*`、`core/*`、`designsystem`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
 | `core/*` | 他の `core/*`（循環は禁止） |
 | `core/utils` | なし（標準ライブラリの拡張など、機能を知らないコードだけ） |
 | `designsystem` | `core/utils` |
@@ -130,6 +134,9 @@ flowchart TD
     apps["apps/ios, apps/android"] --> features["features/*"]
     apps --> designsystem
     apps --> core["core/*"]
+    apps --> shared["shared/*"]
+    features --> shared
+    shared --> core
     features --> designsystem
     features --> core
     features -.->|禁止| features
@@ -142,33 +149,43 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    app["App"] --> github["features/github"]
+    app["App"] --> search["features/search"]
+    app --> saved["features/bookmarks"]
     app --> settings["features/settings"]
+    app --> bookmarks["shared/bookmarks"]
     app --> network["core/network"]
     app --> navigation["core/navigation"]
     app --> storage["core/storage"]
-    github --> network
-    github --> navigation
-    github --> storage
-    github --> designsystem
+    search --> bookmarks
+    search --> network
+    search --> navigation
+    search --> storage
+    search --> designsystem
+    saved --> bookmarks
+    saved --> network
+    saved --> navigation
+    saved --> storage
+    saved --> designsystem
+    bookmarks --> storage
+    bookmarks --> network
     settings --> storage
     settings --> navigation
     settings --> designsystem
     network --> utils["core/utils"]
-    network -.->|生成コード| openapi[("shared/openapi")]
-    navigation -.->|生成コード| routes[("shared/routes.yaml")]
-    designsystem -.->|生成コード| tokens[("shared/tokens")]
+    network -.->|生成コード| openapi[("specs/openapi")]
+    navigation -.->|生成コード| routes[("specs/routes.yaml")]
+    designsystem -.->|生成コード| tokens[("specs/tokens")]
 ```
 
-点線は依存ではなく、`tools/generate.ts` による生成元です。ブックマーク・メモ・表示設定は `core/storage` に永続化します。
+点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通実装です（[ADR 0004](docs/adr/0004-feature-boundaries.md)）。
 
-`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`shared/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
+`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
 
 ### 画面遷移
 
 画面遷移は 1 通りだけです（[ADR 0002](docs/adr/0002-navigation.md)）。機能の中でも外でも、すべて `core/navigation` の `Navigator` に `Route` を渡して遷移します。`NavigationLink` などで画面を直接開きません。
 
-- 画面の一覧（名前・引数・タブ・ディープリンク）は `shared/routes.yaml` に書き、`bun tools/generate.ts` で両 OS の `Route` と `AppTab` を生成します。
+- 画面の一覧（名前・引数・タブ・ディープリンク）は `specs/routes.yaml` に書き、`bun tools/generate.ts` で両 OS の `Route` と `AppTab` を生成します。
 - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル）として持ち、7 つの操作で書き換えます。
 - スタックの要素は `NavigationEntry(id, route)` です。同じ Route を複数回開いても別の ID を持ち、戻る操作やタブ切り替えでは残った画面の ID を保ちます。タブの先頭エントリは `NavigationState.roots` が保持します。
 - URL から開くときは `Route(url:)` / `Route.fromUrl` を使います。エンコード済みパスを区切ってから一度だけデコードするため、ID に `/` や `%` が含まれていても保たれます。
@@ -212,7 +229,7 @@ flowchart TD
 
 ### OpenAPI から API クライアントを生成する
 
-`bun tools/generate.ts` が `shared/openapi/openapi.yaml` を読み、`core/network` に次のコードを生成します。この契約は公式 GitHub OpenAPI から必要な範囲だけを選んだものです。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
+`bun tools/generate.ts` が `specs/openapi/openapi.yaml` を読み、`core/network` に次のコードを生成します。この契約は公式 GitHub OpenAPI から必要な範囲だけを選んだものです。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
 
 | 生成物 | iOS | Android |
 | --- | --- | --- |
@@ -223,13 +240,13 @@ flowchart TD
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
-API を変更するときは `shared/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`shared/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
+API を変更するときは `specs/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`specs/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
 
-同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
+同じコマンドで、`specs/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`specs/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
 ### 共通シナリオを両 OS のテストで実装する
 
-`shared/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`bun tools/check-scenarios.ts` は次を検査します。
+`specs/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`bun tools/check-scenarios.ts` は次を検査します。
 
 - すべての step が、iOS と Android の両方のテストから参照されている
 - `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移、`localState` は保存値と読み書きの失敗条件。API は文字列の `headers` と辞書のエラー `body` も指定可能）
@@ -248,7 +265,7 @@ API を変更するときは `shared/openapi/openapi.yaml` を直接編集し、
 | PR ごとの検査をすべて実行（CI の `repo-checks` と同じ） | `mise run check` |
 | トークンと OpenAPI から Swift / Kotlin を生成 | `bun tools/generate.ts` |
 | spec と両 OS の同期を検査 | `bun tools/check-spec-sync.ts` |
-| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/github` |
+| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/search` |
 | モジュールの依存ルールを検査 | `bun tools/check-deps.ts` |
 | 生成コードが最新かを検査 | `bun tools/check-generated.ts` |
 | 共通シナリオと両 OS のテストの対応を検査 | `bun tools/check-scenarios.ts` |

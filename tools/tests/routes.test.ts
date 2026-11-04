@@ -1,4 +1,4 @@
-/** shared/routes.yaml の検証と生成を確かめる。 */
+/** specs/routes.yaml の検証と生成を確かめる。 */
 import { describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -100,6 +100,6 @@ describe("routes", () => {
   });
 
   test("リポジトリの routes.yaml が正しい", () => {
-    routes.load(readYaml(join(ROOT, "shared/routes.yaml")), ROOT);
+    routes.load(readYaml(join(ROOT, "specs/routes.yaml")), ROOT);
   });
 });
