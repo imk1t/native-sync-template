@@ -1,7 +1,7 @@
 /**
  * specs/ の定義から Swift / Kotlin のコードを生成する。出力は決定的（再生成して差分が出ないこと）。
  *
- * - specs/tokens/tokens.json → designsystem の Tokens
+ * - specs/tokens/tokens.json → shared/designsystem の Tokens
  * - specs/openapi/openapi.yaml → core/network の DTO と APIClient（tools/lib/openapi.ts）
  * - specs/routes.yaml → core/navigation の Route と AppTab（tools/lib/routes.ts）
  */
@@ -16,8 +16,8 @@ const ANDROID_NETWORK = "modules/core/network/android/src/main/kotlin/com/exampl
 
 /** 生成先のファイル。tools/check-generated.ts もこの一覧を使う。 */
 export const OUTPUTS = {
-  iosTokens: "modules/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift",
-  androidTokens: "modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated/Tokens.kt",
+  iosTokens: "modules/shared/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift",
+  androidTokens: "modules/shared/designsystem/android/src/main/kotlin/com/example/designsystem/generated/Tokens.kt",
   iosModels: `${IOS_NETWORK}/APIModels.swift`,
   iosClient: `${IOS_NETWORK}/APIClient.swift`,
   androidModels: `${ANDROID_NETWORK}/ApiModels.kt`,

@@ -4,6 +4,7 @@ OS 固有の設定・環境・落とし穴をここに残す。機能ごとの�
 
 ## ビルド環境
 - Android SDK(compileSdk 36)と JDK 17 が必要。各モジュールが `jvmToolchain(17)` を指定している。
+- macOS で JDK を mise 管理する場合も、Gradle と ktlint が JDK 17 を使うよう `JAVA_HOME` を設定する。インストール済みでも未選択の場合、ktlint が Java Runtime を見つけられず失敗する。
 - Gradle は `apps/android` の wrapper(`./gradlew`)で 8.14.3 に固定する。手元の `gradle` は使わない(理由: `docs/adr/0003`)。
 - モジュールは `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
 

@@ -23,7 +23,7 @@ let package = Package(
         .target(name: "CoreNavigation", path: "core/navigation/ios/Sources/CoreNavigation"),
         .target(name: "CoreNetwork", dependencies: ["CoreUtils"], path: "core/network/ios/Sources/CoreNetwork"),
         .target(name: "CoreStorage", path: "core/storage/ios/Sources/CoreStorage"),
-        .target(name: "DesignSystem", path: "designsystem/ios/Sources/DesignSystem"),
+        .target(name: "DesignSystem", path: "shared/designsystem/ios/Sources/DesignSystem"),
         .target(name: "SharedBookmarks", dependencies: ["CoreNetwork", "CoreStorage"], path: "shared/bookmarks/ios/Sources/SharedBookmarks"),
         .target(name: "FeatureBookmarks", dependencies: ["CoreNavigation", "CoreNetwork", "CoreStorage", "SharedBookmarks", "DesignSystem"], path: "features/bookmarks/ios/Sources/FeatureBookmarks"),
         .target(name: "FeatureSearch", dependencies: ["CoreNavigation", "CoreNetwork", "CoreStorage", "SharedBookmarks", "DesignSystem"], path: "features/search/ios/Sources/FeatureSearch"),

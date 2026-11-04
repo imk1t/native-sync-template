@@ -16,7 +16,7 @@ kotlin { jvmToolchain(17) }
 dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:storage"))
-    implementation(project(":designsystem"))
+    implementation(project(":shared:designsystem"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.lifecycle.viewmodel)

@@ -82,20 +82,31 @@ describe("repo checks", () => {
     expect(output).toContain("android: core/network");
   });
 
-  test.each(["features/search", "shared/bookmarks", "core/utils"])("%s は SDK に直接依存できない", (mod) => {
-    const errors = deps.checkExternal({ ios: new Set([`${mod}\texample-sdk`]), android: new Set() }, root);
-    expect(errors.some((error) => error.includes("直接依存できません"))).toBe(true);
-  });
+  test.each(["features/search", "shared/bookmarks", "shared/designsystem", "core/utils"])(
+    "%s は SDK に直接依存できない",
+    (mod) => {
+      const errors = deps.checkExternal({ ios: new Set([`${mod}\texample-sdk`]), android: new Set() }, root);
+      expect(errors.some((error) => error.includes("直接依存できません"))).toBe(true);
+    },
+  );
 
   test.each([
     ["features/search", "shared/bookmarks", true],
     ["features/bookmarks", "shared/bookmarks", true],
+    ["features/search", "shared/designsystem", true],
+    ["shared/designsystem", "core/utils", true],
+    ["shared/designsystem", "core/network", false],
+    ["shared/designsystem", "core/storage", false],
+    ["shared/designsystem", "core/navigation", false],
+    ["core/network", "shared/designsystem", false],
     ["shared/bookmarks", "core/storage", true],
     ["shared/bookmarks", "core/network", true],
     ["core/storage", "shared/bookmarks", false],
-    ["designsystem", "shared/bookmarks", false],
+    ["shared/designsystem", "shared/bookmarks", false],
+    ["shared/designsystem", "features/search", false],
+    ["shared/designsystem", "shared/designsystem", false],
     ["shared/bookmarks", "features/bookmarks", false],
-    ["shared/bookmarks", "designsystem", false],
+    ["shared/bookmarks", "shared/designsystem", false],
     ["shared/bookmarks", "shared/other", false],
     ["shared/bookmarks", "shared/bookmarks", false],
     ["features/search", "features/bookmarks", false],
