@@ -19,6 +19,8 @@ RepositoryRow は RepositoryRowData（文字列・数値だけの表示値）と
 画面とシステムバーは OS のライト・ダーク設定に従い、背景と文字・アイコンのコントラストを保つ。起動中に OS の明暗設定を変更した場合も追従する。
 
 ## OS 固有の差分
+モジュール名は iOS が `DesignSystem`、Android のパッケージは `com.example.shared.designsystem`。 iOS の実装は `Sources/Shared/DesignSystem`、テストは `Tests/Shared/DesignSystem` に配置する。
+
 iOS 26 以降は Liquid Glass を使う部品を `#available` で分岐し、このモジュールの中に閉じ込める。
 - iOS は SwiftUI 標準の背景・文字色とシステムバーの自動切り替えを使用する。
 - Android はアプリ層の組み立てで Material 3 のライト・ダーク配色を選び、`enableEdgeToEdge()` のシステムバーの明暗設定と揃える。起動ウィンドウのテーマも `values` / `values-night` で切り替える。

@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 android {
-    namespace = "com.example.featuresettings"
+    namespace = "com.example.features.settings"
     compileSdk = 36
     defaultConfig { minSdk = 28 }
     compileOptions {
