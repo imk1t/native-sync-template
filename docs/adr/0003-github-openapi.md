@@ -1,26 +1,22 @@
-# ADR 0003 GitHub の公式 OpenAPI を必要な範囲に絞って使う
+# ADR 0003 GitHub の API 契約を OpenAPI で直接管理する
 
-GitHub 閲覧サンプルでは、公式 github/rest-api-description の OpenAPI 3.0、API バージョン 2026-03-10 を使う。
+GitHub 閲覧サンプルでは、公式 OpenAPI を元にアプリが使用する4操作と必要なフィールドを定義した `shared/openapi/openapi.yaml` を API 契約の正として直接管理する。OpenAPI 3.0、GitHub API バージョン 2026-03-10 を使う。
 
-アプリが使用する operation・パラメータ・フィールドは `github-selection.json` で管理する。更新スクリプトが固定コミットの公式定義を取得し、選択ルールを適用して直接 `openapi.yaml` へ保存する。原本や参照付き schema の中間スナップショットは保存しない。
+元になった公式定義は `github/rest-api-description` のコミット `6348fd455a44a445f9e37a505e981b2c3ed24046` にある `descriptions/api.github.com/api.github.com.2026-03-10.json`。これは初期契約の出典であり、現在の契約を自動的に同期するものではない。ライセンスは `shared/openapi/GITHUB-LICENSE.md` に保持する。
 
-通常の `tools/generate.ts` は `openapi.yaml` だけを API 契約として読み、Swift / Kotlin を生成する。契約自体は書き換えず、通常の生成・CI はネットワークに依存しない。公式定義の型・必須性・null 許容・enum を保持し、未対応構文は更新時に失敗させる。GitHub の全 API や SDK をアプリに持ち込まない。
-
-取得元のリポジトリ・コミット SHA・パス・原本の SHA-256・選択ルールの SHA-256 は、契約の `x-github-source` にまとめる。CI は選択ルールと契約のチェックサムを照合し、契約の更新忘れを検出する。ライセンスは `GITHUB-LICENSE.md` として保存し、`shared/openapi` の管理対象はこの3ファイルに絞る。
+`tools/generate.ts` は `openapi.yaml` を読んで Swift / Kotlin の DTO とクライアントを生成し、契約自体は書き換えない。生成・CI はネットワークに依存しない。CI は再生成による差分と共通シナリオの契約適合を検査し、対応範囲外の構文は生成時にエラーとする。
 
 生成 DTO とクライアントは core/network 内に閉じ、手書きの GitHubAPI ラッパーがドメインモデルとページ情報へ変換する。レスポンスヘッダーは各呼び出しの結果に保持し、Link とレート制限に利用する。
 
 ## 更新手順
 
-固定元は `shared/openapi/openapi.yaml` の `x-github-source`、フィールド選択は `github-selection.json` に記録する。公式定義のバージョンを変えなくても、選択ルールを変更した場合は同じ固定コミットから更新コマンドを実行する。
+公式の API 仕様を確認して `shared/openapi/openapi.yaml` を直接編集する。型・必須性・null 許容・enum を確認し、ID は両 OS で 64bit とするため `format: int64` を指定する。必要に応じて spec・共通シナリオ・fixture・手書きラッパーも更新する。
 
 ```sh
-# github/rest-api-description の更新対象コミットを指定
-bun tools/sync-github-openapi.ts <40桁のコミットSHA>
 bun tools/generate.ts
 mise run check
 ```
 
-取得元・APIバージョンは更新処理の `tools/lib/github-openapi.ts` に固定している。APIバージョンを変更するときは、抽出元パスと生成契約・両OSのGitHubTransportヘッダーも合わせて変更する。更新差分で型・必須性・null許容とライセンスを確認し、生成物を入力と同じ変更に含める。
+生成物は契約と同じ変更に含め、Swift / Kotlin を変更した場合は `mise run lint` と対象のネイティブテストも実行する。GitHub API バージョンを変更するときは、契約の `info.version` と両 OS の GitHubTransport のヘッダーも合わせて変更する。
 
-この構成では原本の保管・同期・検査が不要になる一方、選択ルールの変更にも公式定義の再取得が必要になる。ネットワークが必要なのは明示的な更新コマンドだけで、日常の生成・ビルドには影響しない。
+テンプレートの保守を簡潔にするため、公式定義を取得・抽出する専用処理と選択設定は持たない。そのため公式定義との一致は自動検査せず、API 変更時の確認とレビューで維持する。

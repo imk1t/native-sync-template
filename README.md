@@ -221,7 +221,7 @@ flowchart TD
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
-通常の生成はオフラインで動作します。公式定義や `github-selection.json` の選択ルールを更新するときは、`bun tools/sync-github-openapi.ts <公式リポジトリの40桁SHA>` で公式定義を取得して `openapi.yaml` へ直接変換し、`bun tools/generate.ts` で再生成します。固定元・チェックサムは契約内の `x-github-source` に記録します。`shared/openapi` に保存するのは契約・選択ルール・ライセンスの3ファイルだけで、原本の中間スナップショットは作りません。詳細は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
+API を変更するときは `shared/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`shared/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
 
 同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
@@ -304,5 +304,5 @@ cd apps/android
 
 ## 現状
 
-- **実装済み**: GitHub検索・詳細・Issue、ローカルブックマークとメモ、表示設定、3タブとシート、公式OpenAPIの抽出と両OSコード生成、キャッシュ・ページング・レート制限、共通シナリオと両OSテスト、同期・依存・生成差分検査、CI。
+- **実装済み**: GitHub検索・詳細・Issue、ローカルブックマークとメモ、表示設定、3タブとシート、OpenAPI契約の直接管理と両OSコード生成、キャッシュ・ページング・レート制限、共通シナリオと両OSテスト、同期・依存・生成差分検査、CI。
 - **拡張候補**: 認証、READMEやIssueのMarkdown表示、外部SDKラッパーのサンプル。

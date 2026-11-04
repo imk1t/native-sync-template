@@ -1,6 +1,6 @@
 /** 一時 Git リポジトリで生成差分チェックの見逃しを検証する。 */
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { OUTPUTS } from "../generate";
 import { copyRepo } from "./helpers";
@@ -84,22 +84,9 @@ describe("check-generated", () => {
     expect(output).toContain("APIModels.swift");
   });
 
-  test("選択ルールを変えて契約を更新しないと失敗する", () => {
-    const path = join(repo, "shared/openapi/github-selection.json");
-    const selection = JSON.parse(readFileSync(path, "utf-8"));
-    selection.schemas.Repository.fields.push("archived");
-    writeFileSync(path, JSON.stringify(selection));
-    git("add", ".");
-    commit();
-    const { code, output } = checkGenerated();
-    expect(code, output).toBe(1);
-    expect(output).toContain("sync-github-openapi.ts");
-  });
-
-  test("通常生成は契約だけを入力とし、選択ルールを読まず契約も書き換えない", () => {
+  test("生成は入力の OpenAPI 契約を書き換えない", () => {
     const path = join(repo, "shared/openapi/openapi.yaml");
     const before = readFileSync(path, "utf-8");
-    rmSync(join(repo, "shared/openapi/github-selection.json"));
     const result = Bun.spawnSync(["bun", "tools/generate.ts"], { cwd: repo });
     expect(result.exitCode, result.stderr.toString()).toBe(0);
     expect(readFileSync(path, "utf-8")).toBe(before);
