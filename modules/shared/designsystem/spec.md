@@ -26,3 +26,6 @@ iOS 26 以降は Liquid Glass を使う部品を `#available` で分岐し、こ
 - Android はアプリ層の組み立てで Material 3 のライト・ダーク配色を選び、`enableEdgeToEdge()` のシステムバーの明暗設定と揃える。起動ウィンドウのテーマも `values` / `values-night` で切り替える。
 
 - 行の画像未取得時は iOS では人物アイコン、Android では所有者名の先頭文字を表示する。Star は iOS ではアイコン、Android では文字ラベルを使う。
+
+## ローカライズ
+LoadingIndicator のラベル、ErrorState の再試行ラベル、RepositoryRow の Star 数・保存済みラベルは呼び出し側から受け取る。内部に UI 文言や core/localization への依存を持たない。

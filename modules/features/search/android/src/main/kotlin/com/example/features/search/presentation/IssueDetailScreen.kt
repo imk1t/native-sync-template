@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 import com.example.shared.designsystem.StatusBadge
@@ -39,15 +41,21 @@ private fun IssueDetailContent(viewModel: IssueDetailViewModel) {
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text("Issue", style = MaterialTheme.typography.headlineLarge) }
+            item { Text(Message.IssueTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
             state.items.firstOrNull()?.let { issue ->
                 item { Text(issue.title, style = MaterialTheme.typography.headlineSmall) }
-                item { StatusBadge(issue.state, issue.state == "open") }
-                item { Text("#${issue.number} · ${issue.author ?: "不明な投稿者"}") }
-                item { SelectionContainer { Text(issue.body?.takeIf { it.isNotEmpty() } ?: "本文はありません") } }
+                item { StatusBadge(issueStateLabel(issue.state), issue.state == "open") }
+                item { Text("#${issue.number} · ${issue.author ?: Message.IssueUnknownAuthor.localized()}") }
+                item {
+                    SelectionContainer {
+                        Text(issue.body?.takeIf { it.isNotEmpty() } ?: Message.IssueEmptyBody.localized())
+                    }
+                }
             }
-            if (state.isLoading) item { LoadingIndicator() }
-            state.error?.let { item { ErrorState(it, viewModel::refresh) } }
+            if (state.isLoading) item { LoadingIndicator(Message.CommonLoading.localized()) }
+            state.error?.let {
+                item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::refresh) }
+            }
         }
     }
 }

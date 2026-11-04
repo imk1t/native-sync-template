@@ -24,3 +24,6 @@ specs/openapi/openapi.yaml を API 契約の正として直接編集し、bun to
 
 ## シナリオ
 - `specs/scenarios/github-network.yaml`
+
+## エラーの表示
+エラー型は種類と関連データを保持し、翻訳済みの表示文言を持たない。表示側が core/localization の文言に変換する。

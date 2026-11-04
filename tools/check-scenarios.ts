@@ -50,6 +50,17 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
   const errors: string[] = [];
   for (const [opId, stub] of Object.entries(given)) {
     const w = `${where}.given.${opId}`;
+    if (opId === "localization") {
+      if (
+        !isDict(stub) ||
+        Object.keys(stub).join() !== "locale" ||
+        typeof stub.locale !== "string" ||
+        !/^[a-z]{2,3}(?:-[A-Za-z0-9]+)*$/.test(stub.locale)
+      ) {
+        errors.push(`${w}: locale に BCP 47 言語タグを書いてください`);
+      }
+      continue;
+    }
     if (opId === NAVIGATION) {
       if (!isDict(stub)) errors.push(`${w}: 画面遷移の初期状態を辞書で書いてください`);
       continue;

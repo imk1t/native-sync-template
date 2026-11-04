@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreStorage
 import Observation
 
@@ -8,7 +9,7 @@ final class SettingsViewModel {
     var showDescriptions = true
     private(set) var isLoaded = false
     private(set) var isSaving = false
-    private(set) var error: String?
+    private(set) var error: Message?
 
     init(settings: DisplaySettings) { self.settings = settings }
     func load() async {
@@ -17,7 +18,7 @@ final class SettingsViewModel {
             showDescriptions = settings.showDescriptions
             isLoaded = true
             error = nil
-        } catch { self.error = "設定を読み込めませんでした。再試行してください。" }
+        } catch { self.error = Message.errorSettingsLoad }
     }
     func save() async {
         guard isLoaded, !isSaving, showDescriptions != settings.showDescriptions else { return }
@@ -28,7 +29,7 @@ final class SettingsViewModel {
             error = nil
         } catch {
             showDescriptions = settings.showDescriptions
-            self.error = "設定を保存できませんでした。再試行してください。"
+            self.error = Message.errorSettingsSave
         }
     }
 }

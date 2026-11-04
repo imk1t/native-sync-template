@@ -6,6 +6,7 @@ import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
 import com.example.core.network.Page
 import com.example.core.network.RepositorySummary
+import com.example.corelocalization.Message
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +19,8 @@ internal class RepositoryDetailViewModel(
     private val navigator: Navigator
 ) : ViewModel() {
     val content = PageLoader<RepositorySummary> { it.id }
-    private val mutableSaveError = MutableStateFlow<String?>(null)
-    val saveError: StateFlow<String?> = mutableSaveError
+    private val mutableSaveError = MutableStateFlow<Message?>(null)
+    val saveError: StateFlow<Message?> = mutableSaveError
     private val mutableSaving = MutableStateFlow(false)
     val isSaving: StateFlow<Boolean> = mutableSaving
     private var initialStarted = false
@@ -46,7 +47,7 @@ internal class RepositoryDetailViewModel(
         ) {
             throw e
         } catch (e: Exception) {
-            mutableSaveError.value = "保存データを読み込めませんでした。"
+            mutableSaveError.value = Message.ErrorStorageLoad
         }
         content.load(1) { Page(listOf(dependencies.repository.repository(owner, repo, refresh))) }
     }
@@ -68,7 +69,7 @@ internal class RepositoryDetailViewModel(
         } catch (
             e: Exception
         ) {
-            mutableSaveError.value = e.message ?: "保存できませんでした。"
+            mutableSaveError.value = bookmarkMessage(e, Message.ErrorStorageSave)
         } finally {
             mutableSaving.value = false
         }

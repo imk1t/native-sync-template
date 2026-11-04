@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreNavigation
 import CoreNetwork
 import Observation
@@ -7,7 +8,7 @@ import Observation
 final class RepositoryDetailViewModel {
     let content = PageLoader<RepositorySummary>()
     let dependencies: SearchDependencies
-    private(set) var saveError: String?
+    private(set) var saveError: Message?
     private(set) var isSaving = false
     private let owner: String
     private let repo: String
@@ -21,7 +22,7 @@ final class RepositoryDetailViewModel {
     }
 
     func loadIfNeeded() async {
-        do { try await dependencies.bookmarks.load() } catch { saveError = "保存データを読み込めませんでした。" }
+        do { try await dependencies.bookmarks.load() } catch { saveError = Message.errorStorageLoad }
         if !content.state.hasLoaded { await load(refresh: false) }
     }
     func refresh() async { await load(refresh: true) }
@@ -39,6 +40,6 @@ final class RepositoryDetailViewModel {
         do {
             try await dependencies.bookmarks.toggle(repository)
             saveError = nil
-        } catch { saveError = error.localizedDescription }
+        } catch { saveError = bookmarkMessage(for: error, fallback: .errorStorageSave) }
     }
 }

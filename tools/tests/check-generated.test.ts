@@ -2,16 +2,21 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { ROOTS, load, outputs } from "../lib/localization";
+import { ROOT } from "../lib/util";
 import { OUTPUTS } from "../generate";
 import { copyRepo } from "./helpers";
 
 const FILES = [
+  "node_modules/yaml",
   "tools/generate.ts",
   "tools/check-generated.ts",
   "tools/lib",
   "specs/tokens/tokens.json",
   "specs/openapi",
   "specs/routes.yaml",
+  "specs/localization",
+  ...ROOTS,
   "modules/features/search/spec.md",
   "modules/features/bookmarks/spec.md",
   "modules/features/settings/spec.md",
@@ -93,7 +98,7 @@ describe("check-generated", () => {
   });
 
   test("どの生成物を消してコミットしても失敗する", () => {
-    for (const output of Object.values(OUTPUTS)) {
+    for (const output of [...Object.values(OUTPUTS), ...Object.keys(outputs(load(ROOT)))]) {
       const baseline = git("rev-parse", "HEAD").trim();
       git("rm", output);
       commit();
@@ -102,6 +107,26 @@ describe("check-generated", () => {
       expect(result.output).toContain(`?? ${output}`);
       git("reset", "--hard", baseline);
     }
+  });
+
+  test("言語を削除して生成物を残すと失敗する", () => {
+    git("rm", "specs/localization/messages-en.yaml");
+    commit();
+    const result = checkGenerated();
+    expect(result.code, result.output).toBe(1);
+    expect(result.output).toContain("values-en/strings.xml");
+  });
+
+  test("新しい言語を追加して再生成しないと失敗する", () => {
+    writeFileSync(
+      join(repo, "specs/localization/messages-de.yaml"),
+      readFileSync(join(repo, "specs/localization/messages-en.yaml")),
+    );
+    git("add", ".");
+    commit();
+    const result = checkGenerated();
+    expect(result.code, result.output).toBe(1);
+    expect(result.output).toContain("values-de/strings.xml");
   });
 
   test("生成器が作業ツリーを直しても、ステージ済みの破損は失敗する", () => {

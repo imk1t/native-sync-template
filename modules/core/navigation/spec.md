@@ -43,3 +43,6 @@
 
 ## シナリオ
 `specs/scenarios/navigation.yaml`
+
+## タブの表示名
+AppTab は識別子と root のみを生成する。表示名はアプリ層が core/localization の Message に網羅的に対応付ける。

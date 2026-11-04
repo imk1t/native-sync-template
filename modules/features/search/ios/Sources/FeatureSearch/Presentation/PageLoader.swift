@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreNetwork
 import Foundation
 import Observation
@@ -49,7 +50,7 @@ public final class PageLoader<Value: Equatable & Identifiable & Sendable> where 
         } catch {
             guard current == generation else { return }
             if !(error is CancellationError) && (error as? URLError)?.code != .cancelled && !Task.isCancelled {
-                state.error = (error as? LocalizedError)?.errorDescription ?? "通信に失敗しました。再試行してください。"
+                state.error = SearchFailure(error)
             }
         }
     }

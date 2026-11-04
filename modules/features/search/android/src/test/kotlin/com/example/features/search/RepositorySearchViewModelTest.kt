@@ -64,13 +64,17 @@ class RepositorySearchViewModelTest {
     }
 
     // @scenario github-search/load-fails
+    // @scenario github-search/localized-failure
     @Test fun failureCanBeRetried() = runTest {
         val transport = RecordingTransport().apply { failure = 500 }
         val model = RepositorySearchViewModel(dependencies(transport), Navigator())
         model.edit(SearchForm("swift"))
         model.submit()
         advanceUntilIdle()
-        assertNotNull(model.content.state.value.error)
+        assertEquals(
+            SearchFailure.Message(com.example.corelocalization.Message.ErrorServer(500)),
+            model.content.state.value.error
+        )
         assertFalse(model.content.state.value.isLoading)
         model.retry()
         advanceUntilIdle()

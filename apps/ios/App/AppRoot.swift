@@ -1,8 +1,10 @@
+import CoreLocalization
 import CoreNavigation
 import SwiftUI
 
 /// Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。
 struct AppRoot<Screen: View>: View {
+    @Environment(\.locale) private var locale
     @Bindable var navigator: Navigator
     let screen: (Route) -> Screen
 
@@ -24,11 +26,19 @@ struct AppRoot<Screen: View>: View {
                             screen(entry.route).id(entry.id)
                         }
                 }
-                .tabItem { Label(tab.title, systemImage: tabIcon(tab)) }
+                .tabItem { Label(tabMessage(tab).resolve(locale: locale), systemImage: tabIcon(tab)) }
                 .tag(tab)
             }
         }
         .modifier(ModalLayer(navigator: navigator, level: 0, screen: screen))
+    }
+
+    private func tabMessage(_ tab: AppTab) -> Message {
+        switch tab {
+        case .home: .searchTitle
+        case .saved: .commonSaved
+        case .settings: .settingsTitle
+        }
     }
 
     private func tabIcon(_ tab: AppTab) -> String {

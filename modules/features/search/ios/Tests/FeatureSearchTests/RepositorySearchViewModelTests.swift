@@ -43,6 +43,7 @@ struct RepositorySearchViewModelTests {
     }
 
     // @scenario github-search/load-fails
+    // @scenario github-search/localized-failure
     @Test func failureCanBeRetried() async {
         let transport = RecordingTransport()
         await transport.failNext(500)
@@ -50,7 +51,7 @@ struct RepositorySearchViewModelTests {
         model.query = "swift"
         model.submit()
         await model.loadIfNeeded()
-        #expect(model.content.state.error != nil)
+        #expect(model.content.state.error == .message(.errorServer(status: 500)))
         #expect(!model.content.state.isLoading)
         model.retry()
         await model.loadIfNeeded()

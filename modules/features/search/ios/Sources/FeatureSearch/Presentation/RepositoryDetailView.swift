@@ -1,7 +1,9 @@
+import CoreLocalization
 import DesignSystem
 import SwiftUI
 
 struct RepositoryDetailView: View {
+    @Environment(\.locale) private var locale
     @Bindable private var viewModel: RepositoryDetailViewModel
     init(viewModel: RepositoryDetailViewModel) { self.viewModel = viewModel }
 
@@ -15,8 +17,11 @@ struct RepositoryDetailView: View {
                             avatarURL: repository.avatarURL, description: repository.description,
                             language: repository.language, stars: repository.stars),
                         saved: viewModel.dependencies.bookmarks.contains(repository.id),
-                        showDescription: true, loadImage: { try await viewModel.dependencies.images.load($0) })
-                    LabeledContent("Fork", value: repository.forks.formatted())
+                        showDescription: true,
+                        starsLabel: Message.repositoryStars(count: repository.stars).resolve(locale: locale),
+                        savedLabel: Message.commonSaved.resolve(locale: locale),
+                        loadImage: { try await viewModel.dependencies.images.load($0) })
+                    Text(Message.repositoryForks(count: repository.forks).resolve(locale: locale))
                     if !repository.topics.isEmpty {
                         ScrollView(.horizontal) {
                             HStack { ForEach(repository.topics, id: \.self) { StatusBadge($0) } }
@@ -28,18 +33,26 @@ struct RepositoryDetailView: View {
                         Task { await viewModel.toggleBookmark() }
                     } label: {
                         Label(
-                            viewModel.dependencies.bookmarks.contains(repository.id) ? "保存を解除" : "保存する",
+                            viewModel.dependencies.bookmarks.contains(repository.id)
+                                ? Message.repositoryUnsave.resolve(locale: locale)
+                                : Message.repositorySave.resolve(locale: locale),
                             systemImage: viewModel.dependencies.bookmarks.contains(repository.id)
                                 ? "bookmark.fill" : "bookmark")
                     }.disabled(viewModel.isSaving)
-                    Button("Issue を見る", systemImage: "exclamationmark.bubble", action: viewModel.showIssues)
+                    Button(
+                        Message.repositoryIssues.resolve(locale: locale), systemImage: "exclamationmark.bubble",
+                        action: viewModel.showIssues)
                 }
             }
-            if let error = viewModel.saveError { Text(error).foregroundStyle(.red) }
-            if viewModel.content.state.isLoading { LoadingIndicator() }
-            if let error = viewModel.content.state.error { ErrorState(error) { Task { await viewModel.refresh() } } }
+            if let error = viewModel.saveError { Text(error.resolve(locale: locale)).foregroundStyle(.red) }
+            if viewModel.content.state.isLoading { LoadingIndicator(Message.commonLoading.resolve(locale: locale)) }
+            if let error = viewModel.content.state.error {
+                ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
+                    Task { await viewModel.refresh() }
+                }
+            }
         }
-        .navigationTitle("リポジトリ").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(Message.repositoryTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.loadIfNeeded() }
         .refreshable { await viewModel.refresh() }
     }

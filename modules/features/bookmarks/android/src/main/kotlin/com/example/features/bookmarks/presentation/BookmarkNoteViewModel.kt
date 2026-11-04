@@ -3,6 +3,7 @@ package com.example.features.bookmarks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.navigation.Navigator
+import com.example.corelocalization.Message
 import com.example.shared.bookmarks.BookmarkError
 import com.example.shared.bookmarks.BookmarkRepository
 import kotlinx.coroutines.CancellationException
@@ -14,7 +15,7 @@ data class NoteState(
     val note: String = "",
     val isLoaded: Boolean = false,
     val isSaving: Boolean = false,
-    val error: String? = null
+    val error: Message? = null
 ) {
     val characterCount: Int get() = note.codePointCount(0, note.length)
     val canSave: Boolean get() = isLoaded && !isSaving && characterCount <= 1_000
@@ -46,7 +47,7 @@ internal class BookmarkNoteViewModel(
         ) {
             throw e
         } catch (e: Exception) {
-            mutableState.value = state.value.copy(error = e.message ?: "読み込めませんでした。")
+            mutableState.value = state.value.copy(error = bookmarkMessage(e, Message.ErrorStorageLoad))
         }
     }
     fun save() {
@@ -65,7 +66,7 @@ internal class BookmarkNoteViewModel(
         } catch (
             e: Exception
         ) {
-            mutableState.value = state.value.copy(error = e.message ?: "保存できませんでした。")
+            mutableState.value = state.value.copy(error = bookmarkMessage(e, Message.ErrorStorageSave))
         } finally {
             mutableState.value = state.value.copy(isSaving = false)
         }

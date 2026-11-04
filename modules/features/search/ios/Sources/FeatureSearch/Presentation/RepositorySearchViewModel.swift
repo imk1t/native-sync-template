@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreNavigation
 import CoreNetwork
 import Foundation
@@ -10,7 +11,7 @@ final class RepositorySearchViewModel {
     var language = ""
     var sort = ""
     private(set) var revision = 0
-    private(set) var storageError: String?
+    private(set) var storageError: Message?
     let content = PageLoader<RepositorySummary>()
     let dependencies: SearchDependencies
     private let navigator: Navigator
@@ -55,7 +56,7 @@ final class RepositorySearchViewModel {
         do {
             try await dependencies.loadLocalData()
             storageError = nil
-        } catch { storageError = "保存データの読み込みに失敗しました。再試行してください。" }
+        } catch { storageError = Message.errorStorageLoad }
         guard startedRevision != revision, let submitted else { return }
         let current = revision
         startedRevision = current

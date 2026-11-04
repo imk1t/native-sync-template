@@ -35,6 +35,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.navigation.Navigator
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.RepositoryRow
 import com.example.shared.designsystem.RepositoryRowData
@@ -61,22 +63,22 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             item {
-                Text("探す", style = MaterialTheme.typography.headlineLarge)
+                Text(Message.SearchTitle.localized(), style = MaterialTheme.typography.headlineLarge)
                 OutlinedTextField(
                     form.query,
                     { viewModel.edit(form.copy(query = it)) },
                     Modifier.fillMaxWidth(),
-                    label = { Text("リポジトリを検索") },
+                    label = { Text(Message.SearchPrompt.localized()) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { viewModel.submit() })
                 )
                 Row {
                     FilterMenu(
-                        "言語",
-                        form.language.ifEmpty { "すべて" },
+                        Message.SearchLanguage.localized(),
+                        form.language.ifEmpty { Message.SearchAll.localized() },
                         listOf(
-                            "" to "すべて",
+                            "" to Message.SearchAll.localized(),
                             "Swift" to "Swift",
                             "Kotlin" to "Kotlin",
                             "TypeScript" to "TypeScript",
@@ -86,23 +88,27 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
                         viewModel.edit(form.copy(language = it))
                     }
                     FilterMenu(
-                        "並び順",
+                        Message.SearchSort.localized(),
                         when (form.sort) {
-                            "stars" -> "Star 数"
-                            "updated" -> "更新日時"
-                            else -> "関連度"
+                            "stars" -> Message.SearchStarsSort.localized()
+                            "updated" -> Message.SearchUpdatedSort.localized()
+                            else -> Message.SearchRelevance.localized()
                         },
-                        listOf("" to "関連度", "stars" to "Star 数", "updated" to "更新日時")
+                        listOf(
+                            "" to Message.SearchRelevance.localized(),
+                            "stars" to Message.SearchStarsSort.localized(),
+                            "updated" to Message.SearchUpdatedSort.localized()
+                        )
                     ) {
                         viewModel.edit(form.copy(sort = it))
                     }
                 }
-                Button(viewModel::submit) { Text("この条件で検索") }
+                Button(viewModel::submit) { Text(Message.SearchSubmit.localized()) }
             }
-            storageError?.let { item { ErrorState(it, viewModel::retry) } }
+            storageError?.let { item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::retry) } }
             if (!state.hasLoaded && !state.isLoading && state.error == null) {
                 item {
-                    Text("気になるOSSを探して、自分だけのリストに保存しましょう。")
+                    Text(Message.SearchIntro.localized())
                     Row {
                         listOf("swift", "compose", "developer tools").forEach { query ->
                             TextButton({ viewModel.example(query) }) { Text(query) }
@@ -125,6 +131,8 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
                             it.id == repository.id
                         },
                         descriptions,
+                        Message.RepositoryStars(repository.stars).localized(),
+                        Message.CommonSaved.localized(),
                         viewModel.dependencies.images::load
                     )
                     HorizontalDivider()
@@ -139,7 +147,7 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
 private fun FilterMenu(label: String, value: String, options: List<Pair<String, String>>, select: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Column {
-        TextButton({ expanded = true }) { Text("$label: $value") }
+        TextButton({ expanded = true }) { Text(Message.SearchFilter(label, value).localized()) }
         DropdownMenu(expanded, { expanded = false }) {
             options.forEach { (key, title) ->
                 DropdownMenuItem(text = { Text(title) }, onClick = {

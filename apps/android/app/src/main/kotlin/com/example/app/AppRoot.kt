@@ -34,6 +34,8 @@ import com.example.core.navigation.ModalStyle
 import com.example.core.navigation.NavigationEntry
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 
 /** Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。 */
 @Composable
@@ -68,7 +70,15 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
                             }
                             Icon(painterResource(icon), contentDescription = null)
                         },
-                        label = { Text(tab.title) }
+                        label = {
+                            Text(
+                                when (tab) {
+                                    AppTab.Home -> Message.SearchTitle
+                                    AppTab.Saved -> Message.CommonSaved
+                                    AppTab.Settings -> Message.SettingsTitle
+                                }.localized()
+                            )
+                        }
                     )
                 }
             }
@@ -77,7 +87,7 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
                 Column {
                     if (state.stack(state.selectedTab).isNotEmpty()) {
-                        TextButton(onClick = navigator::pop) { Text("戻る") }
+                        TextButton(onClick = navigator::pop) { Text(Message.CommonBack.localized()) }
                     }
                     NavDisplay(entries = entriesByTab.getValue(state.selectedTab), onBack = navigator::pop)
                 }

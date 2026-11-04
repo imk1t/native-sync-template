@@ -1,0 +1,103 @@
+# 文言はここで編集し、bun tools/generate.ts で両 OS に反映する。
+app_name:
+  text: GitHub Explorer
+  iosInfoPlist: CFBundleDisplayName
+bookmarks_delete_message: このリポジトリのメモも削除されます。
+bookmarks_delete_title: 保存を解除しますか？
+bookmarks_edit_note: メモを編集
+bookmarks_empty_message: 「探す」からリポジトリを開き、保存してみましょう。
+bookmarks_empty_title: まだ保存されていません
+bookmarks_note: メモ
+bookmarks_note_count:
+  arguments:
+    - name: count
+      type: integer
+  plural: count
+  forms:
+    other: "{count} / 1,000文字"
+bookmarks_note_prompt: 気になったことを書いておきましょう
+common_back: 戻る
+common_cancel: キャンセル
+common_delete: 削除
+common_loading: 読み込み中
+common_retry: 再試行
+common_save: 保存
+common_saved: 保存済み
+error_bookmark_limit: 保存できるのは100件までです。
+error_bookmark_not_found: このブックマークは削除されています。
+error_forbidden: この情報へのアクセスが許可されていません。
+error_invalid_query: 検索条件を確認してください。
+error_network: 通信に失敗しました。再試行してください。
+error_not_found: 見つかりませんでした。削除または公開設定が変更された可能性があります。
+error_note_too_long: メモは1,000文字以内で入力してください。
+error_rate_limited:
+  arguments:
+    - name: time
+      type: string
+  text: 取得回数の上限です。{time}以降に再試行してください。
+error_server:
+  arguments:
+    - name: status
+      type: integer
+  text: 取得に失敗しました（HTTP {status}）。時間をおいて再試行してください。
+error_settings_load: 設定を読み込めませんでした。再試行してください。
+error_settings_save: 設定を保存できませんでした。再試行してください。
+error_storage_delete: 削除を保存できませんでした。再試行してください。
+error_storage_load: 保存データの読み込みに失敗しました。再試行してください。
+error_storage_save: 保存できませんでした。再試行してください。
+error_storage_version: 保存データを読み込めません。アプリのバージョンを確認してください。
+issue_body: 本文
+issue_closed: Closed
+issue_empty_body: 本文はありません
+issue_open: Open
+issue_state: 状態
+issue_title: Issue
+issue_unknown_author: 不明な投稿者
+issues_title: Issues
+repository_forks:
+  arguments:
+    - name: count
+      type: integer
+  plural: count
+  forms:
+    other: Fork {count}
+repository_issues: Issue を見る
+repository_save: 保存する
+repository_stars:
+  arguments:
+    - name: count
+      type: integer
+  plural: count
+  forms:
+    other: Star {count}
+repository_title: リポジトリ
+repository_unsave: 保存を解除
+search_all: すべて
+search_empty_message: 条件を変えて探すか、続きがある場合は次のページを確認してください。
+search_empty_title: 結果がありません
+search_filter:
+  arguments:
+    - name: label
+      type: string
+    - name: value
+      type: string
+  text: "{label}: {value}"
+search_incomplete: 検索結果の一部を取得できませんでした。条件を絞って再検索できます。
+search_intro: 気になるOSSを探して、自分だけのリストに保存しましょう。
+search_language: 言語
+search_limit: 検索結果は最大1,000件まで表示します。
+search_more: さらに読み込む
+search_prompt: リポジトリを検索
+search_relevance: 関連度
+search_sort: 並び順
+search_stars_sort: Star 数
+search_submit: この条件で検索
+search_title: 探す
+search_try: 試してみる
+search_updated_sort: 更新日時
+settings_about: このアプリについて
+settings_description: 公開リポジトリを探して保存する、iOS・Android のネイティブ開発サンプルです。
+settings_descriptions: 一覧に説明文を表示
+settings_display: 表示
+settings_storage_note: ブックマークとメモはこの端末に保存されます。GitHub の Star とは連動しません。
+settings_title: 設定

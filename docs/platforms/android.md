@@ -27,3 +27,9 @@ adb shell am start -n com.example.app/.MainActivity
 
 ## 落とし穴
 - Gradle 9.x では、実在しないディレクトリ `:core`(`settings.gradle.kts` の中間プロジェクト)が設定エラーになる。8.14.3 を使う。
+
+## ローカライズ
+- 原本は `specs/localization/messages-*.yaml`。`bun tools/generate.ts` で CoreLocalization の strings.xml とアプリの言語設定を生成する。
+- Compose は `Message.localized()` で現在の Configuration のリソースを解決する。ViewModel は Message と引数だけを保持する。
+- アプリの generateLocaleConfig と resourceConfigurations を生成した言語一覧に接続する。初期は日本語・英語のみを OS のアプリ言語設定に公開する。
+- CoreLocalization のリソーステストは AndroidX Test を使う。規約に従いソースは `src/test/kotlin` に置き、Gradle で androidTest に接続する。エミュレーター接続後、`./gradlew :core:localization:connectedDebugAndroidTest` で実行する。通常の `./gradlew test` はこのモジュールのリソーステストを含まない。
