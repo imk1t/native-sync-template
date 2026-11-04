@@ -8,7 +8,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import * as openapi from "./lib/openapi";
-import { githubOpenAPI } from "./lib/github-openapi";
 import * as routes from "./lib/routes";
 import { compare, type Dict, isDict, join, readText, readYaml, ROOT } from "./lib/util";
 
@@ -17,7 +16,6 @@ const ANDROID_NETWORK = "modules/core/network/android/src/main/kotlin/com/exampl
 
 /** 生成先のファイル。tools/check-generated.ts もこの一覧を使う。 */
 export const OUTPUTS = {
-  openapi: "shared/openapi/openapi.yaml",
   iosTokens: "modules/designsystem/ios/Sources/DesignSystem/Generated/Tokens.swift",
   androidTokens: "modules/designsystem/android/src/main/kotlin/com/example/designsystem/generated/Tokens.kt",
   iosFixtures: `${IOS_NETWORK}/DemoResponses.swift`,
@@ -129,8 +127,7 @@ export function generate(root: string = ROOT): void {
   write(root, OUTPUTS.iosTokens, swiftTokens(tokens));
   write(root, OUTPUTS.androidTokens, kotlinTokens(tokens));
 
-  write(root, OUTPUTS.openapi, githubOpenAPI(root));
-  const api = readYaml(join(root, OUTPUTS.openapi));
+  const api = readYaml(join(root, "shared/openapi/openapi.yaml"));
   const spec = new openapi.Spec(isDict(api) ? api : ({} as Dict));
   write(root, OUTPUTS.iosModels, openapi.swiftModels(spec));
   write(root, OUTPUTS.iosClient, openapi.swiftClient(spec));

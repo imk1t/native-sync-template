@@ -12,7 +12,7 @@ GitHub 公式 OpenAPI の選択定義から生成したクライアントを包�
 - ImageLoader は HTTPS 画像のデータを取得し、サイズを制限したメモリキャッシュを持つ。UI には依存しない。
 
 ## 生成とエラー
-shared/openapi/github-source.json は固定コミットの公式定義から抽出した原本。github-selection.json のフィールド選択を適用して openapi.yaml を生成し、両 OS のコードへ変換する。通常の生成はオフラインで完結する。更新方法は docs/adr/0003-github-openapi.md。
+shared/openapi/openapi.yaml を両 OS のコード生成の入力とする。公式定義の更新時だけ固定コミットから取得し、github-selection.json の選択ルールを適用して直接 openapi.yaml へ保存する。取得元・コミット・原本と選択ルールのチェックサムは同ファイルの x-github-source に記録し、中間の原本スナップショットは保存しない。通常の生成はオフラインで完結する。更新方法は docs/adr/0003-github-openapi.md。
 
 省略可能と null 許容を別々に検証する。入力 enum の値は契約検査で確認する。レスポンスの未知のキーは無視し、状態文字列の未知値はそのまま表示する。空本文・不明な投稿者も表示可能。Issue 一覧から pull_request を除外するが、次ページ情報は除外前の HTTP ヘッダーに従う。
 

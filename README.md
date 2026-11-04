@@ -210,7 +210,7 @@ flowchart TD
 
 ### OpenAPI から API クライアントを生成する
 
-`bun tools/generate.ts` が固定した GitHub 公式 OpenAPI のスナップショットとフィールド選択から `shared/openapi/openapi.yaml` を生成し、その契約から、`core/network` に次のコードを生成します。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
+`bun tools/generate.ts` が `shared/openapi/openapi.yaml` を読み、`core/network` に次のコードを生成します。この契約は公式 GitHub OpenAPI から必要な範囲だけを選んだものです。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
 
 | 生成物 | iOS | Android |
 | --- | --- | --- |
@@ -221,7 +221,7 @@ flowchart TD
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
-通常の生成はオフラインで動作します。公式定義を更新するときだけ `bun tools/sync-github-openapi.ts <公式リポジトリの40桁SHA>` を実行し、`bun tools/generate.ts` で再生成します。固定元・チェックサム・ライセンスと選択ルールは `shared/openapi`、詳細は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
+通常の生成はオフラインで動作します。公式定義や `github-selection.json` の選択ルールを更新するときは、`bun tools/sync-github-openapi.ts <公式リポジトリの40桁SHA>` で公式定義を取得して `openapi.yaml` へ直接変換し、`bun tools/generate.ts` で再生成します。固定元・チェックサムは契約内の `x-github-source` に記録します。`shared/openapi` に保存するのは契約・選択ルール・ライセンスの3ファイルだけで、原本の中間スナップショットは作りません。詳細は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
 
 同じコマンドで、`shared/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`shared/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 

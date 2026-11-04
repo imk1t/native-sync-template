@@ -1,6 +1,6 @@
 /** 一時 Git リポジトリで生成差分チェックの見逃しを検証する。 */
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { OUTPUTS } from "../generate";
 import { copyRepo } from "./helpers";
@@ -71,6 +71,20 @@ describe("check-generated", () => {
   });
 
   test("OpenAPI を変えて再生成しないと失敗する", () => {
+    const path = join(repo, "shared/openapi/openapi.yaml");
+    const api = Bun.YAML.parse(readFileSync(path, "utf-8")) as {
+      components: { schemas: { Repository: { properties: Record<string, unknown> } } };
+    };
+    api.components.schemas.Repository.properties.archived = { type: "boolean" };
+    writeFileSync(path, Bun.YAML.stringify(api));
+    git("add", ".");
+    commit();
+    const { code, output } = checkGenerated();
+    expect(code, output).toBe(1);
+    expect(output).toContain("APIModels.swift");
+  });
+
+  test("選択ルールを変えて契約を更新しないと失敗する", () => {
     const path = join(repo, "shared/openapi/github-selection.json");
     const selection = JSON.parse(readFileSync(path, "utf-8"));
     selection.schemas.Repository.fields.push("archived");
@@ -79,7 +93,16 @@ describe("check-generated", () => {
     commit();
     const { code, output } = checkGenerated();
     expect(code, output).toBe(1);
-    expect(output).toContain("APIModels.swift");
+    expect(output).toContain("sync-github-openapi.ts");
+  });
+
+  test("通常生成は契約だけを入力とし、選択ルールを読まず契約も書き換えない", () => {
+    const path = join(repo, "shared/openapi/openapi.yaml");
+    const before = readFileSync(path, "utf-8");
+    rmSync(join(repo, "shared/openapi/github-selection.json"));
+    const result = Bun.spawnSync(["bun", "tools/generate.ts"], { cwd: repo });
+    expect(result.exitCode, result.stderr.toString()).toBe(0);
+    expect(readFileSync(path, "utf-8")).toBe(before);
   });
 
   test("どの生成物を消してコミットしても失敗する", () => {
