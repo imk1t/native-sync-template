@@ -1,15 +1,15 @@
 package com.example.app
 
 import androidx.compose.runtime.Composable
-import com.example.corenavigation.Navigator
-import com.example.corenavigation.Route
-import com.example.featurebookmarks.BookmarkNoteScreen
-import com.example.featurebookmarks.BookmarksScreen
-import com.example.featuresearch.IssueDetailScreen
-import com.example.featuresearch.RepositoryDetailScreen
-import com.example.featuresearch.RepositoryIssuesScreen
-import com.example.featuresearch.RepositorySearchScreen
-import com.example.featuresettings.SettingsScreen
+import com.example.core.navigation.Navigator
+import com.example.core.navigation.Route
+import com.example.features.bookmarks.BookmarkNoteScreen
+import com.example.features.bookmarks.BookmarksScreen
+import com.example.features.search.IssueDetailScreen
+import com.example.features.search.RepositoryDetailScreen
+import com.example.features.search.RepositoryIssuesScreen
+import com.example.features.search.RepositorySearchScreen
+import com.example.features.settings.SettingsScreen
 
 @Composable
 internal fun AppRouter(route: Route, dependencies: AppDependencies, navigator: Navigator) {

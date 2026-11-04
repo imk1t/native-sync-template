@@ -20,6 +20,8 @@ App で BookmarkRepository を一度生成し、search と bookmarks に同じ�
 `core/storage`（KeyValueStore）と `core/network`（RepositorySummary）に依存する。生成 DTO は扱わない。外部 API やトークンは使わない。
 
 ## OS 固有の差分
+モジュール名は iOS が `SharedBookmarks`、Android のパッケージは `com.example.shared.bookmarks`。
+
 iOS は @MainActor / Observation と Task の直列化、Android は StateFlow と Mutex を使用する。JSON の項目名と保存日時の単位（Unix 秒）は共通。
 
 ## シナリオ

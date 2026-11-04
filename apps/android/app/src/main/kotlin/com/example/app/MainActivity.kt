@@ -10,9 +10,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import com.example.corenavigation.NavigationState
-import com.example.corenavigation.Route
-import com.example.corenavigation.fromUrl
+import com.example.core.navigation.NavigationState
+import com.example.core.navigation.Route
+import com.example.core.navigation.fromUrl
 
 class MainActivity : ComponentActivity() {
     private val app: AppViewModel by viewModels()

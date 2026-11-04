@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 android {
-    namespace = "com.example.featuresearch"
+    namespace = "com.example.features.search"
     compileSdk = 36
     defaultConfig { minSdk = 28 }
     compileOptions {

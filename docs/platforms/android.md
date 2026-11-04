@@ -8,6 +8,12 @@ OS 固有の設定・環境・落とし穴をここに残す。機能ごとの�
 - Gradle は `apps/android` の wrapper(`./gradlew`)で 8.14.3 に固定する。手元の `gradle` は使わない(理由: `docs/adr/0003`)。
 - モジュールは `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
 
+## パッケージ構成
+- パッケージは `com.example.<modules/ からの階層>` とする。`core/network` は `com.example.core.network`、`shared/bookmarks` は `com.example.shared.bookmarks`、`features/search` は `com.example.features.search`。
+- `src/main/kotlin` と `src/test/kotlin` のディレクトリもパッケージに合わせる。Android ライブラリの `namespace` はそのモジュールのルートパッケージと一致させる。
+- `shared/designsystem` は `com.example.shared.designsystem`、アプリは `com.example.app`。`domain`・`data`・`presentation` は実装を分類するサブディレクトリで、パッケージはモジュール内で共通とする。
+- 生成コードは各パッケージ下の `generated/` に置き、同じモジュールのパッケージを使う。出力先と package 宣言は `tools/generate.ts` で管理する。
+
 ## 実行
 ```
 cd apps/android && ./gradlew assembleDebug

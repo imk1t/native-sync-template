@@ -18,6 +18,8 @@
 外部 API は使わない。`core/storage`、`core/navigation`、`shared/designsystem` に依存し、他 feature には依存しない。
 
 ## OS 固有の差分
+モジュール名は iOS が `FeatureSettings`、Android のパッケージは `com.example.features.settings`。
+
 iOS は Observation と SwiftUI の Form / Toggle、Android は StateFlow と Compose の Switch。公開入口は SettingsScreen、内部の描画は SettingsView / SettingsContent、状態管理は SettingsViewModel。iOS は @State、Android は Navigation 3 のエントリの ViewModelStore で ViewModel を保持する。
 
 ## シナリオ

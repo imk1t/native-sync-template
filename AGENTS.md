@@ -37,6 +37,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 - iOS のモジュールと外部依存(`.product(name:package:)`)は `modules/Package.swift` に、Android は `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
 - Android のビルドは `apps/android` の `./gradlew` で行う(Gradle 8.14.3 を `gradle/wrapper` で固定。JDK 17 が必要)。Gradle のバージョンは `./gradlew wrapper --gradle-version <版>` で上げ、手元の `gradle` は使わない。
 - テストは OS 標準の場所に置く(iOS: `ios/Tests`、Android: `android/src/test`)。
+- Android のパッケージと namespace は `com.example` にモジュールの階層を続ける(例: `core/network` → `com.example.core.network`、`features/search` → `com.example.features.search`)。ソースとテストのディレクトリも同じ階層にする。
 - 両 OS の変更は 1 つの PR にまとめる。
 - ワークフローの `uses:` は正確なバージョン(`@v4.4.0`)で書き、変えたら `gh actions-lock` で `.github/workflows/actions.lock` を更新する(手で編集しない)。
 

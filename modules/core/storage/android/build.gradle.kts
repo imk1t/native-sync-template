@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 android {
-    namespace = "com.example.corestorage"
+    namespace = "com.example.core.storage"
     compileSdk = 36
     defaultConfig { minSdk = 28 }
     compileOptions {

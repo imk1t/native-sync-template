@@ -89,8 +89,8 @@ modules/features/search/
     Tests/FeatureSearchTests/               テスト（Swift Testing）
   android/
     build.gradle.kts
-    src/main/kotlin/com/example/featuresearch/   実装
-    src/test/kotlin/com/example/featuresearch/   テスト（JUnit）
+    src/main/kotlin/com/example/features/search/   実装
+    src/test/kotlin/com/example/features/search/   テスト（JUnit）
 ```
 
 ## 開発の流れ

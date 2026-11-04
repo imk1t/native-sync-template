@@ -18,6 +18,8 @@ specs/openapi/openapi.yaml を API 契約の正として直接編集し、bun to
 省略可能と null 許容を別々に検証する。入力 enum の値は契約検査で確認する。レスポンスの未知のキーは無視し、状態文字列の未知値はそのまま表示する。空本文・不明な投稿者も表示可能。Issue 一覧から pull_request を除外するが、次ページ情報は除外前の HTTP ヘッダーに従う。
 
 ## OS 固有の差分
+モジュール名は iOS が `CoreNetwork`、Android のパッケージは `com.example.core.network`。
+
 略語は Swift の API / HTTP と Kotlin の Api / Http。JSON は Codable / kotlinx.serialization。HTTP は URLSession / HttpURLConnection。Android は接続 15 秒・読み込み 30 秒のタイムアウトを持ち、キャンセル時は接続を切断・割り込みする。iOS は URLSession の task キャンセルに従う。画像データは Data / ByteArray。
 
 ## シナリオ

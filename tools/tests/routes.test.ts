@@ -26,7 +26,7 @@ describe("routes", () => {
   test("Swift と Kotlin で同じ構造を生成する", () => {
     const model = routes.load(BASE);
     const swift = routes.swift(model);
-    const kotlin = routes.kotlin(model, "com.example.corenavigation");
+    const kotlin = routes.kotlin(model, "com.example.core.navigation");
     expect(swift).toContain("case itemDetail(id: String)");
     expect(kotlin).toContain("data class ItemDetail(val id: String) : Route");
     expect(swift).toContain('case .home: "ホーム"');

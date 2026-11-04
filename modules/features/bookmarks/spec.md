@@ -27,6 +27,7 @@
 外部 API は呼び出さない。`shared/bookmarks`、`core/navigation`、`core/network`（画像取得）、`core/storage`（表示設定）、`shared/designsystem` に依存する。他 feature には依存しない。
 
 ## OS 固有の差分
+- モジュール名は iOS が `FeatureBookmarks`、Android のパッケージは `com.example.features.bookmarks`。
 - iOS は @MainActor / Observation と @State、Android は ViewModel / StateFlow とエントリごとの ViewModelStore。公開入口は Screen、内部描画は Swift の View / Kotlin の Content。
 - iOS の List / シートと Android の LazyColumn / ボトムシートを使う。読み上げラベルと文字拡大に対応する。プロセス終了後の画面スタック復元は対象外。
 

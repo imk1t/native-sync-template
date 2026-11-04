@@ -28,12 +28,12 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.example.corenavigation.AppTab
-import com.example.corenavigation.Modal
-import com.example.corenavigation.ModalStyle
-import com.example.corenavigation.NavigationEntry
-import com.example.corenavigation.Navigator
-import com.example.corenavigation.Route
+import com.example.core.navigation.AppTab
+import com.example.core.navigation.Modal
+import com.example.core.navigation.ModalStyle
+import com.example.core.navigation.NavigationEntry
+import com.example.core.navigation.Navigator
+import com.example.core.navigation.Route
 
 /** Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。 */
 @Composable

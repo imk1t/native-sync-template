@@ -8,7 +8,7 @@ import { capture, copyRepo, replace } from "./helpers";
 const SCENARIO = "specs/scenarios/github-search.yaml";
 const IOS_TEST = "modules/features/search/ios/Tests/FeatureSearchTests/RepositorySearchViewModelTests.swift";
 const ANDROID_TEST =
-  "modules/features/search/android/src/test/kotlin/com/example/featuresearch/RepositorySearchViewModelTest.kt";
+  "modules/features/search/android/src/test/kotlin/com/example/features/search/RepositorySearchViewModelTest.kt";
 
 describe("check-scenarios", () => {
   let root: string;
