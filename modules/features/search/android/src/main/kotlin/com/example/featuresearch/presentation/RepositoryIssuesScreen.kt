@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corenavigation.Navigator
 import com.example.designsystem.StatusBadge
 
@@ -45,10 +47,14 @@ private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item {
-                Text("Issues", style = MaterialTheme.typography.headlineLarge)
+                Text(Message.IssuesTitle.localized(), style = MaterialTheme.typography.headlineLarge)
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    FilterChip(filter == "open", { viewModel.changeState("open") }, label = { Text("Open") })
-                    FilterChip(filter == "closed", { viewModel.changeState("closed") }, label = { Text("Closed") })
+                    FilterChip(filter == "open", {
+                        viewModel.changeState("open")
+                    }, label = { Text(Message.IssueOpen.localized()) })
+                    FilterChip(filter == "closed", {
+                        viewModel.changeState("closed")
+                    }, label = { Text(Message.IssueClosed.localized()) })
                 }
             }
             items(state.items, key = { it.id }) { issue ->
@@ -60,7 +66,7 @@ private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
                 ) {
                     Text(issue.title, style = MaterialTheme.typography.titleMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        StatusBadge(issue.state, issue.state == "open")
+                        StatusBadge(issueStateLabel(issue.state), issue.state == "open")
                         Text("#${issue.number}")
                     }
                     Text(issue.updatedAt, style = MaterialTheme.typography.bodySmall)

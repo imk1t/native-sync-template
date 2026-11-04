@@ -1,0 +1,23 @@
+{
+  "sourceLanguage": "ja",
+  "strings": {
+    "CFBundleDisplayName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub Explorer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub Explorer"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

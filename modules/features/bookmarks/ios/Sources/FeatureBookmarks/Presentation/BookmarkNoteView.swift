@@ -1,34 +1,40 @@
+import CoreLocalization
 import DesignSystem
 import SwiftUI
 
 struct BookmarkNoteView: View {
+    @Environment(\.locale) private var locale
     @Bindable private var viewModel: BookmarkNoteViewModel
     init(viewModel: BookmarkNoteViewModel) { self.viewModel = viewModel }
     var body: some View {
         Form {
-            Section("メモ") {
-                TextField("気になったことを書いておきましょう", text: $viewModel.note, axis: .vertical)
+            Section(Message.bookmarksNote.resolve(locale: locale)) {
+                TextField(Message.bookmarksNotePrompt.resolve(locale: locale), text: $viewModel.note, axis: .vertical)
                     .lineLimit(6...12).disabled(!viewModel.isLoaded || viewModel.isSaving)
-                Text("\(viewModel.characterCount) / 1,000文字")
+                Text(Message.bookmarksNoteCount(count: viewModel.characterCount).resolve(locale: locale))
                     .foregroundStyle(viewModel.characterCount > 1_000 ? .red : .secondary)
                     .font(.caption)
             }
             if let error = viewModel.error {
                 if viewModel.isLoaded {
-                    Text(error).foregroundStyle(.red)
+                    Text(error.resolve(locale: locale)).foregroundStyle(.red)
                 } else {
-                    ErrorState(error) { Task { await viewModel.load() } }
+                    ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
+                        Task { await viewModel.load() }
+                    }
                 }
             }
-            if viewModel.isSaving { LoadingIndicator() }
+            if viewModel.isSaving { LoadingIndicator(Message.commonLoading.resolve(locale: locale)) }
         }
-        .navigationTitle("メモを編集").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(Message.bookmarksEditNote.resolve(locale: locale)).navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("キャンセル", action: viewModel.cancel).disabled(viewModel.isSaving)
+                Button(Message.commonCancel.resolve(locale: locale), action: viewModel.cancel).disabled(
+                    viewModel.isSaving)
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("保存") { Task { await viewModel.save() } }.disabled(!viewModel.canSave)
+                Button(Message.commonSave.resolve(locale: locale)) { Task { await viewModel.save() } }.disabled(
+                    !viewModel.canSave)
             }
         }
         .interactiveDismissDisabled(viewModel.isSaving)

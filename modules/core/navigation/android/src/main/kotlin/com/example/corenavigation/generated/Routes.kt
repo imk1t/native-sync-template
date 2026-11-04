@@ -40,8 +40,8 @@ sealed interface Route {
 }
 
 /** specs/routes.yaml のタブ。 */
-enum class AppTab(val root: Route, val title: String) {
-    Home(Route.RepositorySearch, "探す"),
-    Saved(Route.Bookmarks, "保存済み"),
-    Settings(Route.Settings, "設定"),
+enum class AppTab(val root: Route) {
+    Home(Route.RepositorySearch),
+    Saved(Route.Bookmarks),
+    Settings(Route.Settings),
 }

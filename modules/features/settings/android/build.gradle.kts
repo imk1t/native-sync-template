@@ -14,6 +14,7 @@ android {
 }
 kotlin { jvmToolchain(17) }
 dependencies {
+    implementation(project(":core:localization"))
     implementation(project(":core:navigation"))
     implementation(project(":core:storage"))
     implementation(project(":shared:designsystem"))

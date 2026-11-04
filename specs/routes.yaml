@@ -1,13 +1,10 @@
 # 画面遷移の単一の正。生成物は tools/generate.ts で更新する。
 tabs:
   - id: home
-    title: 探す
     root: repositorySearch
   - id: saved
-    title: 保存済み
     root: bookmarks
   - id: settings
-    title: 設定
     root: settings
 routes:
   - name: repositorySearch

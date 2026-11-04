@@ -22,3 +22,6 @@ iOS は Observation と SwiftUI の Form / Toggle、Android は StateFlow と Co
 
 ## シナリオ
 - `specs/scenarios/settings.yaml`
+
+## ローカライズ
+UI 文言は core/localization の Message を表示時の言語で解決する。ViewModel は翻訳前のキー・引数を保持する。通信・保存の失敗は意味に応じて表示し、未知のエラーの内部メッセージは表示しない。既存の状態遷移・再試行・キャンセル動作は維持する。API の本文・名前やユーザーのメモは翻訳しない。

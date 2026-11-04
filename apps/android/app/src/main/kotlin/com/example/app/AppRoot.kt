@@ -28,6 +28,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corenavigation.AppTab
 import com.example.corenavigation.Modal
 import com.example.corenavigation.ModalStyle
@@ -68,7 +70,15 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
                             }
                             Icon(painterResource(icon), contentDescription = null)
                         },
-                        label = { Text(tab.title) }
+                        label = {
+                            Text(
+                                when (tab) {
+                                    AppTab.Home -> Message.SearchTitle
+                                    AppTab.Saved -> Message.CommonSaved
+                                    AppTab.Settings -> Message.SettingsTitle
+                                }.localized()
+                            )
+                        }
                     )
                 }
             }
@@ -77,7 +87,7 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
                 Column {
                     if (state.stack(state.selectedTab).isNotEmpty()) {
-                        TextButton(onClick = navigator::pop) { Text("戻る") }
+                        TextButton(onClick = navigator::pop) { Text(Message.CommonBack.localized()) }
                     }
                     NavDisplay(entries = entriesByTab.getValue(state.selectedTab), onBack = navigator::pop)
                 }

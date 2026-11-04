@@ -1,15 +1,17 @@
+import CoreLocalization
 import DesignSystem
 import SwiftUI
 
 struct RepositoryIssuesView: View {
+    @Environment(\.locale) private var locale
     @Bindable private var viewModel: RepositoryIssuesViewModel
     init(viewModel: RepositoryIssuesViewModel) { self.viewModel = viewModel }
 
     var body: some View {
         List {
-            Picker("状態", selection: $viewModel.issueState) {
-                Text("Open").tag("open")
-                Text("Closed").tag("closed")
+            Picker(Message.issueState.resolve(locale: locale), selection: $viewModel.issueState) {
+                Text(Message.issueOpen.resolve(locale: locale)).tag("open")
+                Text(Message.issueClosed.resolve(locale: locale)).tag("closed")
             }.pickerStyle(.segmented).onChange(of: viewModel.issueState) { viewModel.changeState() }
             ForEach(viewModel.content.state.items) { issue in
                 Button {
@@ -18,7 +20,7 @@ struct RepositoryIssuesView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(issue.title).font(.headline).foregroundStyle(.primary)
                         HStack {
-                            StatusBadge(issue.state, emphasized: issue.state == "open")
+                            StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
                             Text("#\(String(issue.number))").foregroundStyle(.secondary)
                         }
                         Text(issue.updatedAt).font(.caption).foregroundStyle(.secondary)
@@ -27,7 +29,7 @@ struct RepositoryIssuesView: View {
             }
             PageFooter(state: viewModel.content.state, retry: viewModel.retry, next: viewModel.nextPage)
         }
-        .navigationTitle("Issues").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(Message.issuesTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.inline)
         .task(id: viewModel.revision) { await viewModel.loadIfNeeded() }
         .refreshable { await viewModel.refresh() }
     }

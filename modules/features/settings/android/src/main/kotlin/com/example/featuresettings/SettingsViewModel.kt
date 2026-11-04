@@ -2,13 +2,14 @@ package com.example.featuresettings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.corelocalization.Message
 import com.example.corestorage.DisplaySettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class SettingsState(val isLoaded: Boolean = false, val isSaving: Boolean = false, val error: String? = null)
+data class SettingsState(val isLoaded: Boolean = false, val isSaving: Boolean = false, val error: Message? = null)
 
 internal class SettingsViewModel(val settings: DisplaySettings) : ViewModel() {
     private val mutableState = MutableStateFlow(SettingsState())
@@ -25,7 +26,7 @@ internal class SettingsViewModel(val settings: DisplaySettings) : ViewModel() {
         ) {
             throw e
         } catch (e: Exception) {
-            mutableState.value = state.value.copy(error = "設定を読み込めませんでした。再試行してください。")
+            mutableState.value = state.value.copy(error = Message.ErrorSettingsLoad)
         }
     }
     fun save(value: Boolean) {
@@ -44,7 +45,7 @@ internal class SettingsViewModel(val settings: DisplaySettings) : ViewModel() {
         } catch (
             e: Exception
         ) {
-            mutableState.value = state.value.copy(error = "設定を保存できませんでした。再試行してください。")
+            mutableState.value = state.value.copy(error = Message.ErrorSettingsSave)
         } finally {
             mutableState.value = state.value.copy(isSaving = false)
         }

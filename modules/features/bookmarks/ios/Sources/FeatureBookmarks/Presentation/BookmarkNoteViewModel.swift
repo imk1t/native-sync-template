@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreNavigation
 import Observation
 import SharedBookmarks
@@ -8,7 +9,7 @@ final class BookmarkNoteViewModel {
     var note = ""
     private(set) var isLoaded = false
     private(set) var isSaving = false
-    private(set) var error: String?
+    private(set) var error: Message?
     private let id: Int64?
     private let bookmarks: BookmarkRepository
     private let navigator: Navigator
@@ -30,7 +31,7 @@ final class BookmarkNoteViewModel {
             note = bookmark.note
             isLoaded = true
             error = nil
-        } catch { self.error = error.localizedDescription }
+        } catch { self.error = bookmarkMessage(for: error, fallback: .errorStorageLoad) }
     }
     func save() async {
         guard canSave, let id else { return }
@@ -39,7 +40,7 @@ final class BookmarkNoteViewModel {
         do {
             try await bookmarks.saveNote(id: id, note: note)
             close()
-        } catch { self.error = error.localizedDescription }
+        } catch { self.error = bookmarkMessage(for: error, fallback: .errorStorageSave) }
     }
     func cancel() { if !isSaving { close() } }
     private func close() {

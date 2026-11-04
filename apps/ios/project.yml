@@ -1,5 +1,6 @@
 # XcodeGen の定義。`xcodegen generate` で App.xcodeproj を作る（.xcodeproj はコミットしない）。
 name: App
+include: [Generated/Localization/config.yml]
 options:
   deploymentTarget:
     iOS: "18.0"
@@ -16,6 +17,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.app
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
+      - package: Modules
+        product: CoreLocalization
       - package: Modules
         product: FeatureSearch
       - package: Modules

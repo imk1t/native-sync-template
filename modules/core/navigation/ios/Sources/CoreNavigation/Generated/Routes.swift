@@ -33,14 +33,6 @@ public enum AppTab: String, CaseIterable, Hashable, Sendable {
         case .settings: .settings
         }
     }
-
-    public var title: String {
-        switch self {
-        case .home: "探す"
-        case .saved: "保存済み"
-        case .settings: "設定"
-        }
-    }
 }
 
 extension Route {

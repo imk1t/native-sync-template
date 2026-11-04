@@ -29,3 +29,5 @@ module(":shared:bookmarks", "shared/bookmarks")
 module(":features:bookmarks", "features/bookmarks")
 module(":features:search", "features/search")
 module(":features:settings", "features/settings")
+
+module(":core:localization", "core/localization")

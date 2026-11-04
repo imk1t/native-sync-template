@@ -2,6 +2,7 @@ package com.example.featuresearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.corelocalization.Message
 import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
 import com.example.corenetwork.RepositorySummary
@@ -17,8 +18,8 @@ internal class RepositorySearchViewModel(val dependencies: SearchDependencies, p
     ViewModel() {
     private val mutableForm = MutableStateFlow(SearchForm())
     val form: StateFlow<SearchForm> = mutableForm
-    private val mutableStorageError = MutableStateFlow<String?>(null)
-    val storageError: StateFlow<String?> = mutableStorageError
+    private val mutableStorageError = MutableStateFlow<Message?>(null)
+    val storageError: StateFlow<Message?> = mutableStorageError
     val content = PageLoader<RepositorySummary> { it.id }
     private var submitted: Pair<String, String?>? = null
     private var requestedPage = 1
@@ -72,7 +73,7 @@ internal class RepositorySearchViewModel(val dependencies: SearchDependencies, p
         ) {
             throw e
         } catch (e: Exception) {
-            mutableStorageError.value = "保存データの読み込みに失敗しました。再試行してください。"
+            mutableStorageError.value = Message.ErrorStorageLoad
         }
         val (query, sort) = submitted ?: return
         val page = requestedPage

@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingIndicator() {
+fun LoadingIndicator(label: String) {
     Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         CircularProgressIndicator()
-        Text("読み込み中")
+        Text(label)
     }
 }
 
@@ -32,10 +32,10 @@ fun EmptyState(title: String, message: String) {
 }
 
 @Composable
-fun ErrorState(message: String, retry: () -> Unit) {
+fun ErrorState(message: String, retryLabel: String, retry: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         Text(message, color = MaterialTheme.colorScheme.error)
-        TextButton(onClick = retry) { Text("再試行") }
+        TextButton(onClick = retry) { Text(retryLabel) }
     }
 }
 

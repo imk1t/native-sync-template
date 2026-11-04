@@ -1,3 +1,4 @@
+import CoreLocalization
 import CoreNavigation
 import Observation
 import SharedBookmarks
@@ -7,7 +8,7 @@ import SharedBookmarks
 final class BookmarksViewModel {
     let dependencies: BookmarksDependencies
     var pendingDelete: Bookmark?
-    private(set) var error: String?
+    private(set) var error: Message?
     private(set) var isLoading = false
     private let navigator: Navigator
 
@@ -22,7 +23,7 @@ final class BookmarksViewModel {
         do {
             try await dependencies.loadLocalData()
             error = nil
-        } catch { self.error = "保存データの読み込みに失敗しました。再試行してください。" }
+        } catch { self.error = Message.errorStorageLoad }
     }
     func select(_ bookmark: Bookmark) {
         navigator.push(.repositoryDetail(owner: bookmark.repository.owner, repo: bookmark.repository.name))
@@ -34,6 +35,6 @@ final class BookmarksViewModel {
         do {
             try await dependencies.bookmarks.remove(id)
             error = nil
-        } catch { self.error = "削除を保存できませんでした。再試行してください。" }
+        } catch { self.error = Message.errorStorageDelete }
     }
 }

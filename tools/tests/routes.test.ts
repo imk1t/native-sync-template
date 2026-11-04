@@ -7,7 +7,7 @@ import * as routes from "../lib/routes";
 import { type Dict, readYaml, ROOT } from "../lib/util";
 
 const BASE = {
-  tabs: [{ id: "home", title: "ホーム", root: "items" }],
+  tabs: [{ id: "home", root: "items" }],
   routes: [
     { name: "items", feature: "features/items", deepLink: "/items" },
     { name: "itemDetail", feature: "features/items", params: { id: "string" }, deepLink: "/items/{id}" },
@@ -29,8 +29,8 @@ describe("routes", () => {
     const kotlin = routes.kotlin(model, "com.example.corenavigation");
     expect(swift).toContain("case itemDetail(id: String)");
     expect(kotlin).toContain("data class ItemDetail(val id: String) : Route");
-    expect(swift).toContain('case .home: "ホーム"');
-    expect(kotlin).toContain('Home(Route.Items, "ホーム"),');
+    expect(swift).not.toContain("var title");
+    expect(kotlin).toContain("Home(Route.Items),");
   });
 
   test("固定の区切りを引数より先に照合する", () => {
