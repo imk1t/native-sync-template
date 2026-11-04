@@ -4,15 +4,19 @@ public struct RepositoryRow: View {
     let repository: RepositoryRowData
     let saved: Bool
     let showDescription: Bool
+    let starsLabel: String
+    let savedLabel: String
     let loadImage: (String) async throws -> Data
 
     public init(
         repository: RepositoryRowData, saved: Bool, showDescription: Bool,
-        loadImage: @escaping (String) async throws -> Data
+        starsLabel: String, savedLabel: String, loadImage: @escaping (String) async throws -> Data
     ) {
         self.repository = repository
         self.saved = saved
         self.showDescription = showDescription
+        self.starsLabel = starsLabel
+        self.savedLabel = savedLabel
         self.loadImage = loadImage
     }
 
@@ -25,9 +29,9 @@ public struct RepositoryRow: View {
                     Text(description).font(.subheadline).foregroundStyle(.secondary).lineLimit(3)
                 }
                 HStack {
-                    Label(repository.stars.formatted(), systemImage: "star")
+                    Label(starsLabel, systemImage: "star")
                     if let language = repository.language { Text(language) }
-                    if saved { Label("保存済み", systemImage: "bookmark.fill") }
+                    if saved { Label(savedLabel, systemImage: "bookmark.fill") }
                 }.font(.caption).foregroundStyle(.secondary)
             }
         }.padding(.vertical, 6).accessibilityElement(children: .combine)

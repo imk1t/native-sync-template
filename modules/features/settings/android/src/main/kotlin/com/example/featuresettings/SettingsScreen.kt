@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corestorage.DisplaySettings
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
@@ -37,6 +39,7 @@ fun SettingsScreen(settings: DisplaySettings) {
 
 @Composable
 private fun SettingsContent(viewModel: SettingsViewModel) {
+    val descriptionsLabel = Message.SettingsDescriptions.localized()
     val state by viewModel.state.collectAsState()
     val descriptions by viewModel.settings.showDescriptions.collectAsState()
     LaunchedEffect(viewModel) { viewModel.load() }
@@ -44,20 +47,20 @@ private fun SettingsContent(viewModel: SettingsViewModel) {
         Modifier.verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("設定", style = MaterialTheme.typography.headlineLarge)
+        Text(Message.SettingsTitle.localized(), style = MaterialTheme.typography.headlineLarge)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("一覧に説明文を表示", Modifier.weight(1f))
+            Text(Message.SettingsDescriptions.localized(), Modifier.weight(1f))
             Switch(
                 descriptions,
                 viewModel::save,
                 enabled = state.isLoaded && !state.isSaving,
-                modifier = Modifier.semantics { contentDescription = "一覧に説明文を表示" }
+                modifier = Modifier.semantics { contentDescription = descriptionsLabel }
             )
         }
-        if (state.isSaving) LoadingIndicator()
-        state.error?.let { ErrorState(it, viewModel::load) }
-        Text("GitHub Explorer", style = MaterialTheme.typography.titleLarge)
-        Text("公開リポジトリを探して保存する、iOS・Android のネイティブ開発サンプルです。")
-        Text("ブックマークとメモはこの端末に保存されます。GitHub の Star とは連動しません。")
+        if (state.isSaving) LoadingIndicator(Message.CommonLoading.localized())
+        state.error?.let { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load) }
+        Text(Message.AppName.localized(), style = MaterialTheme.typography.titleLarge)
+        Text(Message.SettingsDescription.localized())
+        Text(Message.SettingsStorageNote.localized())
     }
 }

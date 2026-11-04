@@ -6,7 +6,11 @@ plugins {
 android {
     namespace = "com.example.app"
     compileSdk = 36
+    androidResources { generateLocaleConfig = true }
+    sourceSets["main"].res.srcDir("src/main/generated/localization/res")
     defaultConfig {
+        resourceConfigurations +=
+            file("src/main/generated/localization/locales.txt").readLines().filter { it.isNotBlank() }
         applicationId = "com.example.app"
         minSdk = 28
         targetSdk = 36
@@ -20,6 +24,7 @@ android {
 }
 kotlin { jvmToolchain(17) }
 dependencies {
+    implementation(project(":core:localization"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":shared:bookmarks"))

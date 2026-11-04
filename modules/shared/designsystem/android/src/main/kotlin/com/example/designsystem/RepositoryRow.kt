@@ -32,6 +32,8 @@ fun RepositoryRow(
     repository: RepositoryRowData,
     saved: Boolean,
     showDescription: Boolean,
+    starsLabel: String,
+    savedLabel: String,
     loadImage: suspend (String) -> ByteArray
 ) {
     Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -49,9 +51,9 @@ fun RepositoryRow(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Star ${repository.stars}", style = MaterialTheme.typography.labelMedium)
+                Text(starsLabel, style = MaterialTheme.typography.labelMedium)
                 repository.language?.let { Text(it, style = MaterialTheme.typography.labelMedium) }
-                if (saved) Text("保存済み", style = MaterialTheme.typography.labelMedium)
+                if (saved) Text(savedLabel, style = MaterialTheme.typography.labelMedium)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.featuresearch
 
+import com.example.corelocalization.Message
 import com.example.corenetwork.Page
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
@@ -42,7 +43,7 @@ class PageLoader<T>(private val id: (T) -> Long) {
             if (current ==
                 generation
             ) {
-                mutableState.value = state.value.copy(error = e.message ?: "通信に失敗しました。再試行してください。")
+                mutableState.value = state.value.copy(error = SearchFailure.from(e))
             }
         } finally {
             if (current == generation) mutableState.value = state.value.copy(isLoading = false)

@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corenavigation.Navigator
 import com.example.designsystem.EmptyState
 import com.example.designsystem.ErrorState
@@ -53,10 +55,14 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
     var pendingDelete by remember { mutableStateOf<Bookmark?>(null) }
     LaunchedEffect(viewModel) { viewModel.load() }
     LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text("保存済み", style = MaterialTheme.typography.headlineLarge) }
-        if (loading) item { LoadingIndicator() }
-        error?.let { item { ErrorState(it, viewModel::load) } }
-        if (loaded && bookmarks.isEmpty()) item { EmptyState("まだ保存されていません", "「探す」からリポジトリを開き、保存してみましょう。") }
+        item { Text(Message.CommonSaved.localized(), style = MaterialTheme.typography.headlineLarge) }
+        if (loading) item { LoadingIndicator(Message.CommonLoading.localized()) }
+        error?.let { item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load) } }
+        if (loaded &&
+            bookmarks.isEmpty()
+        ) {
+            item { EmptyState(Message.BookmarksEmptyTitle.localized(), Message.BookmarksEmptyMessage.localized()) }
+        }
         items(bookmarks, key = { it.id }) { bookmark ->
             Column {
                 Column(Modifier.fillMaxWidth().clickable { viewModel.select(bookmark) }) {
@@ -71,13 +77,17 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
                         ),
                         true,
                         descriptions,
+                        Message.RepositoryStars(bookmark.repository.stars).localized(),
+                        Message.CommonSaved.localized(),
                         viewModel.dependencies.images::load
                     )
                     if (bookmark.note.isNotEmpty()) Text(bookmark.note, maxLines = 2)
                 }
                 Row {
-                    TextButton({ viewModel.edit(bookmark) }) { Text("メモを編集") }
-                    TextButton({ pendingDelete = bookmark }) { Text("削除", color = MaterialTheme.colorScheme.error) }
+                    TextButton({ viewModel.edit(bookmark) }) { Text(Message.BookmarksEditNote.localized()) }
+                    TextButton({
+                        pendingDelete = bookmark
+                    }) { Text(Message.CommonDelete.localized(), color = MaterialTheme.colorScheme.error) }
                 }
                 HorizontalDivider()
             }
@@ -86,15 +96,15 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
     pendingDelete?.let { bookmark ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("保存を解除しますか？") },
-            text = { Text("このリポジトリのメモも削除されます。") },
+            title = { Text(Message.BookmarksDeleteTitle.localized()) },
+            text = { Text(Message.BookmarksDeleteMessage.localized()) },
             confirmButton = {
                 TextButton({
                     pendingDelete = null
                     viewModel.remove(bookmark.id)
-                }) { Text("削除") }
+                }) { Text(Message.CommonDelete.localized()) }
             },
-            dismissButton = { TextButton({ pendingDelete = null }) { Text("キャンセル") } }
+            dismissButton = { TextButton({ pendingDelete = null }) { Text(Message.CommonCancel.localized()) } }
         )
     }
 }

@@ -3,7 +3,7 @@
  *
  * 未対応の書き方は黙って無視せず Error で失敗する。
  * - routes: name（lowerCamelCase）・feature・params（string / integer）・deepLink
- * - tabs: id（lowerCamelCase）・title・root（引数の無い route）
+ * - tabs: id（lowerCamelCase）・root（引数の無い route）
  * - feature は modules/ 配下の spec.md のあるモジュールで、その spec.md が `name` を参照していること
  */
 import { compare, isDict, isFile, join, readText } from "./util";
@@ -20,7 +20,7 @@ export type Route = {
   params: [string, ParamType][];
   segments: string[] | null;
 };
-export type Tab = { id: string; title: string; root: string };
+export type Tab = { id: string; root: string };
 export type RoutesModel = { routes: Route[]; tabs: Tab[] };
 
 function cap(name: string): string {
@@ -118,21 +118,17 @@ export function load(doc: unknown, root?: string): RoutesModel {
   const byName = new Map(routes.map((r) => [r.name, r]));
   rawTabs.forEach((raw: unknown, index) => {
     const where = `tabs[${index}]`;
-    if (!isDict(raw) || !sameMembers(Object.keys(raw), ["id", "title", "root"])) {
-      throw new Error(`${where}: id・title・root を書いてください`);
+    if (!isDict(raw) || !sameMembers(Object.keys(raw), ["id", "root"])) {
+      throw new Error(`${where}: id・root を書いてください`);
     }
     const tabId = ident(raw.id, `${where}.id`);
     if (ids.has(tabId)) throw new Error(`${where}.id: 重複しています: ${tabId}`);
     ids.add(tabId);
-    const title = raw.title;
-    if (typeof title !== "string" || !title || title.includes('"') || title.includes("\\")) {
-      throw new Error(`${where}.title: 空でない文字列にしてください（" と \\ は使えません）`);
-    }
     const rootRoute = typeof raw.root === "string" ? byName.get(raw.root) : undefined;
     if (rootRoute === undefined || rootRoute.params.length > 0) {
       throw new Error(`${where}.root: 引数の無い route の name にしてください: ${JSON.stringify(raw.root ?? null)}`);
     }
-    tabs.push({ id: tabId, title, root: rootRoute.name });
+    tabs.push({ id: tabId, root: rootRoute.name });
   });
   return { routes, tabs };
 }
@@ -169,8 +165,6 @@ export function swift(model: RoutesModel): string {
   out.push(...model.tabs.map((t) => `    case ${t.id}`));
   out.push("", "    /// タブの先頭の画面", "    public var root: Route {", "        switch self {");
   out.push(...model.tabs.map((t) => `        case .${t.id}: .${t.root}`));
-  out.push("        }", "    }", "", "    public var title: String {", "        switch self {");
-  out.push(...model.tabs.map((t) => `        case .${t.id}: "${t.title}"`));
   out.push(
     "        }",
     "    }",
@@ -261,9 +255,9 @@ export function kotlin(model: RoutesModel, pkg: string): string {
     "}",
     "",
     "/** specs/routes.yaml のタブ。 */",
-    "enum class AppTab(val root: Route, val title: String) {",
+    "enum class AppTab(val root: Route) {",
   );
-  out.push(...model.tabs.map((t) => `    ${cap(t.id)}(Route.${cap(t.root)}, "${t.title}"),`));
+  out.push(...model.tabs.map((t) => `    ${cap(t.id)}(Route.${cap(t.root)}),`));
   out.push("}", "");
   return out.join("\n");
 }

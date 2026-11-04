@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corenavigation.Navigator
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
@@ -44,25 +46,32 @@ private fun BookmarkNoteContent(viewModel: BookmarkNoteViewModel) {
         Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).imePadding().padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("メモを編集", style = MaterialTheme.typography.headlineSmall)
+        Text(Message.BookmarksEditNote.localized(), style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(
             state.note,
             viewModel::edit,
             Modifier.fillMaxWidth(),
             enabled = state.isLoaded && !state.isSaving,
-            label = { Text("気になったことを書いておきましょう") },
+            label = { Text(Message.BookmarksNotePrompt.localized()) },
             minLines = 6,
             maxLines = 10,
             isError = state.characterCount > 1_000
         )
-        Text("${state.characterCount} / 1,000文字")
+        Text(Message.BookmarksNoteCount(state.characterCount).localized())
         state.error?.let {
-            if (state.isLoaded) Text(it, color = MaterialTheme.colorScheme.error) else ErrorState(it, viewModel::load)
+            if (state.isLoaded) {
+                Text(
+                    it.localized(),
+                    color = MaterialTheme.colorScheme.error
+                )
+            } else {
+                ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load)
+            }
         }
-        if (state.isSaving) LoadingIndicator()
+        if (state.isSaving) LoadingIndicator(Message.CommonLoading.localized())
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            TextButton(viewModel::cancel, enabled = !state.isSaving) { Text("キャンセル") }
-            Button(viewModel::save, enabled = state.canSave) { Text("保存") }
+            TextButton(viewModel::cancel, enabled = !state.isSaving) { Text(Message.CommonCancel.localized()) }
+            Button(viewModel::save, enabled = state.canSave) { Text(Message.CommonSave.localized()) }
         }
     }
 }

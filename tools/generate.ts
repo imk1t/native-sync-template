@@ -7,6 +7,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import * as localization from "./lib/localization";
 import * as openapi from "./lib/openapi";
 import * as routes from "./lib/routes";
 import { compare, type Dict, isDict, join, readText, readYaml, ROOT } from "./lib/util";
@@ -89,20 +90,26 @@ function write(root: string, path: string, text: string): void {
 }
 
 export function generate(root: string = ROOT): void {
+  const pending: Record<string, string> = {};
+  const localized = localization.outputs(localization.load(root));
   const tokens = JSON.parse(readText(join(root, "specs/tokens/tokens.json"))) as Tokens;
-  write(root, OUTPUTS.iosTokens, swiftTokens(tokens));
-  write(root, OUTPUTS.androidTokens, kotlinTokens(tokens));
+  pending[OUTPUTS.iosTokens] = swiftTokens(tokens);
+  pending[OUTPUTS.androidTokens] = kotlinTokens(tokens);
 
   const api = readYaml(join(root, "specs/openapi/openapi.yaml"));
   const spec = new openapi.Spec(isDict(api) ? api : ({} as Dict));
-  write(root, OUTPUTS.iosModels, openapi.swiftModels(spec));
-  write(root, OUTPUTS.iosClient, openapi.swiftClient(spec));
-  write(root, OUTPUTS.androidModels, openapi.kotlinModels(spec, "com.example.corenetwork"));
-  write(root, OUTPUTS.androidClient, openapi.kotlinClient(spec, "com.example.corenetwork"));
+  pending[OUTPUTS.iosModels] = openapi.swiftModels(spec);
+  pending[OUTPUTS.iosClient] = openapi.swiftClient(spec);
+  pending[OUTPUTS.androidModels] = openapi.kotlinModels(spec, "com.example.corenetwork");
+  pending[OUTPUTS.androidClient] = openapi.kotlinClient(spec, "com.example.corenetwork");
 
   const model = routes.load(readYaml(join(root, "specs/routes.yaml")), root);
-  write(root, OUTPUTS.iosRoutes, routes.swift(model));
-  write(root, OUTPUTS.androidRoutes, routes.kotlin(model, "com.example.corenavigation"));
+  pending[OUTPUTS.iosRoutes] = routes.swift(model);
+  pending[OUTPUTS.androidRoutes] = routes.kotlin(model, "com.example.corenavigation");
+
+  localization.clean(root);
+  for (const [path, text] of Object.entries(pending)) write(root, path, text);
+  for (const [path, text] of Object.entries(localized)) write(root, path, text);
 }
 
 if (import.meta.main) {

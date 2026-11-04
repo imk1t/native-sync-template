@@ -1,2 +1,117 @@
-# 両 OS のテストに同名の @scenario マーカーを記載する。
-{name: github-search,feature: features/search,steps: [{id: load-succeeds,name: 確定した検索結果を表示し再表示で二重取得しない,given: &given {search/repos: {status: 200,body: {total_count: 1,incomplete_results: false,items: [{id: 5000000001,name: Hello-World,full_name: octocat/Hello-World,description: GitHub API を使うネイティブアプリのサンプル。,owner: {login: octocat,avatar_url: ""},language: Swift,stargazers_count: 120,forks_count: 20,topics: [swift,android,sample],html_url: https://github.com/octocat/Hello-World}]}}},when: swift を確定し再表示する,then: {count: 1,requests: 1}},{id: blank,name: 空白のみの入力は送信しない,given: {localState: {values: {}}},when: 空白だけを確定する,then: {requests: 0}},{id: change-conditions,name: 言語・並べ替えを反映し結果をリセットする,given: *given,when: Swift/stars 検索後 Kotlin に変更する,then: {query: kotlin is:public language:Kotlin,page: 1}},{id: load-fails,name: 失敗を表示して手動で再試行できる,given: {search/repos: {status: 500,body: {message: failed}}},when: 取得失敗後に再試行し200を返す,then: {count: 1,error: null}},{id: empty,name: 0件を読み込み済みの空状態として表示する,given: {search/repos: {status: 200,body: {total_count: 0,incomplete_results: false,items: []}}},when: 検索する,then: {hasLoaded: true,count: 0}},{id: pagination,name: 追加失敗でも一覧を保ち重複IDと終端を処理する,given: *given,when: 1件を取得、2ページ目失敗、重複を含む2件で再試行する,then: {ids: [1,2],nextPage: null,incomplete: APIの値を表示,limitReached: APIの値を表示}},{id: stale-response,name: 条件変更前の結果が遅れても上書きしない,given: &given1 {search/repos: {pending: true}},when: 未完了の取得を残して条件を変更し新しい結果を取得する,then: {ids: [2],error: null}},{id: cancellation,name: 画面の取得キャンセルはエラーにしない,given: *given1,when: 取得をキャンセルし再表示する,then: {isLoading: false,error: null,reload: true}},{id: cache,name: 同条件の再取得を5分抑制し明示的な更新は迂回する,given: *given,when: 同条件2回、更新、301秒経過、別の並べ替えで取得する,then: {requests: 4}}]}
+name: github-search
+feature: features/search
+steps:
+  - id: load-succeeds
+    name: 確定した検索結果を表示し再表示で二重取得しない
+    given: &a1
+      search/repos:
+        status: 200
+        body:
+          total_count: 1
+          incomplete_results: false
+          items:
+            - id: 5000000001
+              name: Hello-World
+              full_name: octocat/Hello-World
+              description: GitHub API を使うネイティブアプリのサンプル。
+              owner:
+                login: octocat
+                avatar_url: ""
+              language: Swift
+              stargazers_count: 120
+              forks_count: 20
+              topics:
+                - swift
+                - android
+                - sample
+              html_url: https://github.com/octocat/Hello-World
+    when: swift を確定し再表示する
+    then:
+      count: 1
+      requests: 1
+  - id: blank
+    name: 空白のみの入力は送信しない
+    given:
+      localState:
+        values: {}
+    when: 空白だけを確定する
+    then:
+      requests: 0
+  - id: change-conditions
+    name: 言語・並べ替えを反映し結果をリセットする
+    given: *a1
+    when: Swift/stars 検索後 Kotlin に変更する
+    then:
+      query: kotlin is:public language:Kotlin
+      page: 1
+  - id: load-fails
+    name: 失敗を表示して手動で再試行できる
+    given:
+      search/repos:
+        status: 500
+        body:
+          message: failed
+    when: 取得失敗後に再試行し200を返す
+    then:
+      count: 1
+      error: null
+  - id: empty
+    name: 0件を読み込み済みの空状態として表示する
+    given:
+      search/repos:
+        status: 200
+        body:
+          total_count: 0
+          incomplete_results: false
+          items: []
+    when: 検索する
+    then:
+      hasLoaded: true
+      count: 0
+  - id: pagination
+    name: 追加失敗でも一覧を保ち重複IDと終端を処理する
+    given: *a1
+    when: 1件を取得、2ページ目失敗、重複を含む2件で再試行する
+    then:
+      ids:
+        - 1
+        - 2
+      nextPage: null
+      incomplete: APIの値を表示
+      limitReached: APIの値を表示
+  - id: stale-response
+    name: 条件変更前の結果が遅れても上書きしない
+    given: &a2
+      search/repos:
+        pending: true
+    when: 未完了の取得を残して条件を変更し新しい結果を取得する
+    then:
+      ids:
+        - 2
+      error: null
+  - id: cancellation
+    name: 画面の取得キャンセルはエラーにしない
+    given: *a2
+    when: 取得をキャンセルし再表示する
+    then:
+      isLoading: false
+      error: null
+      reload: true
+  - id: cache
+    name: 同条件の再取得を5分抑制し明示的な更新は迂回する
+    given: *a1
+    when: 同条件2回、更新、301秒経過、別の並べ替えで取得する
+    then:
+      requests: 4
+  - id: localized-failure
+    name: 通信エラーは翻訳前のキーとステータスを保持する
+    given:
+      search/repos:
+        status: 500
+        body:
+          message: failed
+    when: 検索が失敗する
+    then:
+      errorKey: error_server
+      arguments:
+        status: 500

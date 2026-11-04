@@ -1,15 +1,23 @@
+import CoreLocalization
 import DesignSystem
 import SwiftUI
 
 struct BookmarksView: View {
+    @Environment(\.locale) private var locale
     @Bindable private var viewModel: BookmarksViewModel
     init(viewModel: BookmarksViewModel) { self.viewModel = viewModel }
     var body: some View {
         List {
-            if viewModel.isLoading { LoadingIndicator() }
-            if let error = viewModel.error { ErrorState(error) { Task { await viewModel.load() } } }
+            if viewModel.isLoading { LoadingIndicator(Message.commonLoading.resolve(locale: locale)) }
+            if let error = viewModel.error {
+                ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
+                    Task { await viewModel.load() }
+                }
+            }
             if viewModel.dependencies.bookmarks.isLoaded && viewModel.dependencies.bookmarks.items.isEmpty {
-                EmptyState("まだ保存されていません", message: "「探す」からリポジトリを開き、保存してみましょう。", symbol: "bookmark")
+                EmptyState(
+                    Message.bookmarksEmptyTitle.resolve(locale: locale),
+                    message: Message.bookmarksEmptyMessage.resolve(locale: locale), symbol: "bookmark")
             }
             ForEach(viewModel.dependencies.bookmarks.items) { bookmark in
                 VStack(alignment: .leading, spacing: 8) {
@@ -23,31 +31,40 @@ struct BookmarksView: View {
                                 language: bookmark.repository.language, stars: bookmark.repository.stars),
                             saved: true,
                             showDescription: viewModel.dependencies.settings.showDescriptions,
+                            starsLabel: Message.repositoryStars(count: bookmark.repository.stars).resolve(
+                                locale: locale),
+                            savedLabel: Message.commonSaved.resolve(locale: locale),
                             loadImage: { try await viewModel.dependencies.images.load($0) })
                     }.buttonStyle(.plain)
                     if !bookmark.note.isEmpty {
                         Text(bookmark.note).font(.subheadline).lineLimit(2).foregroundStyle(.secondary)
                     }
                     HStack {
-                        Button("メモを編集", systemImage: "square.and.pencil") { viewModel.edit(bookmark) }
+                        Button(Message.bookmarksEditNote.resolve(locale: locale), systemImage: "square.and.pencil") {
+                            viewModel.edit(bookmark)
+                        }
                         Spacer()
-                        Button("削除", systemImage: "trash", role: .destructive) { viewModel.pendingDelete = bookmark }
+                        Button(Message.commonDelete.resolve(locale: locale), systemImage: "trash", role: .destructive) {
+                            viewModel.pendingDelete = bookmark
+                        }
                     }.buttonStyle(.borderless).font(.subheadline)
                 }
             }
         }
-        .navigationTitle("保存済み")
+        .navigationTitle(Message.commonSaved.resolve(locale: locale))
         .task { await viewModel.load() }
         .alert(
-            "保存を解除しますか？",
+            Message.bookmarksDeleteTitle.resolve(locale: locale),
             isPresented: Binding(
                 get: { viewModel.pendingDelete != nil }, set: { if !$0 { viewModel.pendingDelete = nil } }
             ), presenting: viewModel.pendingDelete
         ) { bookmark in
-            Button("削除", role: .destructive) { Task { await viewModel.remove(bookmark.id) } }
-            Button("キャンセル", role: .cancel) {}
+            Button(Message.commonDelete.resolve(locale: locale), role: .destructive) {
+                Task { await viewModel.remove(bookmark.id) }
+            }
+            Button(Message.commonCancel.resolve(locale: locale), role: .cancel) {}
         } message: { _ in
-            Text("このリポジトリのメモも削除されます。")
+            Text(Message.bookmarksDeleteMessage.resolve(locale: locale))
         }
     }
 }

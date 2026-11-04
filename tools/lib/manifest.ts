@@ -16,12 +16,14 @@ export function iosTargets(root: string): Map<string, IosTarget> {
   const targets = new Map<string, IosTarget>();
   const text = readText(join(root, "modules/Package.swift"));
   const row =
-    /^\s*\.target\(\s*name:\s*"([^"]+)"\s*,\s*(?:dependencies:\s*\[(.*)\]\s*,\s*)?path:\s*"([^"]+)"\s*\)\s*,?\s*$/;
+    /^\s*\.target\(\s*name:\s*"([^"]+)"\s*,\s*(?:dependencies:\s*\[(.*)\]\s*,\s*)?path:\s*"([^"]+)"\s*(?:,\s*resources:\s*\[(?:\.process\("[^"]+"\)(?:,\s*)?)+\]\s*)?\)\s*,?\s*$/;
   for (const line of text.split(/\r?\n/)) {
     if (!line.trim().startsWith(".target(")) continue;
     const match = row.exec(line);
     if (!match) {
-      throw new Error(`iOS target は name・dependencies・path の順に1行で記述してください: ${line.trim()}`);
+      throw new Error(
+        `iOS target は name・dependencies・path・resources（省略可、.process のみ）の順に1行で記述してください: ${line.trim()}`,
+      );
     }
     const [, name = "", deps = "", path = ""] = match;
     const index = path.indexOf("/ios/");

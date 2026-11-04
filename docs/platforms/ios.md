@@ -16,3 +16,9 @@ xcodebuild -project App.xcodeproj -scheme App -destination 'platform=iOS Simulat
 
 ## 画面まわり
 - セーフエリアは SwiftUI が既定で扱うため、アプリ層で inset を意識する必要はない。
+
+## ローカライズ
+- 原本は `specs/localization/messages-*.yaml`。`bun tools/generate.ts` で CoreLocalization の String Catalog とアプリの InfoPlist.xcstrings、言語設定を生成する。
+- SwiftPM の defaultLocalization と XcodeGen の developmentLanguage / knownRegions は生成設定を参照する。生成後に `xcodegen generate` を実行する。
+- View は `@Environment(\.locale)` を渡して `Message.resolve(locale:)` を呼ぶ。Core 内で LocalizedStringResource と Bundle.module を指定する。翻訳済み文字列を ViewModel に保存しない。
+- CoreLocalizationTests は Simulator で実リソースの日本語・英語・未対応言語・複数形を検証する。詳細は ADR 0006。

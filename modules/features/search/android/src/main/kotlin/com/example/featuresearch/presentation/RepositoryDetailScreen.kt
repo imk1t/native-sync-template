@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corelocalization.Message
+import com.example.corelocalization.localized
 import com.example.corenavigation.Navigator
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
@@ -47,7 +49,7 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text("リポジトリ", style = MaterialTheme.typography.headlineLarge) }
+            item { Text(Message.RepositoryTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
             state.items.firstOrNull()?.let { repository ->
                 item {
                     RepositoryRow(
@@ -63,9 +65,11 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
                             it.id == repository.id
                         },
                         true,
+                        Message.RepositoryStars(repository.stars).localized(),
+                        Message.CommonSaved.localized(),
                         viewModel.dependencies.images::load
                     )
-                    Text("Fork ${repository.forks}")
+                    Text(Message.RepositoryForks(repository.forks).localized())
                 }
                 item {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -74,14 +78,25 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
                 }
                 item {
                     Button(viewModel::toggleBookmark, enabled = !saving) {
-                        Text(if (bookmarks.any { it.id == repository.id }) "保存を解除" else "保存する")
+                        Text(
+                            if (bookmarks.any {
+                                    it.id == repository.id
+                                }
+                            ) {
+                                Message.RepositoryUnsave.localized()
+                            } else {
+                                Message.RepositorySave.localized()
+                            }
+                        )
                     }
                 }
-                item { Button(viewModel::showIssues) { Text("Issue を見る") } }
+                item { Button(viewModel::showIssues) { Text(Message.RepositoryIssues.localized()) } }
             }
-            saveError?.let { item { Text(it, color = MaterialTheme.colorScheme.error) } }
-            if (state.isLoading) item { LoadingIndicator() }
-            state.error?.let { item { ErrorState(it, viewModel::refresh) } }
+            saveError?.let { item { Text(it.localized(), color = MaterialTheme.colorScheme.error) } }
+            if (state.isLoading) item { LoadingIndicator(Message.CommonLoading.localized()) }
+            state.error?.let {
+                item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::refresh) }
+            }
         }
     }
 }

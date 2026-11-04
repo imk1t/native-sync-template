@@ -1,0 +1,81 @@
+# 文言はここで編集し、bun tools/generate.ts で両 OS に反映する。
+app_name: GitHub Explorer
+bookmarks_delete_message: The note for this repository will also be deleted.
+bookmarks_delete_title: Remove saved repository?
+bookmarks_edit_note: Edit note
+bookmarks_empty_message: Open a repository in Explore and save it here.
+bookmarks_empty_title: No saved repositories
+bookmarks_note: Note
+bookmarks_note_count:
+  forms:
+    one: "{count} / 1,000 character"
+    other: "{count} / 1,000 characters"
+bookmarks_note_prompt: Write down what caught your interest
+common_back: Back
+common_cancel: Cancel
+common_delete: Delete
+common_loading: Loading
+common_retry: Retry
+common_save: Save
+common_saved: Saved
+error_bookmark_limit: You can save up to 100 repositories.
+error_bookmark_not_found: This bookmark has been deleted.
+error_forbidden: You do not have permission to access this information.
+error_invalid_query: Please check your search criteria.
+error_network: Could not connect. Please try again.
+error_not_found: Not found. It may have been deleted or made private.
+error_note_too_long: Notes must be 1,000 characters or fewer.
+error_rate_limited:
+  text: Rate limit reached. Try again after {time}.
+error_server:
+  text: Request failed (HTTP {status}). Please try again later.
+error_settings_load: Could not load settings. Please try again.
+error_settings_save: Could not save settings. Please try again.
+error_storage_delete: Could not save the deletion. Please try again.
+error_storage_load: Could not load saved data. Please try again.
+error_storage_save: Could not save your changes. Please try again.
+error_storage_version: Could not read saved data. Please check the app version.
+issue_body: Body
+issue_closed: Closed
+issue_empty_body: No description provided
+issue_open: Open
+issue_state: State
+issue_title: Issue
+issue_unknown_author: Unknown author
+issues_title: Issues
+repository_forks:
+  forms:
+    one: "{count} fork"
+    other: "{count} forks"
+repository_issues: View issues
+repository_save: Save repository
+repository_stars:
+  forms:
+    one: "{count} star"
+    other: "{count} stars"
+repository_title: Repository
+repository_unsave: Unsave
+search_all: All
+search_empty_message: Try different filters, or load the next page if more results are available.
+search_empty_title: No results
+search_filter:
+  text: "{label}: {value}"
+search_incomplete: Some results could not be retrieved. Narrow your search and try again.
+search_intro: Discover open source projects and save them to your own list.
+search_language: Language
+search_limit: Up to 1,000 search results can be shown.
+search_more: Load more
+search_prompt: Search repositories
+search_relevance: Relevance
+search_sort: Sort by
+search_stars_sort: Stars
+search_submit: Search
+search_title: Explore
+search_try: Try a search
+search_updated_sort: Recently updated
+settings_about: About this app
+settings_description: A native iOS and Android sample app for exploring and saving public repositories.
+settings_descriptions: Show descriptions in lists
+settings_display: Display
+settings_storage_note: Bookmarks and notes are saved on this device. They are separate from GitHub stars.
+settings_title: Settings

@@ -2,6 +2,7 @@ package com.example.featurebookmarks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.corelocalization.Message
 import com.example.corenavigation.ModalStyle
 import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
@@ -13,8 +14,8 @@ import kotlinx.coroutines.launch
 
 internal class BookmarksViewModel(val dependencies: BookmarksDependencies, private val navigator: Navigator) :
     ViewModel() {
-    private val mutableError = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = mutableError
+    private val mutableError = MutableStateFlow<Message?>(null)
+    val error: StateFlow<Message?> = mutableError
     private val mutableLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = mutableLoading
     private val mutableLoaded = MutableStateFlow(false)
@@ -36,7 +37,7 @@ internal class BookmarksViewModel(val dependencies: BookmarksDependencies, priva
         } catch (
             e: Exception
         ) {
-            mutableError.value = "保存データの読み込みに失敗しました。再試行してください。"
+            mutableError.value = Message.ErrorStorageLoad
         } finally {
             mutableLoading.value = false
         }
@@ -54,7 +55,7 @@ internal class BookmarksViewModel(val dependencies: BookmarksDependencies, priva
             ) {
                 throw e
             } catch (e: Exception) {
-                mutableError.value = "削除を保存できませんでした。再試行してください。"
+                mutableError.value = Message.ErrorStorageDelete
             }
         }
     }
