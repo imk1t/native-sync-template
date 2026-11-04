@@ -97,7 +97,9 @@ class UrlConnectionTransportTest {
         for (status in listOf(200, 500)) {
             val connection = TestConnection(status = status)
             val transport = UrlConnectionTransport("https://example.invalid", 123, 456) { connection }
-            assertEquals(HttpResponse(status, "[]"), transport.send(HttpRequest("GET", "/items")))
+            val response = transport.send(HttpRequest("GET", "/search/repositories"))
+            assertEquals(status, response.status)
+            assertEquals("[]", response.body)
             assertEquals(123, connection.connectTimeout)
             assertEquals(456, connection.readTimeout)
             assertTrue(connection.streamClosed)

@@ -1,9 +1,9 @@
 /**
- * shared/scenarios の共通シナリオを検査する。
+ * specs/scenarios の共通シナリオを検査する。
  *
  * - 形式: name（ファイル名と一致）・feature・steps（id・name・given・when・then）
- * - given のキーは shared/openapi の operationId。2xx の body はレスポンスの schema に合うこと
- *   （`navigation` だけは画面遷移の初期状態として予約。辞書で書く）
+ * - given のキーは specs/openapi の operationId。2xx の body はレスポンスの schema に合うこと
+ *   （`navigation` は画面遷移、`localState` は保存値・読み書き失敗の初期状態）
  * - feature の spec.md がシナリオを参照していること
  * - 各 step が iOS と Android の両方のテストで `@scenario <name>/<step id>` として参照されていること
  */
@@ -54,20 +54,40 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       if (!isDict(stub)) errors.push(`${w}: 画面遷移の初期状態を辞書で書いてください`);
       continue;
     }
+    if (opId === "localState") {
+      if (!isDict(stub)) errors.push(`${w}: ローカル保存の初期状態を辞書で書いてください`);
+      else {
+        for (const [key, value] of Object.entries(stub)) {
+          if (!["values", "readFails", "writeFails"].includes(key)) errors.push(`${w}.${key}: 未知のキーです`);
+          else if (key === "values") {
+            if (!isDict(value) || Object.values(value).some((v) => typeof v !== "string" && v !== null)) {
+              errors.push(`${w}.values: 保存キーと文字列または null の辞書が必要です`);
+            }
+          } else if (typeof value !== "boolean") errors.push(`${w}.${key}: boolean が必要です`);
+        }
+      }
+      continue;
+    }
     const op = ops.get(opId);
     if (!op) {
-      errors.push(`${w}: shared/openapi に無い operationId です`);
+      errors.push(`${w}: specs/openapi に無い operationId です`);
       continue;
     }
     if (!isDict(stub)) {
       errors.push(`${w}: status か pending が必要です`);
       continue;
     }
-    const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending"].includes(key)));
+    const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending", "headers"].includes(key)));
     if (unknown.length > 0) errors.push(`${w}: 未知のキーです: ${JSON.stringify(unknown)}`);
     if (stub.pending === true) {
       if (Object.keys(stub).join() !== "pending") errors.push(`${w}: pending: true は単独で書いてください`);
       continue;
+    }
+    if (
+      "headers" in stub &&
+      (!isDict(stub.headers) || Object.values(stub.headers).some((v) => typeof v !== "string"))
+    ) {
+      errors.push(`${w}.headers: 文字列の辞書が必要です`);
     }
     const status = stub.status;
     if (typeof status !== "number" || !Number.isInteger(status) || status < 100 || status > 599) {
@@ -84,8 +104,10 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       } catch (error) {
         errors.push(error instanceof Error ? error.message : String(error));
       }
-    } else if ("body" in stub) {
-      errors.push(`${w}.body: この status では body を検査できません。エラー body は書かないでください`);
+    } else if ("body" in stub && status >= 400 && !isDict(stub.body)) {
+      errors.push(`${w}.body: エラー body は辞書で書いてください`);
+    } else if ("body" in stub && status < 400) {
+      errors.push(`${w}.body: この status では body を検査できません`);
     }
   }
   return errors;
@@ -108,8 +130,8 @@ function checkFile(root: string, path: string, spec: Spec): [string[], Scenario 
   if (moduleDir === null || !isFile(join(moduleDir, "spec.md"))) {
     errors.push(`${rel}: feature は spec.md のあるモジュールのパスにしてください: ${JSON.stringify(feature ?? null)}`);
     moduleDir = null;
-  } else if (!readText(join(moduleDir, "spec.md")).includes(`shared/scenarios/${basename(path)}`)) {
-    errors.push(`modules/${feature}/spec.md: shared/scenarios/${basename(path)} を参照してください`);
+  } else if (!readText(join(moduleDir, "spec.md")).includes(`specs/scenarios/${basename(path)}`)) {
+    errors.push(`modules/${feature}/spec.md: specs/scenarios/${basename(path)} を参照してください`);
   }
   const steps = doc.steps;
   if (!Array.isArray(steps) || steps.length === 0) {
@@ -140,11 +162,11 @@ function checkFile(root: string, path: string, spec: Spec): [string[], Scenario 
 }
 
 export function main(root: string = ROOT, log: (line: string) => void = console.log): number {
-  const api = readYaml(join(root, "shared/openapi/openapi.yaml"));
+  const api = readYaml(join(root, "specs/openapi/openapi.yaml"));
   const spec = new Spec(isDict(api) ? api : ({} as Dict));
   const errors: string[] = [];
   const scenarios = new Map<string, Scenario>();
-  const dir = join(root, "shared/scenarios");
+  const dir = join(root, "specs/scenarios");
   for (const path of glob(dir, "*.yaml", { dot: true })) {
     const [fileErrors, info] = checkFile(root, join(dir, path), spec);
     errors.push(...fileErrors);
@@ -167,8 +189,8 @@ export function main(root: string = ROOT, log: (line: string) => void = console.
   const modules = join(root, "modules");
   for (const path of glob(modules, "**/spec.md")) {
     const specMd = join(modules, path);
-    for (const [, ref] of readText(specMd).matchAll(/shared\/scenarios\/([\w-]+\.yaml)/g)) {
-      if (!isFile(join(root, "shared/scenarios", ref as string))) {
+    for (const [, ref] of readText(specMd).matchAll(/specs\/scenarios\/([\w-]+\.yaml)/g)) {
+      if (!isFile(join(root, "specs/scenarios", ref as string))) {
         errors.push(`${relative(root, specMd)}: 存在しないシナリオを参照しています: ${ref}`);
       }
     }

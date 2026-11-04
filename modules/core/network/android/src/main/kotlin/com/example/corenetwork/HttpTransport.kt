@@ -18,34 +18,38 @@ data class HttpRequest(
     val method: String,
     val path: String,
     val query: List<Pair<String, String>> = emptyList(),
-    val body: String? = null
+    val body: String? = null,
+    val headers: Map<String, String> = emptyMap()
 )
 
-data class HttpResponse(val status: Int, val body: String = "")
+class HttpResponse(val status: Int, val body: String = "", headers: Map<String, String> = emptyMap()) {
+    val headers = headers.mapKeys { it.key.lowercase(java.util.Locale.ROOT) }
+}
 
 /** 2xx 以外のレスポンス。 */
-class ApiException(val status: Int) : Exception("HTTP $status")
+class ApiException(val status: Int, val headers: Map<String, String> = emptyMap(), val body: String = "") :
+    Exception("HTTP $status")
 
 /** 通信の差し替え口。本番は UrlConnectionTransport、テストはスタブを渡す。 */
 interface HttpTransport {
     suspend fun send(request: HttpRequest): HttpResponse
 }
 
-/** iOS の JSONDecoder / 合成 Codable と同じ扱い（未知のキーは無視、null は出力しない）。 */
+/** 未知のキーは無視する。必須 nullable のキー欠落を null とみなさず、両 OS で拒否する。 */
 internal val ApiJson = Json {
     ignoreUnknownKeys = true
-    explicitNulls = false
+    explicitNulls = true
 }
 
-internal suspend inline fun <reified T> HttpTransport.call(request: HttpRequest): T {
+internal suspend inline fun <reified T> HttpTransport.call(request: HttpRequest): ApiResponse<T> {
     val response = send(request)
-    if (response.status !in 200..299) throw ApiException(response.status)
-    return ApiJson.decodeFromString<T>(response.body)
+    if (response.status !in 200..299) throw ApiException(response.status, response.headers, response.body)
+    return ApiResponse(ApiJson.decodeFromString<T>(response.body), response.headers)
 }
 
 internal suspend fun HttpTransport.callUnit(request: HttpRequest) {
     val response = send(request)
-    if (response.status !in 200..299) throw ApiException(response.status)
+    if (response.status !in 200..299) throw ApiException(response.status, response.headers, response.body)
 }
 
 /** パスの 1 区切りとして埋め込む値をエンコードする（"/" もエスケープする）。 */
@@ -98,8 +102,11 @@ class UrlConnectionTransport internal constructor(
             connection.setRequestProperty("Content-Type", "application/json")
             connection.outputStream.use { it.write(body.toByteArray()) }
         }
+        request.headers.forEach { (key, value) -> connection.setRequestProperty(key, value) }
         val status = connection.responseCode
         val stream = if (status in 200..299) connection.inputStream else connection.errorStream
-        return HttpResponse(status, stream?.bufferedReader()?.use { it.readText() }.orEmpty())
+        val headers = connection.headerFields.orEmpty().filterKeys { it != null }
+            .mapValues { it.value.joinToString(", ") }
+        return HttpResponse(status, stream?.bufferedReader()?.use { it.readText() }.orEmpty(), headers)
     }
 }

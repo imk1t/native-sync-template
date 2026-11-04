@@ -1,9 +1,9 @@
 /**
- * shared/ の定義から Swift / Kotlin のコードを生成する。出力は決定的（再生成して差分が出ないこと）。
+ * specs/ の定義から Swift / Kotlin のコードを生成する。出力は決定的（再生成して差分が出ないこと）。
  *
- * - shared/tokens/tokens.json → designsystem の Tokens
- * - shared/openapi/openapi.yaml → core/network の DTO と APIClient（tools/lib/openapi.ts）
- * - shared/routes.yaml → core/navigation の Route と AppTab（tools/lib/routes.ts）
+ * - specs/tokens/tokens.json → designsystem の Tokens
+ * - specs/openapi/openapi.yaml → core/network の DTO と APIClient（tools/lib/openapi.ts）
+ * - specs/routes.yaml → core/navigation の Route と AppTab（tools/lib/routes.ts）
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -89,18 +89,18 @@ function write(root: string, path: string, text: string): void {
 }
 
 export function generate(root: string = ROOT): void {
-  const tokens = JSON.parse(readText(join(root, "shared/tokens/tokens.json"))) as Tokens;
+  const tokens = JSON.parse(readText(join(root, "specs/tokens/tokens.json"))) as Tokens;
   write(root, OUTPUTS.iosTokens, swiftTokens(tokens));
   write(root, OUTPUTS.androidTokens, kotlinTokens(tokens));
 
-  const api = readYaml(join(root, "shared/openapi/openapi.yaml"));
+  const api = readYaml(join(root, "specs/openapi/openapi.yaml"));
   const spec = new openapi.Spec(isDict(api) ? api : ({} as Dict));
   write(root, OUTPUTS.iosModels, openapi.swiftModels(spec));
   write(root, OUTPUTS.iosClient, openapi.swiftClient(spec));
   write(root, OUTPUTS.androidModels, openapi.kotlinModels(spec, "com.example.corenetwork"));
   write(root, OUTPUTS.androidClient, openapi.kotlinClient(spec, "com.example.corenetwork"));
 
-  const model = routes.load(readYaml(join(root, "shared/routes.yaml")), root);
+  const model = routes.load(readYaml(join(root, "specs/routes.yaml")), root);
   write(root, OUTPUTS.iosRoutes, routes.swift(model));
   write(root, OUTPUTS.androidRoutes, routes.kotlin(model, "com.example.corenavigation"));
 }

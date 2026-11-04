@@ -1,0 +1,90 @@
+# Navigator の状態遷移（modules/core/navigation/spec.md の「操作」）。
+# 両 OS のテストが同じ step を実装し、NavigationState を比べる。given.navigation は初期状態（空なら既定）。
+# 各テストに `@scenario navigation/<id>` を書く。
+name: navigation
+feature: core/navigation
+steps:
+  - id: push-onto-selected-tab
+    name: モーダルが無ければ選択中のタブのスタックに積む
+    given:
+      navigation: {}
+    when: push repositoryDetail(owner owner, repo 1)
+    then:
+      stacks: { home: [repositoryDetail(owner owner, repo 1)] }
+      modals: []
+  - id: push-inside-modal
+    name: モーダル表示中の push はそのモーダルのスタックに積む
+    given:
+      navigation:
+        modals: [{ style: sheet, stack: [repositorySearch] }]
+    when: push repositoryDetail(owner owner, repo 1)
+    then:
+      stacks: { home: [] }
+      modals: [{ style: sheet, stack: [repositorySearch, repositoryDetail(owner owner, repo 1)] }]
+  - id: pop-modal-root-dismisses
+    name: モーダルの先頭で pop するとモーダルを閉じる
+    given:
+      navigation:
+        modals: [{ style: sheet, stack: [repositorySearch] }]
+    when: pop
+    then:
+      modals: []
+  - id: pop-on-empty-stack
+    name: タブのスタックが空なら pop しても何も変わらない
+    given:
+      navigation: {}
+    when: pop
+    then:
+      stacks: { home: [] }
+  - id: pop-to-root
+    name: popToRoot でタブのスタックを空にする
+    given:
+      navigation:
+        stacks: { home: [repositoryDetail(owner owner, repo 1), repositoryDetail(owner owner, repo 2)] }
+    when: popToRoot
+    then:
+      stacks: { home: [] }
+  - id: present-and-dismiss
+    name: present でモーダルを重ね、dismiss で一番上を閉じる
+    given:
+      navigation: {}
+    when: present repositoryDetail(owner owner, repo 1) fullScreen, present repositorySearch sheet, dismiss
+    then:
+      modals: [{ style: fullScreen, stack: [repositoryDetail(owner owner, repo 1)] }]
+  - id: select-tab-dismisses-modals
+    name: タブを選ぶとモーダルをすべて閉じ、スタックは保つ
+    given:
+      navigation:
+        stacks: { home: [repositoryDetail(owner owner, repo 1)] }
+        modals: [{ style: sheet, stack: [repositorySearch] }]
+    when: selectTab home
+    then:
+      selectedTab: home
+      stacks: { home: [repositoryDetail(owner owner, repo 1)] }
+      modals: []
+  - id: open-deep-link
+    name: ディープリンクのパスから開く状態を作る
+    given:
+      navigation: {}
+    when: opening(Route(path)) in home
+    then:
+      "/repositories/owner/a%2F1": { stacks: { home: [repositoryDetail(owner owner, repo a/1)] } }
+      "/search": { stacks: { home: [] } }
+      "/unknown": no route
+  - id: open-url-with-encoded-id
+    name: URL のパスの区切りごとに一度だけデコードする
+    given:
+      navigation: {}
+    when: open URL then create NavigationState
+    then:
+      "https://example.com/repositories/owner/a%2F1?source=test#detail": { id: "a/1" }
+      "https://example.com/repositories/owner/a%252F1?source=test#detail": { id: "a%2F1" }
+      "https://example.com/repositories/owner/a%2B1?source=test#detail": { id: "a+1" }
+  - id: duplicate-route-entries
+    name: 同じ画面を重ねてもエントリ ID を共有しない
+    given:
+      navigation: {}
+    when: push same route twice, pop, push again; present and push same route, popToRoot
+    then:
+      entryIds: unique-per-opening
+      remainingEntryIds: unchanged

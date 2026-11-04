@@ -1,29 +1,24 @@
 # core/network
 
 ## 概要
-`shared/openapi` から生成した API クライアントを包み、ドメインモデルへの変換までを担う。画面層には生成された型を渡さない。
+GitHub 公式 OpenAPI を元に必要な範囲を直接管理する API 契約からクライアントを生成し、公開リポジトリ・Issue・ページ情報へ変換する。生成 DTO と APIClient はモジュール外へ公開しない。
 
 ## 提供するもの
-| 名前 | 内容 |
-| --- | --- |
-| `ItemsAPI.listItems()` | `shared/openapi` の `listItems` を呼び、`[Item]` を返す |
-| `ItemsAPI.getItem(id:)` | `shared/openapi` の `getItem` を呼び、`Item` を返す |
-| `Item` | `id: String`, `title: String` |
-| `DefaultItemsAPI(transport:)` | 生成された `APIClient` を使う `ItemsAPI` の実装 |
-| `HTTPTransport` | 通信の差し替え口。`send(HTTPRequest) -> HTTPResponse` |
-| `URLSessionTransport(baseURL:)` | 本番用の `HTTPTransport` |
-| `APIError(status)` | 2xx 以外のレスポンスで投げるエラー |
+- アプリは常に https://api.github.com の実 API に接続する。通信の差し替えと固定レスポンスはテスト内でのみ使用し、アプリ向けのデモ起動モードは持たない。
+- GitHubAPI: searchRepositories(query, sort, page)、repository(owner, repo)、issues(owner, repo, state, page)、issue(owner, repo, number)。DefaultGitHubAPI が生成コードを呼ぶ。
+- RepositorySummary、GitHubIssue、Page<Value>。ID は Int64 / Long、次ページは Link から取得。検索は 1,000 件を上限にし incomplete_results を公開する。
+- HTTPRequest / HTTPResponse は body と headers を保持する。成功時も body と headers を同じ呼び出しの APIResponse に含め、並行呼び出しで共有しない。
+- GitHubTransport が Accept、User-Agent、X-GitHub-Api-Version: 2026-03-10 を付ける。レスポンスヘッダー名は小文字化する。
+- GitHub の 403 / 429 は残量・Retry-After・エラー body で分類し、制限時は再試行可能時刻を返す。通常の 403 と区別する。待機中は同じリソースへの再送を抑制する。
+- ImageLoader は HTTPS 画像のデータを取得し、サイズを制限したメモリキャッシュを持つ。UI には依存しない。
 
-## キャンセルとタイムアウト
-呼び出し元のキャンセルは実際の通信にも伝え、接続を解放する。キャンセルされた応答を成功として返さない。接続・読み取りは有限のタイムアウトで終了させる。
+## 生成とエラー
+specs/openapi/openapi.yaml を API 契約の正として直接編集し、bun tools/generate.ts で両 OS の DTO と APIClient を生成する。生成処理は契約を書き換えず、オフラインで完結する。CI は再生成による差分と共通シナリオの契約適合を検査する。元になった公式定義と更新方法は docs/adr/0004-github-openapi.md に記録し、ライセンスは specs/openapi/GITHUB-LICENSE.md に保持する。
 
-## 内部（生成コード）
-`bun tools/generate.ts` が `Generated/`（iOS）・`generated/`（Android）に生成する。モジュールの外には公開しない。
-
-- schema ごとの DTO（`ItemDTO`）。JSON の未知のキーは無視し、省略可能な値は null を出力しない。
-- operation ごとのメソッドを持つ `APIClient`。2xx 以外は `APIError` を投げる。パスに埋め込む値は 1 区切りとしてエンコードする（`/` もエスケープ）。
+省略可能と null 許容を別々に検証する。入力 enum の値は契約検査で確認する。レスポンスの未知のキーは無視し、状態文字列の未知値はそのまま表示する。空本文・不明な投稿者も表示可能。Issue 一覧から pull_request を除外するが、次ページ情報は除外前の HTTP ヘッダーに従う。
 
 ## OS 固有の差分
-命名規約に合わせて、Android では略語を先頭だけ大文字にする: `ItemsApi` / `DefaultItemsApi` / `HttpTransport` / `HttpRequest` / `HttpResponse` / `ApiClient` / `ApiException`（iOS の `APIError`）/ `UrlConnectionTransport`（iOS の `URLSessionTransport`、ベース URL は `String`）。
-JSON は iOS が `Codable`（`JSONDecoder`）、Android が kotlinx.serialization。リクエスト・レスポンスの body は iOS が `Data`、Android が `String`。
-iOS は URLSession のキャンセルとタイムアウト設定に従い、キャンセルは `URLError.cancelled` または `CancellationError` として伝わる。Android は `CancellationException` を伝え、接続の切断とブロッキング処理の割り込みを行う。`UrlConnectionTransport` のタイムアウトは `connectTimeoutMillis`（既定 15,000 ms）と `readTimeoutMillis`（既定 30,000 ms）で指定し、0 以下は拒否する。
+略語は Swift の API / HTTP と Kotlin の Api / Http。JSON は Codable / kotlinx.serialization。HTTP は URLSession / HttpURLConnection。Android は接続 15 秒・読み込み 30 秒のタイムアウトを持ち、キャンセル時は接続を切断・割り込みする。iOS は URLSession の task キャンセルに従う。画像データは Data / ByteArray。
+
+## シナリオ
+- `specs/scenarios/github-network.yaml`

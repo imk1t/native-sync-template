@@ -1,0 +1,36 @@
+# 画面遷移の単一の正。生成物は tools/generate.ts で更新する。
+tabs:
+  - id: home
+    title: 探す
+    root: repositorySearch
+  - id: saved
+    title: 保存済み
+    root: bookmarks
+  - id: settings
+    title: 設定
+    root: settings
+routes:
+  - name: repositorySearch
+    feature: features/search
+    deepLink: /search
+  - name: repositoryDetail
+    feature: features/search
+    params: { owner: string, repo: string }
+    deepLink: /repositories/{owner}/{repo}
+  - name: repositoryIssues
+    feature: features/search
+    params: { owner: string, repo: string }
+    deepLink: /repositories/{owner}/{repo}/issues
+  - name: issueDetail
+    feature: features/search
+    params: { owner: string, repo: string, number: integer }
+    deepLink: /repositories/{owner}/{repo}/issues/{number}
+  - name: bookmarks
+    feature: features/bookmarks
+    deepLink: /saved
+  - name: bookmarkNote
+    feature: features/bookmarks
+    params: { repositoryId: string }
+  - name: settings
+    feature: features/settings
+    deepLink: /settings

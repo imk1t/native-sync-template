@@ -9,7 +9,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -40,6 +43,19 @@ class StoreTest {
         assertEquals("dark", store.get("theme"))
         store.set("theme", null)
         assertNull(store.get("theme"))
+    }
+
+    @Test
+    fun dataSurvivesStoreRecreation() = runTest(UnconfinedTestDispatcher()) {
+        val file = File(dir, "restored.preferences_pb")
+        val job = SupervisorJob()
+        val first = PreferenceDataStoreFactory.create(scope = CoroutineScope(backgroundScope.coroutineContext + job)) {
+            file
+        }
+        DataStoreKeyValueStore(first).set("github.bookmarks.v1", "{\"version\":1,\"items\":[]}")
+        job.cancelAndJoin()
+        val second = PreferenceDataStoreFactory.create(scope = backgroundScope) { file }
+        assertEquals("{\"version\":1,\"items\":[]}", DataStoreKeyValueStore(second).get("github.bookmarks.v1"))
     }
 
     @Test
