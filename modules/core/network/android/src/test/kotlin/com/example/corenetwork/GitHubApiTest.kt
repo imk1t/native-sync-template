@@ -28,7 +28,7 @@ private class StubTransport(private val response: HttpResponse) : HttpTransport 
 class GitHubApiTest {
     @Test
     fun encodesPathSegments() = runTest {
-        val body = DemoResponses.bodies.getValue("/repos/octocat/Hello-World")
+        val body = TestResponses.repository
         val stub = StubTransport(HttpResponse(200, body))
         DefaultGitHubApi(stub).repository("owner/name", "repo/name")
         assertEquals("/repos/owner%2Fname/repo%2Fname", stub.requests.first().path)
@@ -37,7 +37,7 @@ class GitHubApiTest {
     // @scenario github-network/nullable
     @Test fun nullableUnknownFieldsAndLargeIDs() = runTest {
         val body = Json.parseToJsonElement(
-            DemoResponses.bodies.getValue("/search/repositories")
+            TestResponses.search
         ).jsonObject.toMutableMap()
         val item = body.getValue("items").jsonArray.first().jsonObject.toMutableMap()
         item["description"] = JsonNull
@@ -58,7 +58,7 @@ class GitHubApiTest {
 
     // @scenario github-network/pull-requests
     @Test fun prOnlyPagePreservesNextLinkAndNullableIssue() = runTest {
-        val issue = Json.parseToJsonElement(DemoResponses.bodies.getValue("/repos/octocat/Hello-World/issues/1"))
+        val issue = Json.parseToJsonElement(TestResponses.issue)
             .jsonObject.toMutableMap()
         issue["user"] = JsonNull
         issue.remove("body")
@@ -80,7 +80,7 @@ class GitHubApiTest {
 
     // @scenario github-network/search-limit
     @Test fun searchLimitAndResponseHeaders() = runTest {
-        val text = DemoResponses.bodies.getValue("/search/repositories")
+        val text = TestResponses.search
             .replace("\"total_count\":1", "\"total_count\":1001")
             .replace("\"incomplete_results\":false", "\"incomplete_results\":true")
         val stub = StubTransport(

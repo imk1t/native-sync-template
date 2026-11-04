@@ -14,7 +14,15 @@ actor RecordingTransport: HTTPTransport {
             self.failure = nil
             return HTTPResponse(status: failure, body: Data())
         }
-        return try await DemoGitHubTransport().send(request)
+        let body: String
+        switch request.path {
+        case "/search/repositories": body = TestResponses.search
+        case "/repos/octocat/Hello-World": body = TestResponses.repository
+        case "/repos/octocat/Hello-World/issues": body = "[\(TestResponses.issue)]"
+        case "/repos/octocat/Hello-World/issues/1": body = TestResponses.issue
+        default: return HTTPResponse(status: 404)
+        }
+        return HTTPResponse(status: 200, body: Data(body.utf8))
     }
 }
 
@@ -34,7 +42,7 @@ func sample(_ id: Int64 = 5_000_000_001) -> RepositorySummary {
 }
 
 @MainActor
-func dependencies(_ transport: any HTTPTransport = DemoGitHubTransport()) -> GitHubDependencies {
+func dependencies(_ transport: any HTTPTransport = RecordingTransport()) -> GitHubDependencies {
     let store = InMemoryKeyValueStore()
     return GitHubDependencies(
         repository: GitHubRepositoryImpl(

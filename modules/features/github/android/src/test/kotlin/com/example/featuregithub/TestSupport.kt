@@ -1,7 +1,6 @@
 package com.example.featuregithub
 
 import com.example.corenetwork.DefaultGitHubApi
-import com.example.corenetwork.DemoGitHubTransport
 import com.example.corenetwork.GitHubTransport
 import com.example.corenetwork.HttpRequest
 import com.example.corenetwork.HttpResponse
@@ -21,7 +20,14 @@ class RecordingTransport : HttpTransport {
             failure = null
             return HttpResponse(it, "")
         }
-        return DemoGitHubTransport().send(request)
+        val body = when (request.path) {
+            "/search/repositories" -> TestResponses.search
+            "/repos/octocat/Hello-World" -> TestResponses.repository
+            "/repos/octocat/Hello-World/issues" -> "[${TestResponses.issue}]"
+            "/repos/octocat/Hello-World/issues/1" -> TestResponses.issue
+            else -> return HttpResponse(404)
+        }
+        return HttpResponse(200, body)
     }
 }
 
@@ -36,7 +42,7 @@ class FailingStore : KeyValueStore {
 }
 
 fun sample(id: Long = 5_000_000_001) = RepositorySummary(id, "repo", "owner/repo", "owner")
-fun dependencies(transport: HttpTransport = DemoGitHubTransport()): GitHubDependencies {
+fun dependencies(transport: HttpTransport = RecordingTransport()): GitHubDependencies {
     val store = InMemoryKeyValueStore()
     return GitHubDependencies(
         GitHubRepositoryImpl(DefaultGitHubApi(GitHubTransport(transport))),

@@ -10,7 +10,7 @@ GitHub 閲覧サンプルでは、公式 OpenAPI を元にアプリが使用す�
 
 ## 更新手順
 
-公式の API 仕様を確認して `shared/openapi/openapi.yaml` を直接編集する。型・必須性・null 許容・enum を確認し、ID は両 OS で 64bit とするため `format: int64` を指定する。必要に応じて spec・共通シナリオ・fixture・手書きラッパーも更新する。
+公式の API 仕様を確認して `shared/openapi/openapi.yaml` を直接編集する。型・必須性・null 許容・enum を確認し、ID は両 OS で 64bit とするため `format: int64` を指定する。必要に応じて spec・共通シナリオ・テストデータ・手書きラッパーも更新する。
 
 ```sh
 bun tools/generate.ts

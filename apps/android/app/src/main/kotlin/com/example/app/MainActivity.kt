@@ -21,12 +21,10 @@ import com.example.corenavigation.Navigator
 import com.example.corenavigation.Route
 import com.example.corenavigation.fromUrl
 import com.example.corenetwork.DefaultGitHubApi
-import com.example.corenetwork.DemoGitHubTransport
 import com.example.corenetwork.GitHubTransport
 import com.example.corenetwork.UrlConnectionTransport
 import com.example.corestorage.DataStoreKeyValueStore
 import com.example.corestorage.DisplaySettings
-import com.example.corestorage.InMemoryKeyValueStore
 import com.example.featuregithub.BookmarkNoteScreen
 import com.example.featuregithub.BookmarkNoteViewModel
 import com.example.featuregithub.BookmarkRepository
@@ -47,17 +45,10 @@ import com.example.featuresettings.SettingsViewModel
 
 /** アプリの寿命で共有する依存を組み立てる。複数の Activity からも同じ Store を使う。 */
 class SampleApplication : Application() {
-    val github by lazy { dependencies(demo = false) }
-    val demo by lazy { dependencies(demo = true) }
-
-    private fun dependencies(demo: Boolean): GitHubDependencies {
-        val store = if (demo) {
-            InMemoryKeyValueStore()
-        } else {
-            DataStoreKeyValueStore.persistent(this, "github-explorer")
-        }
-        val transport = if (demo) DemoGitHubTransport() else UrlConnectionTransport("https://api.github.com")
-        return GitHubDependencies(
+    val github by lazy {
+        val store = DataStoreKeyValueStore.persistent(this, "github-explorer")
+        val transport = UrlConnectionTransport("https://api.github.com")
+        GitHubDependencies(
             GitHubRepositoryImpl(DefaultGitHubApi(GitHubTransport(transport))),
             BookmarkRepository(store),
             DisplaySettings(store)
@@ -67,14 +58,7 @@ class SampleApplication : Application() {
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     val navigator = Navigator()
-    lateinit var dependencies: GitHubDependencies
-        private set
-
-    fun configure(demo: Boolean) {
-        if (::dependencies.isInitialized) return
-        val application = getApplication<SampleApplication>()
-        dependencies = if (demo) application.demo else application.github
-    }
+    val dependencies = getApplication<SampleApplication>().github
 }
 
 class MainActivity : ComponentActivity() {
@@ -83,7 +67,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        app.configure(intent?.getBooleanExtra("demo", false) == true)
         if (savedInstanceState == null) open(intent)
         setContent {
             // システムバーの外観と同じ OS 設定で、コンテンツの配色も切り替える。

@@ -16,7 +16,7 @@ private actor StubTransport: HTTPTransport {
 
 struct GitHubAPITests {
     @Test func encodesPathSegments() async throws {
-        let body = try #require(DemoResponses.bodies["/repos/octocat/Hello-World"])
+        let body = TestResponses.repository
         let stub = StubTransport(HTTPResponse(status: 200, body: Data(body.utf8)))
         _ = try await DefaultGitHubAPI(transport: stub).repository(owner: "owner/name", repo: "repo/name")
         #expect(await stub.requests.first?.path == "/repos/owner%2Fname/repo%2Fname")
@@ -24,7 +24,7 @@ struct GitHubAPITests {
 
     // @scenario github-network/nullable
     @Test func nullableUnknownFieldsAndLargeIDs() async throws {
-        let searchJSON = try #require(DemoResponses.bodies["/search/repositories"])
+        let searchJSON = TestResponses.search
         var body = try #require(JSONSerialization.jsonObject(with: Data(searchJSON.utf8)) as? [String: Any])
         var item = try #require((body["items"] as? [[String: Any]])?.first)
         item["description"] = NSNull()
@@ -55,7 +55,7 @@ struct GitHubAPITests {
 
     // @scenario github-network/pull-requests
     @Test func prOnlyPagePreservesNextLinkAndNullableIssue() async throws {
-        let issueJSON = try #require(DemoResponses.bodies["/repos/octocat/Hello-World/issues/1"])
+        let issueJSON = TestResponses.issue
         var issue = try #require(JSONSerialization.jsonObject(with: Data(issueJSON.utf8)) as? [String: Any])
         issue["user"] = NSNull()
         issue.removeValue(forKey: "body")
@@ -74,7 +74,7 @@ struct GitHubAPITests {
 
     // @scenario github-network/search-limit
     @Test func searchLimitAndResponseHeaders() async throws {
-        let text = try #require(DemoResponses.bodies["/search/repositories"])
+        let text = TestResponses.search
             .replacingOccurrences(of: "\"total_count\":1", with: "\"total_count\":1001")
             .replacingOccurrences(of: "\"incomplete_results\":false", with: "\"incomplete_results\":true")
         let transport = StubTransport(

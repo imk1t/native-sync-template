@@ -11,7 +11,6 @@ const FILES = [
   "tools/lib",
   "shared/tokens/tokens.json",
   "shared/openapi",
-  "shared/fixtures",
   "shared/routes.yaml",
   "modules/features/github/spec.md",
   "modules/features/settings/spec.md",

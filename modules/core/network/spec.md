@@ -4,6 +4,7 @@
 GitHub 公式 OpenAPI を元に必要な範囲を直接管理する API 契約からクライアントを生成し、公開リポジトリ・Issue・ページ情報へ変換する。生成 DTO と APIClient はモジュール外へ公開しない。
 
 ## 提供するもの
+- アプリは常に https://api.github.com の実 API に接続する。通信の差し替えと固定レスポンスはテスト内でのみ使用し、アプリ向けのデモ起動モードは持たない。
 - GitHubAPI: searchRepositories(query, sort, page)、repository(owner, repo)、issues(owner, repo, state, page)、issue(owner, repo, number)。DefaultGitHubAPI が生成コードを呼ぶ。
 - RepositorySummary、GitHubIssue、Page<Value>。ID は Int64 / Long、次ページは Link から取得。検索は 1,000 件を上限にし incomplete_results を公開する。
 - HTTPRequest / HTTPResponse は body と headers を保持する。成功時も body と headers を同じ呼び出しの APIResponse に含め、並行呼び出しで共有しない。

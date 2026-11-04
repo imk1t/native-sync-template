@@ -298,7 +298,7 @@ cd apps/android
 ./gradlew test assembleDebug
 ```
 
-固定データで確認する場合は、iOSのLaunch Argumentsへ `--demo` を指定します。Androidはインストール後に `adb shell am start -n com.example.app/.MainActivity --ez demo true` で起動します。`shared/fixtures/github.json` を両OS共通のTransportへ生成し、実際のDTOデコード・変換を通します。デモは保存先もメモリのため、通常起動の保存データを変更しません。デモの検索は同じ1件を返し、アバターは代替表示です。
+アプリは両 OS とも GitHub の実 API に接続し、ブックマーク・メモ・表示設定は端末内に永続化します。単体テストではテスト内のスタブと応答データを使い、ネットワークに依存せず検証します。
 
 `TS2688: Cannot find type definition file for 'bun'` が出る場合は、`bun install --frozen-lockfile` で型検査依存を復元してから `mise run check` を実行してください。型定義は `package.json` / `bun.lock` に固定済みです。
 
