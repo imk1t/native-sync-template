@@ -1,4 +1,4 @@
-# ADR 0003 GitHub の API 契約を OpenAPI で直接管理する
+# ADR 0004 GitHub の API 契約を OpenAPI で直接管理する
 
 GitHub 閲覧サンプルでは、公式 OpenAPI を元にアプリが使用する4操作と必要なフィールドを定義した `specs/openapi/openapi.yaml` を API 契約の正として直接管理する。OpenAPI 3.0、GitHub API バージョン 2026-03-10 を使う。
 

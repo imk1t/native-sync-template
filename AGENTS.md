@@ -9,6 +9,7 @@ iOS(Swift)と Android(Kotlin)をネイティブで同時に開発するモノレ
 - `modules/<core|shared|designsystem|features>/<名前>/{spec.md, ios, android}`: 機能・基盤。`spec.md` が同期の基準。
 - `modules/shared/*`: 複数 feature で使うモデルと処理。ルートの `specs/` は仕様・生成元で、共通実装とは分ける。
 - `docs/adr/`: 設計判断の記録。
+- `docs/platforms/{ios,android}.md`: OS 固有の設定・環境・注意点。OS 固有の設定や落とし穴を見つけたらここに書く。
 
 ## コマンド
 ツールのバージョンは `mise.toml`、検査スクリプトは Bun(TypeScript)。変更後は次を通す。
@@ -41,6 +42,7 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 
 ## スキルの管理(apm)
 - 原本は `.apm/skills/<名前>/SKILL.md`。配置先の `.claude/skills/`・`.agents/skills/` はコミットせず、手で編集しない。原本を直したら `apm install` をやり直す。
-- clone 後は `mise install` と `mise run setup`。mise・apm のインストールは利用者が行う(README の「セットアップ」)。エージェントは mise・apm をインストールしない。
+- clone 後は `mise install` と `mise run setup`。mise のインストールは利用者が行う(README の「セットアップ」)。apm は `mise.toml` で版を固定している。エージェントは mise・apm をインストールしない。
+- `apm.lock.yaml` はコミットする。`.mcp.json`・`.codex/` は apm の生成物なのでコミットしない。
 - `apm compile` は実行しない(この AGENTS.md は手書きのため)。
 - スキルは短く保ち、`description` に「何をするか」と「いつ使うか」を書く。

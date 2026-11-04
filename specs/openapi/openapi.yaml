@@ -1,4 +1,4 @@
-# API 契約はこのファイルを直接編集する。更新手順と出典: docs/adr/0003-github-openapi.md
+# API 契約はこのファイルを直接編集する。更新手順と出典: docs/adr/0004-github-openapi.md
 openapi: 3.0.3
 info:
   title: GitHub sample API

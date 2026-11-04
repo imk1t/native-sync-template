@@ -10,6 +10,43 @@ dependencies:
   virtual_path: jetpack-compose/adaptive
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/adaptive
+  - .agents/skills/adaptive/SKILL.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/container-behavior.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/get-started.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/index.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/item-behavior.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/container-properties.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/get-started.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/index.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/item-properties.md
+  - .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/mediaquery/index.md
+  - .agents/skills/adaptive/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md
+  - .agents/skills/adaptive/references/android/guide/navigation/navigation-3/save-state.md
+  - .agents/skills/adaptive/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md
+  - .agents/skills/adaptive/references/custom_cursors.md
+  - .agents/skills/adaptive/references/foldable-tabletop.md
+  - .agents/skills/adaptive/references/keyboard_shortcuts.md
+  - .agents/skills/adaptive/references/tooltips.md
+  deployed_file_hashes:
+    .agents/skills/adaptive/SKILL.md: sha256:e7a778745599729973cd6a07f0c90be3355e9785f650680daece8905fe0f617d
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/container-behavior.md: sha256:7a33b15b827dbf21557a2ac808d3e0c2653cf33cc4c58277f2eb94ebfa41aa5f
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/get-started.md: sha256:2333ea80100012554a3891048f237b6aeacf9e5f9d8b54d8b10c4cf639897813
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/index.md: sha256:952ca4608d36dcb0db9a36aed865f9cdb5e85583480cd85e9e364327be460ecb
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/item-behavior.md: sha256:94e894a59857662ed784913774a4d0c5bcec7d16468c4c910962a7d806a0e562
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/container-properties.md: sha256:fb12005053f5f040c26c5b74a93c11825d5a27f1802ec7748859b24ee2c030c7
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/get-started.md: sha256:96a2eeb05283eb5c99b751b4bf68769b59462e2d0bb70170260325004240e673
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/index.md: sha256:f6fb9a8d962dc7053fa5a1a20234d96fd0eeb9d4252fc98c40826353816815ab
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/item-properties.md: sha256:ef0a67039918022d01ac26983b3cc06c798050736d42ffe692c98e3c4517b45a
+    .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/mediaquery/index.md: sha256:1e79df59c053569d5376a618c414b793670fdf35e337d7c8aecce81bf09f90d7
+    .agents/skills/adaptive/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md: sha256:e4781cf0fc691f92c202400a07ebc80424666681f9547e757f660388252cdb29
+    .agents/skills/adaptive/references/android/guide/navigation/navigation-3/save-state.md: sha256:88f4e8e8831368f58fba9dc28f2cb40a0dcf0a627df5c09eb5b2a837486f9d6f
+    .agents/skills/adaptive/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md: sha256:4b4ada7a50201bcf9ab90b0d9f00cc2ceb16513d1de7f63c12d634318a2ec20d
+    .agents/skills/adaptive/references/custom_cursors.md: sha256:a6673e5540ea54e73c871a1e28e47c73b5f8e7cbc5a28bde18acd8ff3d6fd2fe
+    .agents/skills/adaptive/references/foldable-tabletop.md: sha256:5133e364ce466df05a3c012565f237b6fa27f853dbc92d2d65982045c20f2a79
+    .agents/skills/adaptive/references/keyboard_shortcuts.md: sha256:72c2876b4c805f00b00c948f00f0e41d9a3d2c9207a38262f45cd2ab03327513
+    .agents/skills/adaptive/references/tooltips.md: sha256:c87d96b2da4488cbbfd097a25a6b4557c48de055df96c7602bd7cb2966d2e4e9
   content_hash: sha256:172c058f860c017a5d9645c54732bbb7cd2f383a513ffe8b5f9369e825ae457f
 - repo_url: android/skills
   name: jetpack-compose-performance
@@ -20,6 +57,29 @@ dependencies:
   virtual_path: jetpack-compose/jetpack-compose-performance
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/jetpack-compose-performance
+  - .agents/skills/jetpack-compose-performance/SKILL.md
+  - .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/custom-modifiers.md
+  - .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/backwards-write.md
+  - .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/stability/strongskipping.md
+  - .agents/skills/jetpack-compose-performance/references/animation.md
+  - .agents/skills/jetpack-compose-performance/references/effects-and-threading.md
+  - .agents/skills/jetpack-compose-performance/references/graphics-performance.md
+  - .agents/skills/jetpack-compose-performance/references/layouts.md
+  - .agents/skills/jetpack-compose-performance/references/lazy-layouts.md
+  - .agents/skills/jetpack-compose-performance/references/state-and-stability.md
+  deployed_file_hashes:
+    .agents/skills/jetpack-compose-performance/SKILL.md: sha256:a1680a1ae079faa47fc706bf034b88d4c4c4903dfa4187e98e0af8b056e1848b
+    .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/custom-modifiers.md: sha256:b4ede8f37dc56c54f3621a5ad21f91a649450a9854bc1bacc1a24eb65fe31b38
+    .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/backwards-write.md: sha256:e9b5b1afa36dca37f9548a8d706cc8474b3f03e61bc77037dfa6ab7b1a2169b7
+    .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/stability/strongskipping.md: sha256:3a69e68553d6d628e8787b3e499766798e73d86779a149c800fff7bb4340cce4
+    .agents/skills/jetpack-compose-performance/references/animation.md: sha256:fe21a3bc55b85b807e3655f427f00e3898a7a0da0590a9fe2825a20d43e440fe
+    .agents/skills/jetpack-compose-performance/references/effects-and-threading.md: sha256:4a612526c8e9d28d26fb51b1d942d1b34a1fa2316dfe43d2869206dda49bbfa3
+    .agents/skills/jetpack-compose-performance/references/graphics-performance.md: sha256:3dc5881c2fb8eb4bcbf59b410008d995321a5fd2583e98194ee42407bdb7d266
+    .agents/skills/jetpack-compose-performance/references/layouts.md: sha256:619da0bd169a2a2c1b7e99868ab358a3be8c06f25f2bef0dd15353670ce12c06
+    .agents/skills/jetpack-compose-performance/references/lazy-layouts.md: sha256:68a0a4f43d311e4d57238ce745d0de775b1948748ab462608d5cbfe8f07b9bfe
+    .agents/skills/jetpack-compose-performance/references/state-and-stability.md: sha256:46aff96f166d19d1b2f5510c35679a0efac4fe9f578b4a1e186f5017a696ba37
   content_hash: sha256:333fae93ad9f596bd44926fd253bed62d32d83f4ef0a942fa84f4e483d23ba36
 - repo_url: android/skills
   name: navigation-3
@@ -30,6 +90,65 @@ dependencies:
   virtual_path: navigation/navigation-3
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/navigation-3
+  - .agents/skills/navigation-3/SKILL.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/index.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/migration-guide.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/animations.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basic.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicdsl.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicsaveable.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/bottomsheet.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/common-ui.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional-transitions.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-custommatcher.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-staticuri.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-syntheticbackstack.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-uriarguments.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/dialog.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/lifecycle-owner.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-supportingpane.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-hilt.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-koin.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/multiple-backstacks.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/passingarguments.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-event.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-state.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-listdetail.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-twopane.md
+  - .agents/skills/navigation-3/references/android/guide/navigation/type-safe-destinations.md
+  deployed_file_hashes:
+    .agents/skills/navigation-3/SKILL.md: sha256:e2bc8ec434bc104f71ef753ca21665678b00db8f14ef3fd36847ab85b313b4af
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/index.md: sha256:a6170dc40e2769e1034d51a5021b0b6dbc5df9bc9d9bbcae3c576a0647d0b6cf
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/migration-guide.md: sha256:2ba7d44e4b0b5ab827925354810645da026e9fb721bd9589a4f94b6f5d7bc954
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/animations.md: sha256:50c54d09fe14cb28f27d02cd9aaad4204dfe975a14bc8292b0bd40f61ad5300d
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basic.md: sha256:f96b02408f311d07c8df16c1867e25598c4bcc1794b52aaaa290a3b377727495
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicdsl.md: sha256:d077507172cbf9ed6916899ef2d17b5f9aebcc9d3b46d51725d30166949daa14
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicsaveable.md: sha256:93f01733db02f06a66c54bc5372a88688831bad14ded07ad181a16a12b848110
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/bottomsheet.md: sha256:63d7fe5d044bd0d9c4dbb913b47ecaf2d7677305ac94c51c9295ebabfc1ef76f
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/common-ui.md: sha256:835be092ff7114870543b4f7fb1f0893157c0ad07e00d70682a1256e95f5f3db
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional-transitions.md: sha256:bb41f81b08f422aaa201d2716f0feaa22705ebc9154d914ade0c25b3d3052063
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional.md: sha256:1197b80637b7f670d7f7a426e1c5e47958139954888ddbe5cad68a82dda0fe2f
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-custommatcher.md: sha256:96c0a9a617fffc4e5e9113da2b55fd1bd8bbe40593c836425a9dc2984854d0b0
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-staticuri.md: sha256:f131fe946f25f108601b66dcdb62be6add8cf685437fc78621d8b92dd67bd201
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-syntheticbackstack.md: sha256:12bf69439480fab3111f4b513118be0128ad574dd9d0aecd199ea37d0f75c4b2
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-uriarguments.md: sha256:bb8afb2616dfc7202376175752bdb5c99b19a64642b7a1b1f6f651527dfdf129
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/dialog.md: sha256:b8ac45054125a6aed66c5df682200c74440336d0584d7e1894078954c719200a
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/lifecycle-owner.md: sha256:45e204c1494179deadb56e9b544c78c6f6f17be4d3d660d841a5db5e4245038f
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md: sha256:e4781cf0fc691f92c202400a07ebc80424666681f9547e757f660388252cdb29
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-supportingpane.md: sha256:f0dc47a8d0aaceeefc6a48bf73563b3f9449e608c2ef71140acd5dcd13377e6d
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-hilt.md: sha256:a11572b32f8a72ea6736db0ccea44eb94f575dd272c9246bdf24d1b76c31f539
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-koin.md: sha256:591bd833b2b725d9e2e8f5ca5658a825c7d2f589c6c5d3103066e320a82e4fb9
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/multiple-backstacks.md: sha256:ee3300492f924914c649e157f3e72ce67af1b3b2fb356465a86b0b37e7b47d11
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/passingarguments.md: sha256:bc53a9bbabb799865bf8bc3130faeae6e6d2b2838c3e44f48574443b6467e0a5
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-event.md: sha256:e3f3371d6c5f06a3696c2f90f095bd5c530abd1a8dc59e666631b4e1d2926589
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-state.md: sha256:17fbf45258b3c928e300adfa07ec320ffbd591e3209236499c74bbb736a1acec
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-listdetail.md: sha256:2a19b4d03973c179eb4e4be8f95f9b728af34b55015619dde73dcd72af916e8c
+    .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-twopane.md: sha256:d0cb99ae3054cf463a598fd348d3d9a07aa4b6805ab22121bdc11561a60b1f64
+    .agents/skills/navigation-3/references/android/guide/navigation/type-safe-destinations.md: sha256:ad5f13e3d5ee1bc849d2da5941d4f99a3e2a5748d52fcdfde96d1bc21bf47acb
   content_hash: sha256:8475a7e54a5f986edd492a96ae1e4a71a825d1b0d41d5126301c3ffa8aa2f938
 - repo_url: android/skills
   name: navigation-event
@@ -40,6 +159,19 @@ dependencies:
   virtual_path: navigation/navigation-event
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/navigation-event
+  - .agents/skills/navigation-event/SKILL.md
+  - .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/dispatcher.md
+  - .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/handle-back.md
+  - .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/index.md
+  - .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/setup.md
+  deployed_file_hashes:
+    .agents/skills/navigation-event/SKILL.md: sha256:4e9acfb0190cdee56dafb063868965992fdba2ad1694a7fc2524b9046a199609
+    .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/dispatcher.md: sha256:c7ea58494c01b81554058c04090489a867731ca6cd995541446b22ddb0f42bba
+    .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/handle-back.md: sha256:83268d85190a87e96f3738bec946d7f920abf2779f78d1f7c81822b4697a251b
+    .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/index.md: sha256:c6fa437e86e893fba81b80c1667dec134eb9530eea77861e23ec8dc1ac4747a5
+    .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/setup.md: sha256:c117a8fbffa985a0640fd3a1738e568d6d4e26c2c5a941601146fea687258d84
   content_hash: sha256:e249bbffbaa492c66822d46fed37cc45ea05df8764a7b485f4bb03c650d180eb
 - repo_url: android/skills
   name: anr-audit-and-fix
@@ -50,6 +182,17 @@ dependencies:
   virtual_path: performance/anr-audit-and-fix
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/anr-audit-and-fix
+  - .agents/skills/anr-audit-and-fix/SKILL.md
+  - .agents/skills/anr-audit-and-fix/references/anr_trace_report_template.md
+  - .agents/skills/anr-audit-and-fix/references/risk_analysis_guide.md
+  - .agents/skills/anr-audit-and-fix/references/trace_analysis_guide.md
+  deployed_file_hashes:
+    .agents/skills/anr-audit-and-fix/SKILL.md: sha256:0ea6c5ab75a621b0cf24fa6276cdfa2c6799bbd2538631b8fc81a1e4dcd282bd
+    .agents/skills/anr-audit-and-fix/references/anr_trace_report_template.md: sha256:7e8494d46a0aaf97d19b7efc59ade16b3be4eca922f9025c178152595a76f5a6
+    .agents/skills/anr-audit-and-fix/references/risk_analysis_guide.md: sha256:71ea8e0ae7ee5cd708a9b97e818691a93a88d638df6d24984ba8b93de707ea13
+    .agents/skills/anr-audit-and-fix/references/trace_analysis_guide.md: sha256:86361ab2892ec91e424a7d0f8c6712d3ed4aa98f8b74d74aa0dbcc2774726011
   content_hash: sha256:b3fa11ca275763378c16689bb38b3ce92a610b1ad8f055ae9214635512651c21
 - repo_url: android/skills
   name: r8-analyzer
@@ -60,6 +203,27 @@ dependencies:
   virtual_path: performance/r8-analyzer
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/r8-analyzer
+  - .agents/skills/r8-analyzer/SKILL.md
+  - .agents/skills/r8-analyzer/references/CONFIGURATION.md
+  - .agents/skills/r8-analyzer/references/FULL_BUILD_CONFIG_ANALYZER.md
+  - .agents/skills/r8-analyzer/references/INSPECT-RULES.md
+  - .agents/skills/r8-analyzer/references/REPORT_FORMAT.md
+  - .agents/skills/r8-analyzer/references/android/topic/performance/app-optimization/enable-app-optimization.md
+  - .agents/skills/r8-analyzer/scripts/analyze.py
+  - .agents/skills/r8-analyzer/scripts/convert_pb_to_json.py
+  - .agents/skills/r8-analyzer/scripts/keep_radius_pb2.py
+  deployed_file_hashes:
+    .agents/skills/r8-analyzer/SKILL.md: sha256:b6001b06ff0ebcbe87b98534a239c8c22b818b97681972db50d5b26466d2bf06
+    .agents/skills/r8-analyzer/references/CONFIGURATION.md: sha256:61669860168d5c1f9628f4eb49d68b28e06d60f301a550107d96c030a1389ab2
+    .agents/skills/r8-analyzer/references/FULL_BUILD_CONFIG_ANALYZER.md: sha256:e35ee7cebcf2c2bff5f17b5691ad9ac3a58bc2755ae5d7c3f326a9911d3e6f06
+    .agents/skills/r8-analyzer/references/INSPECT-RULES.md: sha256:35c2c579ab8693365ed9caba4b08e70228484d3d98e74efe143047e8df9996c4
+    .agents/skills/r8-analyzer/references/REPORT_FORMAT.md: sha256:34f11005ccc09e7198fedcb2e56f270127c5e8ac6e95c5fce6e4d9b52a55c323
+    .agents/skills/r8-analyzer/references/android/topic/performance/app-optimization/enable-app-optimization.md: sha256:560048d6c973301d60c4ee058147f16043c50e5490f6e464c45754a38a7a92bb
+    .agents/skills/r8-analyzer/scripts/analyze.py: sha256:59b55ac94cc1509e244792edeef26111b048d130eb74b6eb4f14ad5f1f30473b
+    .agents/skills/r8-analyzer/scripts/convert_pb_to_json.py: sha256:06397052c96d80cc0ffd7077faf197555c2e9c9363a7fff59ae84f28169998e2
+    .agents/skills/r8-analyzer/scripts/keep_radius_pb2.py: sha256:37f0f038d7870c71b8d3cdd5b9b9361d79bde265e2754e3ffd511f53107a2e1a
   content_hash: sha256:7bee16200224e69abcdcc421b1705c90d8b20b2c683a9985b96785e179239d54
 - repo_url: android/skills
   name: android-intent-security
@@ -70,6 +234,11 @@ dependencies:
   virtual_path: security/android-intent-security
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/android-intent-security
+  - .agents/skills/android-intent-security/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/android-intent-security/SKILL.md: sha256:4f5792c0f1e92a1298398c7c823a14e9cea9518a02b252c802577a097dfec48b
   content_hash: sha256:f3eb7d785071d1a161685563b834c5d702c582e9767ced3fe87e921b3e16bc6f
 - repo_url: android/skills
   name: android-permissions-security
@@ -80,6 +249,19 @@ dependencies:
   virtual_path: security/android-permissions-security
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/android-permissions-security
+  - .agents/skills/android-permissions-security/SKILL.md
+  - .agents/skills/android-permissions-security/references/android/guide/topics/manifest/permission-element.md
+  - .agents/skills/android-permissions-security/references/android/guide/topics/permissions/overview.md
+  - .agents/skills/android-permissions-security/references/android/privacy-and-security/risks/sender-of-pending-intents.md
+  - .agents/skills/android-permissions-security/references/android/training/permissions/requesting.md
+  deployed_file_hashes:
+    .agents/skills/android-permissions-security/SKILL.md: sha256:3e109c4cc07fe0d3c20ea1c66a3b53cc892b7d547a70ef3080e14d844ab4d7e3
+    .agents/skills/android-permissions-security/references/android/guide/topics/manifest/permission-element.md: sha256:06e8c6e6eee6c53ed26db9599e5d461ccadcd2e54c785e7eabaf676cb5a16587
+    .agents/skills/android-permissions-security/references/android/guide/topics/permissions/overview.md: sha256:95e34ec29d120e352814c905f574175ceb30f1ffe062e7ea8eddb36852b9419a
+    .agents/skills/android-permissions-security/references/android/privacy-and-security/risks/sender-of-pending-intents.md: sha256:74adeb0c724b5c43a45de8953698707a8034a81238bb1c91d27684e1f262f2bb
+    .agents/skills/android-permissions-security/references/android/training/permissions/requesting.md: sha256:cec4c45adaa81e9f819fdb51f0d5b4c747493fa48682e67e20cff9bb7751fef8
   content_hash: sha256:3f9e87128f38487339ccd463443c27b8dc57d8e3b652726b8059e1753a442649
 - repo_url: android/skills
   name: testing-setup
@@ -90,6 +272,19 @@ dependencies:
   virtual_path: testing/testing-setup
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/testing-setup
+  - .agents/skills/testing-setup/SKILL.md
+  - .agents/skills/testing-setup/references/android/develop/ui/compose/testing/common-patterns.md
+  - .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md
+  - .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing.md
+  - .agents/skills/testing-setup/references/android/training/dependency-injection/hilt-testing.md
+  deployed_file_hashes:
+    .agents/skills/testing-setup/SKILL.md: sha256:613970834fedb22c5f85bbc900e600e9a17cd953157af5a7e953e5938d7c2457
+    .agents/skills/testing-setup/references/android/develop/ui/compose/testing/common-patterns.md: sha256:57fc697835d875cae7179d1b164db371e1b8c37881719fb32be51c09fa5c8c35
+    .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md: sha256:4b4ada7a50201bcf9ab90b0d9f00cc2ceb16513d1de7f63c12d634318a2ec20d
+    .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing.md: sha256:d9b9c86efe82e0aa841f43435e4a29466794e75dd452e84a29fdc4f332a4d699
+    .agents/skills/testing-setup/references/android/training/dependency-injection/hilt-testing.md: sha256:5e774a6ab09c0f469b4712ea8c468402b38dd4a19dce9570bacc49ad9af9c814
   content_hash: sha256:2d1090689966e496966fa71047db0190f2ecbd310e3a6d00b0b372cb44673954
 - repo_url: imk1t/apm-shared
   name: apm-shared
@@ -136,6 +331,41 @@ dependencies:
   virtual_path: swiftui-pro
   is_virtual: true
   package_type: claude_skill
+  deployed_files:
+  - .agents/skills/swiftui-pro
+  - .agents/skills/swiftui-pro/SKILL.md
+  - .agents/skills/swiftui-pro/agents/openai.yaml
+  - .agents/skills/swiftui-pro/assets/swiftui-pro-icon.png
+  - .agents/skills/swiftui-pro/assets/swiftui-pro-icon.svg
+  - .agents/skills/swiftui-pro/references/accessibility.md
+  - .agents/skills/swiftui-pro/references/api.md
+  - .agents/skills/swiftui-pro/references/data.md
+  - .agents/skills/swiftui-pro/references/design.md
+  - .agents/skills/swiftui-pro/references/hygiene.md
+  - .agents/skills/swiftui-pro/references/localization.md
+  - .agents/skills/swiftui-pro/references/navigation.md
+  - .agents/skills/swiftui-pro/references/performance-plus.md
+  - .agents/skills/swiftui-pro/references/performance.md
+  - .agents/skills/swiftui-pro/references/resizability.md
+  - .agents/skills/swiftui-pro/references/swift.md
+  - .agents/skills/swiftui-pro/references/views.md
+  deployed_file_hashes:
+    .agents/skills/swiftui-pro/SKILL.md: sha256:fc62139e262bd364cbbcab9b9f97557cd3fd6d2d4f73c4fab039d562fc324643
+    .agents/skills/swiftui-pro/agents/openai.yaml: sha256:429c39b71692d4dc86e2b616f28b7e7f56207361c5b5a0b06df4746af96d5fa3
+    .agents/skills/swiftui-pro/assets/swiftui-pro-icon.png: sha256:51a28a5834e6d251def3c562712db1e2124e6d67b62be89fe4c1ca628e37a70a
+    .agents/skills/swiftui-pro/assets/swiftui-pro-icon.svg: sha256:a15c0a3030f08ffcc442aed9b7f2f19840877e43f980ad4dfdef515e9aeb44b3
+    .agents/skills/swiftui-pro/references/accessibility.md: sha256:46f865d3e5cf63f4394e8d55628e06897bf9eec7409d69331931225eac69a198
+    .agents/skills/swiftui-pro/references/api.md: sha256:a12fb9dcc02093b560dd82e2882556d7cd2d6652edc0006eb24ebc14bc669448
+    .agents/skills/swiftui-pro/references/data.md: sha256:291a81fb0fc1befebcafe576d9e35cc8d47bb4d63baef50f6f2292300be797dd
+    .agents/skills/swiftui-pro/references/design.md: sha256:8f2d05504e4d51dc2a0d91d2b0a580457cd98d0145826e4c0bc35dc67f006793
+    .agents/skills/swiftui-pro/references/hygiene.md: sha256:18c945717a842912180c218c10e7e76b496c11a87a77c1be65a504c70850877c
+    .agents/skills/swiftui-pro/references/localization.md: sha256:54f1d15bd8f726409a72622964005d2732148da614dc022bf7729f68ab246571
+    .agents/skills/swiftui-pro/references/navigation.md: sha256:24b95bbaa01970ff0a6625a7a201d81191ab1746dbe317bd7583d1f3f7ce53a3
+    .agents/skills/swiftui-pro/references/performance-plus.md: sha256:b7c77ac07548f9f8b6440daab607b0fa22796fc498ca644e3fa9890ee7912068
+    .agents/skills/swiftui-pro/references/performance.md: sha256:82ee00cc74109dd7e6296dc872d410742a8584ad6d0bc4ae902fad0220392e38
+    .agents/skills/swiftui-pro/references/resizability.md: sha256:2e1a88a675fe2eaf326fb1a50fafae4123725e6b4278c311c875335651a60226
+    .agents/skills/swiftui-pro/references/swift.md: sha256:fda431d8d1cc58bddc38a2075d5818b3d41df9b69886e8b1f6e0370ba1f9f773
+    .agents/skills/swiftui-pro/references/views.md: sha256:e9c7ce9ef17e23b713a2565ee9d7f5db11e036adbae1a6b9c14d21d8b3dddce7
   content_hash: sha256:46ba1afccc1703ec1e72f791f5632b9c8acb5fb47a9fd4d3efae99b51d18b6f0
 deployments:
 - kind: project-relative
@@ -266,6 +496,285 @@ deployments:
   content_hash: sha256:13d6df0531b59e7569773ea8ea51bbb793f857889775990faa2b725c2e390986
 - kind: project-relative
   target: codex
+  value: .agents/skills/adaptive
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:e7a778745599729973cd6a07f0c90be3355e9785f650680daece8905fe0f617d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/container-behavior.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:7a33b15b827dbf21557a2ac808d3e0c2653cf33cc4c58277f2eb94ebfa41aa5f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/get-started.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:2333ea80100012554a3891048f237b6aeacf9e5f9d8b54d8b10c4cf639897813
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/index.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:952ca4608d36dcb0db9a36aed865f9cdb5e85583480cd85e9e364327be460ecb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/flexbox/item-behavior.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:94e894a59857662ed784913774a4d0c5bcec7d16468c4c910962a7d806a0e562
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/container-properties.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:fb12005053f5f040c26c5b74a93c11825d5a27f1802ec7748859b24ee2c030c7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/get-started.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:96a2eeb05283eb5c99b751b4bf68769b59462e2d0bb70170260325004240e673
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/index.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:f6fb9a8d962dc7053fa5a1a20234d96fd0eeb9d4252fc98c40826353816815ab
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/grid/item-properties.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:ef0a67039918022d01ac26983b3cc06c798050736d42ffe692c98e3c4517b45a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/develop/ui/compose/layouts/adaptive/mediaquery/index.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:1e79df59c053569d5376a618c414b793670fdf35e337d7c8aecce81bf09f90d7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:e4781cf0fc691f92c202400a07ebc80424666681f9547e757f660388252cdb29
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/guide/navigation/navigation-3/save-state.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:88f4e8e8831368f58fba9dc28f2cb40a0dcf0a627df5c09eb5b2a837486f9d6f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:4b4ada7a50201bcf9ab90b0d9f00cc2ceb16513d1de7f63c12d634318a2ec20d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/custom_cursors.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:a6673e5540ea54e73c871a1e28e47c73b5f8e7cbc5a28bde18acd8ff3d6fd2fe
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/foldable-tabletop.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:5133e364ce466df05a3c012565f237b6fa27f853dbc92d2d65982045c20f2a79
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/keyboard_shortcuts.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:72c2876b4c805f00b00c948f00f0e41d9a3d2c9207a38262f45cd2ab03327513
+- kind: project-relative
+  target: codex
+  value: .agents/skills/adaptive/references/tooltips.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/adaptive
+  active_owner: android/skills/jetpack-compose/adaptive
+  content_hash: sha256:c87d96b2da4488cbbfd097a25a6b4557c48de055df96c7602bd7cb2966d2e4e9
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-intent-security
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-intent-security
+  active_owner: android/skills/security/android-intent-security
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-intent-security/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-intent-security
+  active_owner: android/skills/security/android-intent-security
+  content_hash: sha256:4f5792c0f1e92a1298398c7c823a14e9cea9518a02b252c802577a097dfec48b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: sha256:3e109c4cc07fe0d3c20ea1c66a3b53cc892b7d547a70ef3080e14d844ab4d7e3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security/references/android/guide/topics/manifest/permission-element.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: sha256:06e8c6e6eee6c53ed26db9599e5d461ccadcd2e54c785e7eabaf676cb5a16587
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security/references/android/guide/topics/permissions/overview.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: sha256:95e34ec29d120e352814c905f574175ceb30f1ffe062e7ea8eddb36852b9419a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security/references/android/privacy-and-security/risks/sender-of-pending-intents.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: sha256:74adeb0c724b5c43a45de8953698707a8034a81238bb1c91d27684e1f262f2bb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/android-permissions-security/references/android/training/permissions/requesting.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/security/android-permissions-security
+  active_owner: android/skills/security/android-permissions-security
+  content_hash: sha256:cec4c45adaa81e9f819fdb51f0d5b4c747493fa48682e67e20cff9bb7751fef8
+- kind: project-relative
+  target: codex
+  value: .agents/skills/anr-audit-and-fix
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/anr-audit-and-fix
+  active_owner: android/skills/performance/anr-audit-and-fix
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/anr-audit-and-fix/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/anr-audit-and-fix
+  active_owner: android/skills/performance/anr-audit-and-fix
+  content_hash: sha256:0ea6c5ab75a621b0cf24fa6276cdfa2c6799bbd2538631b8fc81a1e4dcd282bd
+- kind: project-relative
+  target: codex
+  value: .agents/skills/anr-audit-and-fix/references/anr_trace_report_template.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/anr-audit-and-fix
+  active_owner: android/skills/performance/anr-audit-and-fix
+  content_hash: sha256:7e8494d46a0aaf97d19b7efc59ade16b3be4eca922f9025c178152595a76f5a6
+- kind: project-relative
+  target: codex
+  value: .agents/skills/anr-audit-and-fix/references/risk_analysis_guide.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/anr-audit-and-fix
+  active_owner: android/skills/performance/anr-audit-and-fix
+  content_hash: sha256:71ea8e0ae7ee5cd708a9b97e818691a93a88d638df6d24984ba8b93de707ea13
+- kind: project-relative
+  target: codex
+  value: .agents/skills/anr-audit-and-fix/references/trace_analysis_guide.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/anr-audit-and-fix
+  active_owner: android/skills/performance/anr-audit-and-fix
+  content_hash: sha256:86361ab2892ec91e424a7d0f8c6712d3ed4aa98f8b74d74aa0dbcc2774726011
+- kind: project-relative
+  target: codex
   value: .agents/skills/code-docs
   runtime: null
   scope: project
@@ -320,6 +829,420 @@ deployments:
   content_hash: sha256:36a479b23945a381ef0ac995f57a641c883def290f67250c264f95812f48e518
 - kind: project-relative
   target: codex
+  value: .agents/skills/jetpack-compose-performance
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:a1680a1ae079faa47fc706bf034b88d4c4c4903dfa4187e98e0af8b056e1848b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/custom-modifiers.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:b4ede8f37dc56c54f3621a5ad21f91a649450a9854bc1bacc1a24eb65fe31b38
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/backwards-write.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:e9b5b1afa36dca37f9548a8d706cc8474b3f03e61bc77037dfa6ab7b1a2169b7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/android/develop/ui/compose/performance/stability/strongskipping.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:3a69e68553d6d628e8787b3e499766798e73d86779a149c800fff7bb4340cce4
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/animation.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:fe21a3bc55b85b807e3655f427f00e3898a7a0da0590a9fe2825a20d43e440fe
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/effects-and-threading.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:4a612526c8e9d28d26fb51b1d942d1b34a1fa2316dfe43d2869206dda49bbfa3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/graphics-performance.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:3dc5881c2fb8eb4bcbf59b410008d995321a5fd2583e98194ee42407bdb7d266
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/layouts.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:619da0bd169a2a2c1b7e99868ab358a3be8c06f25f2bef0dd15353670ce12c06
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/lazy-layouts.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:68a0a4f43d311e4d57238ce745d0de775b1948748ab462608d5cbfe8f07b9bfe
+- kind: project-relative
+  target: codex
+  value: .agents/skills/jetpack-compose-performance/references/state-and-stability.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/jetpack-compose/jetpack-compose-performance
+  active_owner: android/skills/jetpack-compose/jetpack-compose-performance
+  content_hash: sha256:46aff96f166d19d1b2f5510c35679a0efac4fe9f578b4a1e186f5017a696ba37
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:e2bc8ec434bc104f71ef753ca21665678b00db8f14ef3fd36847ab85b313b4af
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/index.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:a6170dc40e2769e1034d51a5021b0b6dbc5df9bc9d9bbcae3c576a0647d0b6cf
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/migration-guide.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:2ba7d44e4b0b5ab827925354810645da026e9fb721bd9589a4f94b6f5d7bc954
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/animations.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:50c54d09fe14cb28f27d02cd9aaad4204dfe975a14bc8292b0bd40f61ad5300d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basic.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:f96b02408f311d07c8df16c1867e25598c4bcc1794b52aaaa290a3b377727495
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicdsl.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:d077507172cbf9ed6916899ef2d17b5f9aebcc9d3b46d51725d30166949daa14
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/basicsaveable.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:93f01733db02f06a66c54bc5372a88688831bad14ded07ad181a16a12b848110
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/bottomsheet.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:63d7fe5d044bd0d9c4dbb913b47ecaf2d7677305ac94c51c9295ebabfc1ef76f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/common-ui.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:835be092ff7114870543b4f7fb1f0893157c0ad07e00d70682a1256e95f5f3db
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional-transitions.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:bb41f81b08f422aaa201d2716f0feaa22705ebc9154d914ade0c25b3d3052063
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/conditional.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:1197b80637b7f670d7f7a426e1c5e47958139954888ddbe5cad68a82dda0fe2f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-custommatcher.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:96c0a9a617fffc4e5e9113da2b55fd1bd8bbe40593c836425a9dc2984854d0b0
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-staticuri.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:f131fe946f25f108601b66dcdb62be6add8cf685437fc78621d8b92dd67bd201
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-syntheticbackstack.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:12bf69439480fab3111f4b513118be0128ad574dd9d0aecd199ea37d0f75c4b2
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/deeplinks-uriarguments.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:bb8afb2616dfc7202376175752bdb5c99b19a64642b7a1b1f6f651527dfdf129
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/dialog.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:b8ac45054125a6aed66c5df682200c74440336d0584d7e1894078954c719200a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/lifecycle-owner.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:45e204c1494179deadb56e9b544c78c6f6f17be4d3d660d841a5db5e4245038f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-listdetail.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:e4781cf0fc691f92c202400a07ebc80424666681f9547e757f660388252cdb29
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/material-supportingpane.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:f0dc47a8d0aaceeefc6a48bf73563b3f9449e608c2ef71140acd5dcd13377e6d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-hilt.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:a11572b32f8a72ea6736db0ccea44eb94f575dd272c9246bdf24d1b76c31f539
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/modular-koin.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:591bd833b2b725d9e2e8f5ca5658a825c7d2f589c6c5d3103066e320a82e4fb9
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/multiple-backstacks.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:ee3300492f924914c649e157f3e72ce67af1b3b2fb356465a86b0b37e7b47d11
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/passingarguments.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:bc53a9bbabb799865bf8bc3130faeae6e6d2b2838c3e44f48574443b6467e0a5
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-event.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:e3f3371d6c5f06a3696c2f90f095bd5c530abd1a8dc59e666631b4e1d2926589
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/results-state.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:17fbf45258b3c928e300adfa07ec320ffbd591e3209236499c74bbb736a1acec
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-listdetail.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:2a19b4d03973c179eb4e4be8f95f9b728af34b55015619dde73dcd72af916e8c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/navigation-3/recipes/scenes-twopane.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:d0cb99ae3054cf463a598fd348d3d9a07aa4b6805ab22121bdc11561a60b1f64
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-3/references/android/guide/navigation/type-safe-destinations.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-3
+  active_owner: android/skills/navigation/navigation-3
+  content_hash: sha256:ad5f13e3d5ee1bc849d2da5941d4f99a3e2a5748d52fcdfde96d1bc21bf47acb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: sha256:4e9acfb0190cdee56dafb063868965992fdba2ad1694a7fc2524b9046a199609
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/dispatcher.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: sha256:c7ea58494c01b81554058c04090489a867731ca6cd995541446b22ddb0f42bba
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/handle-back.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: sha256:83268d85190a87e96f3738bec946d7f920abf2779f78d1f7c81822b4697a251b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/index.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: sha256:c6fa437e86e893fba81b80c1667dec134eb9530eea77861e23ec8dc1ac4747a5
+- kind: project-relative
+  target: codex
+  value: .agents/skills/navigation-event/references/android/guide/navigation/navigation-event/setup.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/navigation/navigation-event
+  active_owner: android/skills/navigation/navigation-event
+  content_hash: sha256:c117a8fbffa985a0640fd3a1738e568d6d4e26c2c5a941601146fea687258d84
+- kind: project-relative
+  target: codex
   value: .agents/skills/project-docs-sync
   runtime: null
   scope: project
@@ -336,6 +1259,303 @@ deployments:
   - imk1t/apm-shared
   active_owner: imk1t/apm-shared
   content_hash: sha256:d3362297049ceff6aa13e5943cf907c2a33aab1853d3f960af3fe988d58387c2
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:b6001b06ff0ebcbe87b98534a239c8c22b818b97681972db50d5b26466d2bf06
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/references/CONFIGURATION.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:61669860168d5c1f9628f4eb49d68b28e06d60f301a550107d96c030a1389ab2
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/references/FULL_BUILD_CONFIG_ANALYZER.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:e35ee7cebcf2c2bff5f17b5691ad9ac3a58bc2755ae5d7c3f326a9911d3e6f06
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/references/INSPECT-RULES.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:35c2c579ab8693365ed9caba4b08e70228484d3d98e74efe143047e8df9996c4
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/references/REPORT_FORMAT.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:34f11005ccc09e7198fedcb2e56f270127c5e8ac6e95c5fce6e4d9b52a55c323
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/references/android/topic/performance/app-optimization/enable-app-optimization.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:560048d6c973301d60c4ee058147f16043c50e5490f6e464c45754a38a7a92bb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/scripts/analyze.py
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:59b55ac94cc1509e244792edeef26111b048d130eb74b6eb4f14ad5f1f30473b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/scripts/convert_pb_to_json.py
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:06397052c96d80cc0ffd7077faf197555c2e9c9363a7fff59ae84f28169998e2
+- kind: project-relative
+  target: codex
+  value: .agents/skills/r8-analyzer/scripts/keep_radius_pb2.py
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/performance/r8-analyzer
+  active_owner: android/skills/performance/r8-analyzer
+  content_hash: sha256:37f0f038d7870c71b8d3cdd5b9b9361d79bde265e2754e3ffd511f53107a2e1a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:fc62139e262bd364cbbcab9b9f97557cd3fd6d2d4f73c4fab039d562fc324643
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:429c39b71692d4dc86e2b616f28b7e7f56207361c5b5a0b06df4746af96d5fa3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/assets/swiftui-pro-icon.png
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:51a28a5834e6d251def3c562712db1e2124e6d67b62be89fe4c1ca628e37a70a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/assets/swiftui-pro-icon.svg
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:a15c0a3030f08ffcc442aed9b7f2f19840877e43f980ad4dfdef515e9aeb44b3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/accessibility.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:46f865d3e5cf63f4394e8d55628e06897bf9eec7409d69331931225eac69a198
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/api.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:a12fb9dcc02093b560dd82e2882556d7cd2d6652edc0006eb24ebc14bc669448
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/data.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:291a81fb0fc1befebcafe576d9e35cc8d47bb4d63baef50f6f2292300be797dd
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/design.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:8f2d05504e4d51dc2a0d91d2b0a580457cd98d0145826e4c0bc35dc67f006793
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/hygiene.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:18c945717a842912180c218c10e7e76b496c11a87a77c1be65a504c70850877c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/localization.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:54f1d15bd8f726409a72622964005d2732148da614dc022bf7729f68ab246571
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/navigation.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:24b95bbaa01970ff0a6625a7a201d81191ab1746dbe317bd7583d1f3f7ce53a3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/performance-plus.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:b7c77ac07548f9f8b6440daab607b0fa22796fc498ca644e3fa9890ee7912068
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/performance.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:82ee00cc74109dd7e6296dc872d410742a8584ad6d0bc4ae902fad0220392e38
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/resizability.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:2e1a88a675fe2eaf326fb1a50fafae4123725e6b4278c311c875335651a60226
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/swift.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:fda431d8d1cc58bddc38a2075d5818b3d41df9b69886e8b1f6e0370ba1f9f773
+- kind: project-relative
+  target: codex
+  value: .agents/skills/swiftui-pro/references/views.md
+  runtime: null
+  scope: project
+  owners:
+  - twostraws/swiftui-agent-skill/swiftui-pro
+  active_owner: twostraws/swiftui-agent-skill/swiftui-pro
+  content_hash: sha256:e9c7ce9ef17e23b713a2565ee9d7f5db11e036adbae1a6b9c14d21d8b3dddce7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: sha256:613970834fedb22c5f85bbc900e600e9a17cd953157af5a7e953e5938d7c2457
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup/references/android/develop/ui/compose/testing/common-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: sha256:57fc697835d875cae7179d1b164db371e1b8c37881719fb32be51c09fa5c8c35
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing-with-testsuites.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: sha256:4b4ada7a50201bcf9ab90b0d9f00cc2ceb16513d1de7f63c12d634318a2ec20d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup/references/android/studio/preview/compose-screenshot-testing.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: sha256:d9b9c86efe82e0aa841f43435e4a29466794e75dd452e84a29fdc4f332a4d699
+- kind: project-relative
+  target: codex
+  value: .agents/skills/testing-setup/references/android/training/dependency-injection/hilt-testing.md
+  runtime: null
+  scope: project
+  owners:
+  - android/skills/testing/testing-setup
+  active_owner: android/skills/testing/testing-setup
+  content_hash: sha256:5e774a6ab09c0f469b4712ea8c468402b38dd4a19dce9570bacc49ad9af9c814
 - kind: project-relative
   target: legacy
   value: .agents/skills/add-module
@@ -390,6 +1610,42 @@ deployments:
   - .
   active_owner: .
   content_hash: sha256:13d6df0531b59e7569773ea8ea51bbb793f857889775990faa2b725c2e390986
+- kind: uri
+  target: mcp
+  value: context7
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: context7
+  runtime: codex
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+mcp_servers:
+- context7
+mcp_configs:
+  context7:
+    name: context7
+    transport: stdio
+    args:
+    - -y
+    - '@upstash/context7-mcp@4.4.1'
+    registry: false
+    command: npx
+mcp_target_servers:
+  claude:
+  - context7
+  codex:
+  - context7
+mcp_config_provenance:
+  context7: apm-shared
 local_deployed_files:
 - .agents/skills/add-module
 - .agents/skills/add-module/SKILL.md

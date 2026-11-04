@@ -1,6 +1,8 @@
 # 開発ツールのバージョン。`mise install` で入れる（mise 自体は各自でインストールする。README の「セットアップ」）。
 [tools]
 bun = "1.4.4"
+# apm（エージェント用スキルの配置）。lock の apm_version と揃えるため版を固定する
+"github:microsoft/apm" = "0.33.0"
 ktlint = "1.7.1"
 # SwiftLint は macOS のみ。CI（Linux）は Docker イメージ ghcr.io/realm/swiftlint を同じバージョンで使う。
 swiftlint = { version = "0.65.1", os = ["macos"] }

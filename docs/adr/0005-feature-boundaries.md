@@ -1,4 +1,4 @@
-# 0004: タブごとの feature と共通実装・仕様の境界
+# ADR 0005: タブごとの feature と共通実装・仕様の境界
 
 ## 決定
 - 画面は `features/search`（探す・リポジトリ詳細・Issue）、`features/bookmarks`（保存済み・メモ）、`features/settings`（設定）に分ける。

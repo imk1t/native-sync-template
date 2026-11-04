@@ -21,17 +21,16 @@ iOS（Swift）と Android（Kotlin）をそれぞれネイティブで実装し�
 
 clone 後に一度だけ実行します。
 
-1. mise と apm（Agent Package Manager）をインストールします。どちらも各自で入れます。
+1. mise をインストールします。各自で入れます（apm は手順 2 の `mise install` で入ります）。
 
    ```bash
-   brew install mise apm                      # macOS
-   curl https://mise.run | sh                 # Linux（mise）
-   curl -sSL https://aka.ms/apm-unix | sh     # Linux（apm）
+   brew install mise                          # macOS
+   curl https://mise.run | sh                 # Linux
    ```
 
    mise のシェル連携（`mise activate`）は [mise のドキュメント](https://mise.jdx.dev/getting-started.html)に沿って設定してください。
 
-2. `mise.toml` に書いたバージョンの Bun・ktlint・SwiftLint（macOS のみ）を入れます。
+2. `mise.toml` に書いたバージョンの Bun・apm・ktlint・SwiftLint（macOS のみ）を入れます。
 
    ```bash
    mise install
@@ -45,6 +44,7 @@ clone 後に一度だけ実行します。
 
    `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
    あわせて `apm.yml` の依存（共通の `apm-shared`、Android 公式の `android/skills`、SwiftUI Pro スキル）も配置されます。
+   あわせて MCP 設定（`.mcp.json`、`.codex/config.toml`）も生成されますが、コミットしません（`.gitignore` 済み）。依存の解決結果は `apm.lock.yaml` に記録されるので、依存や apm の版を変えたらコミットします。
 
 ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
 
@@ -76,6 +76,7 @@ modules/
     settings/           説明文表示設定とアプリ情報
 tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
 docs/adr/               設計判断の記録
+docs/platforms/         OS 固有の設定・環境・注意点（ios.md, android.md）
 ```
 
 `modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。
@@ -177,7 +178,7 @@ flowchart TD
     designsystem -.->|生成コード| tokens[("specs/tokens")]
 ```
 
-点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通実装です（[ADR 0004](docs/adr/0004-feature-boundaries.md)）。
+点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通実装です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。
 
 `bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
 
@@ -240,7 +241,7 @@ flowchart TD
 - 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
 - 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
 
-API を変更するときは `specs/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`specs/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0003](docs/adr/0003-github-openapi.md) を参照してください。
+API を変更するときは `specs/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`specs/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0004](docs/adr/0004-github-openapi.md) を参照してください。
 
 同じコマンドで、`specs/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`specs/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
