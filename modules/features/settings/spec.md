@@ -15,7 +15,7 @@
 スイッチ操作で core/storage の DisplaySettings に保存する。書き込み成功後に全画面へ反映し、再起動後も復元する。保存中は操作を無効にし、失敗時は保存済みの値を維持する。
 
 ## 使う API とトークン
-外部 API は使わない。core/storage、core/navigation、designsystem に依存し、他 feature には依存しない。
+外部 API は使わない。`core/storage`、`core/navigation`、`shared/designsystem` に依存し、他 feature には依存しない。
 
 ## OS 固有の差分
 iOS は Observation と SwiftUI の Form / Toggle、Android は StateFlow と Compose の Switch。公開入口は SettingsScreen、内部の描画は SettingsView / SettingsContent、状態管理は SettingsViewModel。iOS は @State、Android は Navigation 3 のエントリの ViewModelStore で ViewModel を保持する。

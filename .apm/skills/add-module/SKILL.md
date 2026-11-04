@@ -1,12 +1,13 @@
 ---
 name: add-module
-description: modules/ 配下に新しいモジュール（features/<名前>、core/<名前>、shared/<名前>、designsystem など）を iOS と Android の両方に新規作成するときに使う。Package.swift と settings.gradle.kts への登録まで含む。既存モジュールの変更は sync-feature を使う。
+description: modules/ 配下に新しいモジュール（features/<名前>、core/<名前>、shared/<名前>）を iOS と Android の両方に新規作成するときに使う。Package.swift と settings.gradle.kts への登録まで含む。既存モジュールの変更は sync-feature を使う。
 ---
 
 # モジュールの追加
 
 ## 置き場所と名前
-- 機能: `modules/features/<名前>/`、基盤: `modules/core/<名前>/`、feature 共通のモデルと処理: `modules/shared/<名前>/`（依存先は core のみ）。
+- 機能: `modules/features/<名前>/`、基盤: `modules/core/<名前>/`、feature 共通の UI・モデル・処理: `modules/shared/<名前>/`。
+- 共通 UI とトークンは `shared/designsystem`（依存先は `core/utils` のみ）。その他の shared の依存先は core のみ。shared 同士は依存しない。
 - 中身は `spec.md`、`ios/`、`android/`。名前は両 OS で対応させる（iOS の `FeatureLogin` ⇔ Android の `:features:login`）。
 
 ## 手順

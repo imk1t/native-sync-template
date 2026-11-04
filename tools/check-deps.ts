@@ -1,11 +1,11 @@
 /**
  * モジュール間の依存ルールを検査する。
  *
- *   core/utils      -> 何にも依存しない
- *   core/*          -> 他の core/* のみ（循環禁止）
- *   designsystem    -> core/utils のみ
- *   shared/*        -> core/*
- *   features/*      -> shared/*, core/*, designsystem（features 同士は禁止）
+ *   core/utils          -> 何にも依存しない
+ *   core/*              -> 他の core/* のみ（循環禁止）
+ *   shared/designsystem -> core/utils のみ
+ *   その他の shared/*   -> core/*（shared 同士は禁止）
+ *   features/*          -> shared/*, core/*（features 同士は禁止）
  */
 import { androidModules, iosTargets } from "./lib/manifest";
 import { compare, glob, isDict, join, readText, readYaml, ROOT, sorted } from "./lib/util";
@@ -139,10 +139,10 @@ export function checkExternal(used: { ios: External; android: External }, root: 
 export function allowed(src: string, dst: string): boolean {
   if (src === dst || src === "core/utils") return false;
   if (src.startsWith("core/")) return dst.startsWith("core/");
-  if (src === "designsystem") return dst === "core/utils";
+  if (src === "shared/designsystem") return dst === "core/utils";
   if (src.startsWith("shared/")) return dst.startsWith("core/");
   if (src.startsWith("features/")) {
-    return dst.startsWith("shared/") || dst.startsWith("core/") || dst === "designsystem";
+    return dst.startsWith("shared/") || dst.startsWith("core/");
   }
   return false;
 }

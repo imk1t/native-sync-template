@@ -67,8 +67,8 @@ modules/
     navigation/         画面遷移の状態と操作（Route は routes.yaml から生成）
     network/            OpenAPI から生成した API クライアントとそのラッパー
     storage/            UserDefaults / DataStore、Keychain / Keystore
-  designsystem/         トークンから生成した値と共通 UI
   shared/               複数 feature で使う共通実装（OS ごとに実装）
+    designsystem/       トークンから生成した値と共通 UI
     bookmarks/          保存 Key・JSON・更新と通知をまとめる BookmarkRepository
   features/
     search/             探す・リポジトリ詳細・Issue一覧と詳細
@@ -122,20 +122,20 @@ modules/features/search/
 | モジュール | 依存してよい先 |
 | --- | --- |
 | `apps/*` | すべて（DI の組み立てと画面遷移の配線だけを持つ） |
-| `shared/*` | `core/*`（画面を持たず、features と他の shared には依存しない） |
-| `features/*` | `shared/*`、`core/*`、`designsystem`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
+| `shared/designsystem` | `core/utils`（共通 UI・トークンを持つ。他の shared には依存しない） |
+| その他の `shared/*` | `core/*`（画面を持たず、features と他の shared には依存しない） |
+| `features/*` | `shared/*`、`core/*`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
 | `core/*` | 他の `core/*`（循環は禁止） |
 | `core/utils` | なし（標準ライブラリの拡張など、機能を知らないコードだけ） |
-| `designsystem` | `core/utils` |
 
 依存してよい向き（矢印は「依存する」）:
 
 ```mermaid
 flowchart TD
     apps["apps/ios, apps/android"] --> features["features/*"]
-    apps --> designsystem
+    apps --> designsystem["shared/designsystem"]
     apps --> core["core/*"]
-    apps --> shared["shared/*"]
+    apps --> shared["その他の shared/*"]
     features --> shared
     shared --> core
     features --> designsystem
@@ -161,7 +161,7 @@ flowchart TD
     search --> network
     search --> navigation
     search --> storage
-    search --> designsystem
+    search --> designsystem["shared/designsystem"]
     saved --> bookmarks
     saved --> network
     saved --> navigation
@@ -178,7 +178,7 @@ flowchart TD
     designsystem -.->|生成コード| tokens[("specs/tokens")]
 ```
 
-点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通実装です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。
+点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通 UI・モデル・処理です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。shared 同士の依存は禁止し、`shared/designsystem` の依存先は `core/utils` のみに制限します。
 
 `bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
 
@@ -222,7 +222,7 @@ flowchart TD
 
 ### 最低対応バージョン（案）
 
-- **iOS 18 以上**: Observation と SwiftData を前提にできます。Liquid Glass（iOS 26）などの新しい API は `#available` で分岐し、`designsystem` の中に閉じ込めます。
+- **iOS 18 以上**: Observation と SwiftData を前提にできます。Liquid Glass（iOS 26）などの新しい API は `#available` で分岐し、`shared/designsystem` の中に閉じ込めます。
 - **Android minSdk 28 以上**: targetSdk は常に最新にします。
 - リリース時期が決まった時点で、利用者の OS 分布を見て見直します。
 
@@ -243,7 +243,7 @@ flowchart TD
 
 API を変更するときは `specs/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`specs/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0004](docs/adr/0004-github-openapi.md) を参照してください。
 
-同じコマンドで、`specs/tokens/tokens.json` から `designsystem` の `Tokens`（色・余白）を、`specs/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
+同じコマンドで、`specs/tokens/tokens.json` から `shared/designsystem` の `Tokens`（色・余白）を、`specs/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
 
 ### 共通シナリオを両 OS のテストで実装する
 

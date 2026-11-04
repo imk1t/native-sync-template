@@ -24,7 +24,7 @@
 - 保存データの読み込み失敗・未知の保存バージョンはエラー表示し、空データで上書きしない。
 
 ## 使う API とトークン
-外部 API は呼び出さない。`shared/bookmarks`、`core/navigation`、`core/network`（画像取得）、`core/storage`（表示設定）、`designsystem` に依存する。他 feature には依存しない。
+外部 API は呼び出さない。`shared/bookmarks`、`core/navigation`、`core/network`（画像取得）、`core/storage`（表示設定）、`shared/designsystem` に依存する。他 feature には依存しない。
 
 ## OS 固有の差分
 - iOS は @MainActor / Observation と @State、Android は ViewModel / StateFlow とエントリごとの ViewModelStore。公開入口は Screen、内部描画は Swift の View / Kotlin の Content。

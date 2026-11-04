@@ -31,8 +31,8 @@
 
 ## 使う API とトークン
 - API: `search/repos`, `repos/get`, `issues/list-for-repo`, `issues/get`。`core/network` の GitHubAPI を Repository で包む。
-- `core/navigation`、`core/network`、`core/storage`、`shared/bookmarks`、`designsystem` に依存。他 feature には依存しない。
-- 共通 UI は designsystem の行・状態表示・バッジを利用する。
+- `core/navigation`、`core/network`、`core/storage`、`shared/bookmarks`、`shared/designsystem` に依存。他 feature には依存しない。
+- 共通 UI は `shared/designsystem` の行・状態表示・バッジを利用する。
 
 ## OS 固有の差分
 - iOS は @MainActor / Observation と画面ごとの @State、Android は ViewModel / StateFlow と Navigation 3 のエントリごとの ViewModelStore。iOS の task と Android の viewModelScope で取得を所有する。
