@@ -16,6 +16,8 @@ iOS は一つの Localizable.xcstrings、Android は言語ごとの strings.xml 
 他モジュールには依存しない。feature とアプリ層から参照する。designsystem には翻訳済みのラベルを渡す。
 
 ## OS 固有の差分
+モジュール名は iOS が `CoreLocalization`、Android のパッケージは `com.example.core.localization`。
+
 iOS は SwiftPM のリソース bundle と Foundation、Android は Context の getString / getQuantityString を使う。Android 13 以降は OS のアプリ言語設定に対応し、それ以前はシステム言語に従う。
 
 ## 検証

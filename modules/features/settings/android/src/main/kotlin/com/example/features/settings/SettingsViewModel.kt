@@ -2,8 +2,8 @@ package com.example.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.localization.Message
 import com.example.core.storage.DisplaySettings
-import com.example.corelocalization.Message
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

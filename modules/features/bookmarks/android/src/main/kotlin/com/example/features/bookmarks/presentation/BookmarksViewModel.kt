@@ -2,10 +2,10 @@ package com.example.features.bookmarks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.localization.Message
 import com.example.core.navigation.ModalStyle
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
-import com.example.corelocalization.Message
 import com.example.shared.bookmarks.Bookmark
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow

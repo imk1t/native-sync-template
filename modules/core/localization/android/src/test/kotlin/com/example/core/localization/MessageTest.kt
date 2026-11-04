@@ -1,4 +1,4 @@
-package com.example.corelocalization
+package com.example.core.localization
 
 import android.content.Context
 import android.content.res.Configuration

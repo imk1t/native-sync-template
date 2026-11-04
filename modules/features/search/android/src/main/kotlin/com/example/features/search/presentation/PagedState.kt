@@ -1,6 +1,6 @@
 package com.example.features.search
 
-import com.example.corelocalization.Message
+import com.example.core.localization.Message
 data class PagedState<T>(
     val items: List<T> = emptyList(),
     val hasLoaded: Boolean = false,

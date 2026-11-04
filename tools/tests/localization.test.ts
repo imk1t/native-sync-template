@@ -82,7 +82,7 @@ test("plural selection uses the declared integer, even after a string argument",
   const files = outputs(load(root));
   const catalog = JSON.parse(files[`${IOS}/Resources/Localizable.xcstrings`]!);
   expect(catalog.strings.message.localizations.en.substitutions.count.argNum).toBe(2);
-  expect(files[`${ANDROID}/kotlin/com/example/corelocalization/Message.kt`]).toContain(
+  expect(files[`${ANDROID}/kotlin/com/example/core/localization/Message.kt`]).toContain(
     "getQuantityString(R.plurals.message, count, name, count)",
   );
   write("en", { message: { forms: { other: "{count} results for {name}" } } });

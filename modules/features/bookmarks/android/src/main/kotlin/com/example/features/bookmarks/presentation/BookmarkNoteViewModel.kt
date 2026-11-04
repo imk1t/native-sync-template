@@ -2,8 +2,8 @@ package com.example.features.bookmarks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
-import com.example.corelocalization.Message
 import com.example.shared.bookmarks.BookmarkError
 import com.example.shared.bookmarks.BookmarkRepository
 import kotlinx.coroutines.CancellationException

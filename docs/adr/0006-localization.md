@@ -43,12 +43,12 @@ modules/core/localization/
   ios/Tests/CoreLocalizationTests/MessageTests.swift
   android/
     build.gradle.kts
-    src/main/kotlin/com/example/corelocalization/Localized.kt
+    src/main/kotlin/com/example/core/localization/Localized.kt
     src/main/generated/
-      kotlin/com/example/corelocalization/Message.kt
+      kotlin/com/example/core/localization/Message.kt
       res/values/strings.xml
       res/values-en/strings.xml
-    src/test/kotlin/com/example/corelocalization/MessageTest.kt
+    src/test/kotlin/com/example/core/localization/MessageTest.kt
 modules/Generated/Localization/config.json
 apps/ios/
   Generated/Localization/config.yml

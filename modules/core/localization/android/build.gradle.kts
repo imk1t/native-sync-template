@@ -5,7 +5,7 @@ plugins {
 }
 android {
     buildFeatures { compose = true }
-    namespace = "com.example.corelocalization"
+    namespace = "com.example.core.localization"
     compileSdk = 36
     sourceSets["main"].res.srcDir("src/main/generated/res")
     sourceSets["main"].java.srcDir("src/main/generated/kotlin")

@@ -1,4 +1,4 @@
-package com.example.corelocalization
+package com.example.core.localization
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration

@@ -12,7 +12,7 @@ OS 固有の設定・環境・落とし穴をここに残す。機能ごとの�
 - パッケージは `com.example.<modules/ からの階層>` とする。`core/network` は `com.example.core.network`、`shared/bookmarks` は `com.example.shared.bookmarks`、`features/search` は `com.example.features.search`。
 - `src/main/kotlin` と `src/test/kotlin` のディレクトリもパッケージに合わせる。Android ライブラリの `namespace` はそのモジュールのルートパッケージと一致させる。
 - `shared/designsystem` は `com.example.shared.designsystem`、アプリは `com.example.app`。`domain`・`data`・`presentation` は実装を分類するサブディレクトリで、パッケージはモジュール内で共通とする。
-- 生成コードは各パッケージ下の `generated/` に置き、同じモジュールのパッケージを使う。出力先と package 宣言は `tools/generate.ts` で管理する。
+- 生成コードは同じモジュールのパッケージを使う。API・画面遷移・トークンは各パッケージ下の `generated/`、ローカライズは `src/main/generated/kotlin/com/example/core/localization/` に置く。出力先と package 宣言は `tools/generate.ts` と `tools/lib/localization.ts` で管理する。
 
 ## 実行
 ```

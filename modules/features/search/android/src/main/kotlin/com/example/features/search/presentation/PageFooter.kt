@@ -3,8 +3,8 @@ package com.example.features.search
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import com.example.corelocalization.Message
-import com.example.corelocalization.localized
+import com.example.core.localization.Message
+import com.example.core.localization.localized
 import com.example.shared.designsystem.EmptyState
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator

@@ -72,7 +72,7 @@ class RepositorySearchViewModelTest {
         model.submit()
         advanceUntilIdle()
         assertEquals(
-            SearchFailure.Message(com.example.corelocalization.Message.ErrorServer(500)),
+            SearchFailure.Message(com.example.core.localization.Message.ErrorServer(500)),
             model.content.state.value.error
         )
         assertFalse(model.content.state.value.isLoading)

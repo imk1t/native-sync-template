@@ -3,9 +3,9 @@ package com.example.features.search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import com.example.core.localization.Message as LocalizedMessage
+import com.example.core.localization.localized
 import com.example.core.network.GitHubError
-import com.example.corelocalization.Message as LocalizedMessage
-import com.example.corelocalization.localized
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

@@ -2,10 +2,10 @@ package com.example.features.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
 import com.example.core.network.RepositorySummary
-import com.example.corelocalization.Message
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

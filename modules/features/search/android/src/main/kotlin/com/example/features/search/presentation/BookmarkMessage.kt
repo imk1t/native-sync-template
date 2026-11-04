@@ -1,6 +1,6 @@
 package com.example.features.search
 
-import com.example.corelocalization.Message
+import com.example.core.localization.Message
 import com.example.shared.bookmarks.BookmarkError
 
 internal fun bookmarkMessage(error: Exception, fallback: Message): Message = when (error as? BookmarkError) {
