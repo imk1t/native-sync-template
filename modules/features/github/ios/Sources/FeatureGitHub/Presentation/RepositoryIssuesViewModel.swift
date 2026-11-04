@@ -4,10 +4,10 @@ import Observation
 
 @MainActor
 @Observable
-public final class RepositoryIssuesViewModel {
-    public var issueState = "open"
-    public private(set) var revision = 0
-    public let content = PageLoader<GitHubIssue>()
+final class RepositoryIssuesViewModel {
+    var issueState = "open"
+    private(set) var revision = 0
+    let content = PageLoader<GitHubIssue>()
     private let owner: String
     private let repo: String
     private let repository: any GitHubRepository
@@ -15,34 +15,34 @@ public final class RepositoryIssuesViewModel {
     private var page = 1
     private var startedRevision: Int?
 
-    public init(owner: String, repo: String, repository: any GitHubRepository, navigator: Navigator) {
+    init(owner: String, repo: String, repository: any GitHubRepository, navigator: Navigator) {
         self.owner = owner
         self.repo = repo
         self.repository = repository
         self.navigator = navigator
     }
-    public func changeState() {
+    func changeState() {
         content.reset()
         page = 1
         revision += 1
     }
-    public func select(_ issue: GitHubIssue) {
+    func select(_ issue: GitHubIssue) {
         navigator.push(.issueDetail(owner: owner, repo: repo, number: issue.number))
     }
-    public func nextPage() {
+    func nextPage() {
         guard !content.state.isLoading, let next = content.state.nextPage else { return }
         page = next
         revision += 1
     }
-    public func retry() { revision += 1 }
-    public func loadIfNeeded() async {
+    func retry() { revision += 1 }
+    func loadIfNeeded() async {
         guard startedRevision != revision else { return }
         let current = revision
         startedRevision = current
         await load(page: page, refresh: false)
         if Task.isCancelled && current == revision { startedRevision = nil }
     }
-    public func refresh() async {
+    func refresh() async {
         guard !content.state.isLoading else { return }
         page = 1
         await load(page: 1, refresh: true)

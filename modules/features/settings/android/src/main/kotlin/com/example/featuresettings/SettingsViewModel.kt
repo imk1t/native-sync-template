@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 data class SettingsState(val isLoaded: Boolean = false, val isSaving: Boolean = false, val error: String? = null)
 
-class SettingsViewModel(val settings: DisplaySettings) : ViewModel() {
+internal class SettingsViewModel(val settings: DisplaySettings) : ViewModel() {
     private val mutableState = MutableStateFlow(SettingsState())
     val state: StateFlow<SettingsState> = mutableState
     fun load() {

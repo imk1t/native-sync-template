@@ -3,25 +3,25 @@ import Observation
 
 @MainActor
 @Observable
-public final class BookmarkNoteViewModel {
-    public var note = ""
-    public private(set) var isLoaded = false
-    public private(set) var isSaving = false
-    public private(set) var error: String?
+final class BookmarkNoteViewModel {
+    var note = ""
+    private(set) var isLoaded = false
+    private(set) var isSaving = false
+    private(set) var error: String?
     private let id: Int64?
     private let bookmarks: BookmarkRepository
     private let navigator: Navigator
     private let entryID: String?
-    public var characterCount: Int { note.unicodeScalars.count }
-    public var canSave: Bool { isLoaded && !isSaving && characterCount <= 1_000 }
+    var characterCount: Int { note.unicodeScalars.count }
+    var canSave: Bool { isLoaded && !isSaving && characterCount <= 1_000 }
 
-    public init(repositoryId: String, bookmarks: BookmarkRepository, navigator: Navigator) {
+    init(repositoryId: String, bookmarks: BookmarkRepository, navigator: Navigator) {
         id = Int64(repositoryId)
         self.bookmarks = bookmarks
         self.navigator = navigator
         entryID = navigator.state.modals.last?.stack.first?.id
     }
-    public func load() async {
+    func load() async {
         guard !isLoaded else { return }
         do {
             try await bookmarks.load()
@@ -31,7 +31,7 @@ public final class BookmarkNoteViewModel {
             error = nil
         } catch { self.error = error.localizedDescription }
     }
-    public func save() async {
+    func save() async {
         guard canSave, let id else { return }
         isSaving = true
         defer { isSaving = false }
@@ -40,7 +40,7 @@ public final class BookmarkNoteViewModel {
             close()
         } catch { self.error = error.localizedDescription }
     }
-    public func cancel() { if !isSaving { close() } }
+    func cancel() { if !isSaving { close() } }
     private func close() {
         if entryID != nil && navigator.state.modals.last?.stack.first?.id == entryID { navigator.dismiss() }
     }

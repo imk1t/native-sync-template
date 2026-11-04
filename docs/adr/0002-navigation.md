@@ -7,14 +7,16 @@
   - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル。モーダルはそれぞれ自分のスタックを持つ）として持ち、`Navigator` の 7 つの操作（`push` / `pop` / `popToRoot` / `present` / `dismiss` / `selectTab` / `reset`）で書き換える。push かモーダルかは呼ぶ側が決める。
   - スタックは `NavigationEntry(id, route)` を保持する。Route は遷移先、id は画面インスタンスを表す。同じ Route の push ごとに UUID を発行し、戻る操作で残るエントリは同じ ID を保つ。タブの先頭も NavigationState がエントリとして所有する。
   - 描画時はエントリ ID に画面状態を紐付ける。iOS は NavigationStack の要素と View の `.id`、Android は NavEntry の `contentKey` に使用する。
-  - `Route` から画面への対応と、状態の描画はアプリ層（`apps/*`）が持つ。iOS は `TabView` + `NavigationStack(path:)` + `.sheet` / `.fullScreenCover`、Android は `NavigationSuiteScaffold` + Navigation 3 の `NavDisplay` + ボトムシート / 全画面ダイアログ。
+  - アプリ層（`apps/*`）は起動処理・共有依存の組み立て（AppDependencies）・Route と公開入口の対応（AppRouter）・タブとスタックとモーダルの枠（AppRoot）を持つ。個別画面と ViewModel の生成・保持は各 feature の公開入口 `*Screen` に閉じる。
+  - 枠の描画は iOS が `TabView` + `NavigationStack(path:)` + `.sheet` / `.fullScreenCover`、Android が `NavigationSuiteScaffold` + Navigation 3 の `NavDisplay` + ボトムシート / 全画面ダイアログ。feature の入口で作る ViewModel も、その枠が提供する画面エントリの寿命に従う。
+  - AppDependencies は設定画面へ DisplaySettings を直接渡す。GitHubDependencies にも同じインスタンスを渡して変更を共有し、features 同士を依存させない。
 - 理由:
   - やり方を 1 つにすると、どこで書くかの判断が要らず、機能を足しても書き方がぶれない。
   - features 同士の依存を禁止したまま（相互遷移で循環しない）、機能をまたぐ遷移とディープリンクを書ける。
   - 遷移の振る舞いを純粋な状態遷移にすると、両 OS 共通のシナリオでテストでき、OS 間の差が出にくい。
   - 描画は各 OS の公式部品に任せるので、Liquid Glass のタブバーや大画面の適応レイアウトに OS の更新だけで追随できる。
 - 結果:
-  - 画面を足すときは `routes.yaml` に 1 件足し、アプリ層の `Route` → 画面の対応に 1 行足す。登録し忘れると `switch` / `when` の網羅チェックでビルドが落ちる。
+  - 画面を足すときは `routes.yaml` に 1 件足し、feature に `*Screen` を作り、両 OS の AppRouter に対応を足す。登録し忘れると `switch` / `when` の網羅チェックでビルドが落ちる。アプリ層に画面ごとのラッパーや ViewModel の factory は置かない。
   - 画面間で結果を返す仕組みは作らない。結果はデータ層（`core/*`）を通して受け渡す。
   - プロセス終了後のバックスタック復元は対象外（必要になったら `NavigationState` を保存できる形にする）。
 

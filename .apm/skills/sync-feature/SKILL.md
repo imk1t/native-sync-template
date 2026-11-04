@@ -11,7 +11,7 @@ description: 機能や基盤モジュールの振る舞い（画面、画面遷�
 1. 対象モジュールの `spec.md` を更新する。必要なら `shared/openapi`、`shared/tokens`、`shared/scenarios` も変える。
    - API: `shared/openapi/openapi.yaml` を直し、`bun tools/generate.ts` で `core/network` の DTO と APIClient を再生成する。ドメインモデルへの変換は `core/network` の手書きラッパーに足す。
    - 色・余白: `shared/tokens/tokens.json` を直し、`bun tools/generate.ts` で再生成する。
-   - 画面: `shared/routes.yaml` に足して再生成し、spec.md の「画面遷移」に画面と遷移（`push(...)` など）を書く。遷移は ViewModel から `Navigator` を呼ぶ。両 OS のアプリ層（iOS `AppMain.swift` の `Screen`、Android `MainActivity.kt` の `Screen`）に `Route` → 画面の対応を足す。
+   - 画面: `shared/routes.yaml` に足して再生成し、spec.md の「画面遷移」に画面と遷移（`push(...)` など）を書く。遷移は ViewModel から `Navigator` を呼ぶ。各 feature の公開入口 `*Screen` で ViewModel を生成・保持し、両 OS のアプリ層の `AppRouter` に `Route` → 入口の対応を足す。アプリ層には個別画面やその ViewModel の生成処理を置かない。
 2. 一方の OS を実装する（iOS: `<module>/ios/`、Android: `<module>/android/`）。
 3. もう一方を**同じ型名・同じ構造**で実装する。意図した違いは `spec.md` の「OS 固有の差分」に書く。
 4. 状態遷移やエラーを変えたら `shared/scenarios/*.yaml` を更新する。新しい step には `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書く。

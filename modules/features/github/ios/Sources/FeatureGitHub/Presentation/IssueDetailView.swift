@@ -1,10 +1,10 @@
 import DesignSystem
 import SwiftUI
 
-public struct IssueDetailView: View {
+struct IssueDetailView: View {
     private let viewModel: IssueDetailViewModel
-    public init(viewModel: IssueDetailViewModel) { self.viewModel = viewModel }
-    public var body: some View {
+    init(viewModel: IssueDetailViewModel) { self.viewModel = viewModel }
+    var body: some View {
         List {
             if let issue = viewModel.content.state.items.first {
                 Section {

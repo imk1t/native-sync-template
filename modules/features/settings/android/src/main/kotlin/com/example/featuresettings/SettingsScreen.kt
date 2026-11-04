@@ -18,11 +18,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corestorage.DisplaySettings
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(settings: DisplaySettings) {
+    val viewModel: SettingsViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { SettingsViewModel(settings) }
+        }
+    )
+    SettingsContent(viewModel)
+}
+
+@Composable
+private fun SettingsContent(viewModel: SettingsViewModel) {
     val state by viewModel.state.collectAsState()
     val descriptions by viewModel.settings.showDescriptions.collectAsState()
     LaunchedEffect(viewModel) { viewModel.load() }

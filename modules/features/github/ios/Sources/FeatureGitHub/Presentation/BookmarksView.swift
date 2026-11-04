@@ -1,10 +1,10 @@
 import DesignSystem
 import SwiftUI
 
-public struct BookmarksView: View {
+struct BookmarksView: View {
     @Bindable private var viewModel: BookmarksViewModel
-    public init(viewModel: BookmarksViewModel) { self.viewModel = viewModel }
-    public var body: some View {
+    init(viewModel: BookmarksViewModel) { self.viewModel = viewModel }
+    var body: some View {
         List {
             if viewModel.isLoading { LoadingIndicator() }
             if let error = viewModel.error { ErrorState(error) { Task { await viewModel.load() } } }

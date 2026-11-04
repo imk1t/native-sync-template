@@ -4,6 +4,7 @@ iOS(Swift)と Android(Kotlin)をネイティブで同時に開発するモノレ
 
 ## 構成
 - `apps/{ios,android}`: 組み立てだけ。ロジックは置かない。
+- アプリ層は起動・AppRoot の枠・AppDependencies の共有依存・AppRouter の対応表を持つ。個別画面と ViewModel の生成・保持は各 feature の公開入口 `*Screen` に置く。
 - `shared/`: 単一の正。`openapi`(API)、`tokens`(デザイントークン)、`routes.yaml`(画面の一覧)、`scenarios`(共通シナリオ)、`third-party.yaml`(外部ライブラリ対応表)。
 - `modules/<core|designsystem|features>/<名前>/{spec.md, ios, android}`: 機能・基盤。`spec.md` が同期の基準。
 - `docs/adr/`: 設計判断の記録。

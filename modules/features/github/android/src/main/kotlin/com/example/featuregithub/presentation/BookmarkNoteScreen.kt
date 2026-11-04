@@ -19,11 +19,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
 
 @Composable
-fun BookmarkNoteScreen(viewModel: BookmarkNoteViewModel) {
+fun BookmarkNoteScreen(repositoryId: String, dependencies: GitHubDependencies, navigator: Navigator) {
+    val viewModel: BookmarkNoteViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { BookmarkNoteViewModel(repositoryId, dependencies.bookmarks, navigator) }
+        }
+    )
+    BookmarkNoteContent(viewModel)
+}
+
+@Composable
+private fun BookmarkNoteContent(viewModel: BookmarkNoteViewModel) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(viewModel) { viewModel.load() }
     Column(

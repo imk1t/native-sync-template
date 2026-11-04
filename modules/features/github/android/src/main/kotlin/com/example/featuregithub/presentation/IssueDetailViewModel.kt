@@ -7,7 +7,7 @@ import com.example.corenetwork.Page
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-class IssueDetailViewModel(
+internal class IssueDetailViewModel(
     private val owner: String,
     private val repo: String,
     private val number: Long,

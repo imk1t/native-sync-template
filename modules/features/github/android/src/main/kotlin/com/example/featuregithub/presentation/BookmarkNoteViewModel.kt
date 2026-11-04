@@ -18,7 +18,7 @@ data class NoteState(
     val canSave: Boolean get() = isLoaded && !isSaving && characterCount <= 1_000
 }
 
-class BookmarkNoteViewModel(
+internal class BookmarkNoteViewModel(
     repositoryId: String,
     private val bookmarks: BookmarkRepository,
     private val navigator: Navigator

@@ -22,12 +22,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
 import com.example.designsystem.EmptyState
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
 
 @Composable
-fun BookmarksScreen(viewModel: BookmarksViewModel) {
+fun BookmarksScreen(dependencies: GitHubDependencies, navigator: Navigator) {
+    val viewModel: BookmarksViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { BookmarksViewModel(dependencies, navigator) }
+        }
+    )
+    BookmarksContent(viewModel)
+}
+
+@Composable
+private fun BookmarksContent(viewModel: BookmarksViewModel) {
     val bookmarks by viewModel.dependencies.bookmarks.items.collectAsState()
     val descriptions by viewModel.dependencies.settings.showDescriptions.collectAsState()
     val error by viewModel.error.collectAsState()

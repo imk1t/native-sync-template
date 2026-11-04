@@ -1,11 +1,11 @@
 import DesignSystem
 import SwiftUI
 
-public struct RepositoryIssuesView: View {
+struct RepositoryIssuesView: View {
     @Bindable private var viewModel: RepositoryIssuesViewModel
-    public init(viewModel: RepositoryIssuesViewModel) { self.viewModel = viewModel }
+    init(viewModel: RepositoryIssuesViewModel) { self.viewModel = viewModel }
 
-    public var body: some View {
+    var body: some View {
         List {
             Picker("状態", selection: $viewModel.issueState) {
                 Text("Open").tag("open")

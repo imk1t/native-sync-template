@@ -1,10 +1,10 @@
 import DesignSystem
 import SwiftUI
 
-public struct SettingsView: View {
+struct SettingsView: View {
     @Bindable private var viewModel: SettingsViewModel
-    public init(viewModel: SettingsViewModel) { self.viewModel = viewModel }
-    public var body: some View {
+    init(viewModel: SettingsViewModel) { self.viewModel = viewModel }
+    var body: some View {
         Form {
             Section("表示") {
                 Toggle("一覧に説明文を表示", isOn: $viewModel.showDescriptions)

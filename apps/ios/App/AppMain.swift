@@ -1,7 +1,4 @@
 import CoreNavigation
-import CoreNetwork
-import CoreStorage
-import FeatureGitHub
 import SwiftUI
 
 @main
@@ -11,8 +8,8 @@ struct AppMain: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(navigator: navigator) { route in
-                Screen(route: route, dependencies: dependencies.github, navigator: navigator)
+            AppRoot(navigator: navigator) { route in
+                AppRouter(route: route, dependencies: dependencies, navigator: navigator)
             }
             .onOpenURL { url in
                 if let route = Route(url: url) {

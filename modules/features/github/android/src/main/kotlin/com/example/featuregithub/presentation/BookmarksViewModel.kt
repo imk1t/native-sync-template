@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class BookmarksViewModel(val dependencies: GitHubDependencies, private val navigator: Navigator) : ViewModel() {
+internal class BookmarksViewModel(val dependencies: GitHubDependencies, private val navigator: Navigator) :
+    ViewModel() {
     private val mutableError = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = mutableError
     private val mutableLoading = MutableStateFlow(false)

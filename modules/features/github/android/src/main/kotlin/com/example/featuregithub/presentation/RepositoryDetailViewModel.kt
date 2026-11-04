@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RepositoryDetailViewModel(
+internal class RepositoryDetailViewModel(
     private val owner: String,
     private val repo: String,
     val dependencies: GitHubDependencies,

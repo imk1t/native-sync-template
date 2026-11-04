@@ -31,11 +31,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
 import com.example.designsystem.ErrorState
+
+@Composable
+fun RepositorySearchScreen(dependencies: GitHubDependencies, navigator: Navigator) {
+    val viewModel: RepositorySearchViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { RepositorySearchViewModel(dependencies, navigator) }
+        }
+    )
+    RepositorySearchContent(viewModel)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepositorySearchScreen(viewModel: RepositorySearchViewModel) {
+private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
     val form by viewModel.form.collectAsState()
     val state by viewModel.content.state.collectAsState()
     val storageError by viewModel.storageError.collectAsState()

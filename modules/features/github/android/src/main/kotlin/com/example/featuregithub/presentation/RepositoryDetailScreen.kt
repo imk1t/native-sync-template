@@ -17,13 +17,27 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
 import com.example.designsystem.ErrorState
 import com.example.designsystem.LoadingIndicator
 import com.example.designsystem.StatusBadge
 
+@Composable
+fun RepositoryDetailScreen(owner: String, repo: String, dependencies: GitHubDependencies, navigator: Navigator) {
+    val viewModel: RepositoryDetailViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { RepositoryDetailViewModel(owner, repo, dependencies, navigator) }
+        }
+    )
+    RepositoryDetailContent(viewModel)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepositoryDetailScreen(viewModel: RepositoryDetailViewModel) {
+private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
     val state by viewModel.content.state.collectAsState()
     val bookmarks by viewModel.dependencies.bookmarks.items.collectAsState()
     val saving by viewModel.isSaving.collectAsState()

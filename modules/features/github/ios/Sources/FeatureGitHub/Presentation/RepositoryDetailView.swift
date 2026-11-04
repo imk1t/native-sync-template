@@ -1,11 +1,11 @@
 import DesignSystem
 import SwiftUI
 
-public struct RepositoryDetailView: View {
+struct RepositoryDetailView: View {
     @Bindable private var viewModel: RepositoryDetailViewModel
-    public init(viewModel: RepositoryDetailViewModel) { self.viewModel = viewModel }
+    init(viewModel: RepositoryDetailViewModel) { self.viewModel = viewModel }
 
-    public var body: some View {
+    var body: some View {
         List {
             if let repository = viewModel.content.state.items.first {
                 Section {

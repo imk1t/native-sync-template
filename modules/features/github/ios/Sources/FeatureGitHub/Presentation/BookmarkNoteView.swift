@@ -1,10 +1,10 @@
 import DesignSystem
 import SwiftUI
 
-public struct BookmarkNoteView: View {
+struct BookmarkNoteView: View {
     @Bindable private var viewModel: BookmarkNoteViewModel
-    public init(viewModel: BookmarkNoteViewModel) { self.viewModel = viewModel }
-    public var body: some View {
+    init(viewModel: BookmarkNoteViewModel) { self.viewModel = viewModel }
+    var body: some View {
         Form {
             Section("メモ") {
                 TextField("気になったことを書いておきましょう", text: $viewModel.note, axis: .vertical)

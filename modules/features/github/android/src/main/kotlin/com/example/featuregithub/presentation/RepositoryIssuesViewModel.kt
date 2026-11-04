@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RepositoryIssuesViewModel(
+internal class RepositoryIssuesViewModel(
     private val owner: String,
     private val repo: String,
     private val repository: GitHubRepository,

@@ -5,25 +5,25 @@ import Observation
 
 @MainActor
 @Observable
-public final class RepositorySearchViewModel {
-    public var query = ""
-    public var language = ""
-    public var sort = ""
-    public private(set) var revision = 0
-    public private(set) var storageError: String?
-    public let content = PageLoader<RepositorySummary>()
-    public let dependencies: GitHubDependencies
+final class RepositorySearchViewModel {
+    var query = ""
+    var language = ""
+    var sort = ""
+    private(set) var revision = 0
+    private(set) var storageError: String?
+    let content = PageLoader<RepositorySummary>()
+    let dependencies: GitHubDependencies
     private let navigator: Navigator
     private var submitted: (query: String, sort: String?)?
     private var requestedPage = 1
     private var startedRevision: Int?
 
-    public init(dependencies: GitHubDependencies, navigator: Navigator) {
+    init(dependencies: GitHubDependencies, navigator: Navigator) {
         self.dependencies = dependencies
         self.navigator = navigator
     }
 
-    public func submit() {
+    func submit() {
         content.reset()
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         submitted =
@@ -37,21 +37,21 @@ public final class RepositorySearchViewModel {
         revision += 1
     }
 
-    public func example(_ query: String) {
+    func example(_ query: String) {
         self.query = query
         submit()
     }
-    public func select(_ repository: RepositorySummary) {
+    func select(_ repository: RepositorySummary) {
         navigator.push(.repositoryDetail(owner: repository.owner, repo: repository.name))
     }
-    public func nextPage() {
+    func nextPage() {
         guard !content.state.isLoading, let page = content.state.nextPage else { return }
         requestedPage = page
         revision += 1
     }
-    public func retry() { revision += 1 }
+    func retry() { revision += 1 }
 
-    public func loadIfNeeded() async {
+    func loadIfNeeded() async {
         do {
             try await dependencies.loadLocalData()
             storageError = nil
@@ -67,7 +67,7 @@ public final class RepositorySearchViewModel {
         if Task.isCancelled && current == revision { startedRevision = nil }
     }
 
-    public func refresh() async {
+    func refresh() async {
         guard let submitted, !content.state.isLoading else { return }
         requestedPage = 1
         let repository = dependencies.repository

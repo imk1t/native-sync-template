@@ -180,7 +180,9 @@ flowchart TD
 | `selectTab(tab)` | タブ切り替え（モーダルは閉じる） |
 | `reset(state)` | ログイン後のホームなど戻れない遷移、ディープリンク（`NavigationState.opening`） |
 
-`Route` から画面への対応と状態の描画はアプリ層だけが持ちます（iOS: `apps/ios/App/AppMain.swift`・`RootView.swift`、Android: `MainActivity.kt`・`AppRoot.kt`）。描画には iOS は `TabView` / `NavigationStack` / `.sheet`、Android は `NavigationSuiteScaffold` / Navigation 3 / ボトムシートを使い、タブバーや大画面のレイアウトは OS の部品に任せます。画面を足したら、`routes.yaml` に 1 件、アプリ層の対応に 1 行足します（足し忘れは `switch` / `when` の網羅チェックでビルドが落ちます）。
+アプリ層は起動処理、`AppRoot` によるタブ・スタック・シートの枠、`AppDependencies` による共有依存の組み立て、`AppRouter` による `Route` → feature の公開入口の対応だけを持ちます。iOS の `AppMain.swift` と Android の `MainActivity.kt` がこれらを組み立てます。個別画面と ViewModel の生成・保持は各 feature の `*Screen` に置き、アプリ層から個別画面の ViewModel を参照しません。設定画面は他 feature の依存コンテナを受け取らず、共有の `DisplaySettings` だけを受け取ります。
+
+枠の描画には iOS は `TabView` / `NavigationStack` / `.sheet`、Android は `NavigationSuiteScaffold` / Navigation 3 / ボトムシートを使い、タブバーや大画面のレイアウトは OS の部品に任せます。画面を足したら、`routes.yaml` と feature の `*Screen`、両 OS の `AppRouter` に対応を足します（登録漏れは `switch` / `when` の網羅チェックでビルドが落ちます）。画面状態はエントリ ID に紐付け、タブ切り替えや戻る操作でも残ったエントリの状態を維持します。
 
 ### 技術スタック
 

@@ -16,6 +16,8 @@
 検索・保存済みの選択は `push(repositoryDetail)`、詳細から `push(repositoryIssues)`、Issue 選択は `push(issueDetail)`。メモは `present(bookmarkNote, sheet)`、保存成功・キャンセルは `dismiss()`。戻る操作は `pop()`。ID は文字列、API 内の ID は 64bit 整数。
 
 ## 画面と状態
+- 各画面の公開入口は両 OS とも `<画面名>Screen` とし、画面引数・GitHubDependencies・必要な Navigator を受け取る。ViewModel の生成と保持、画面本体は feature 内に閉じる。アプリ層は AppRouter で Route から入口を呼ぶだけとする。
+- 画面状態は NavigationEntry の ID ごとに保持する。同じ Route を複数回開いた場合は独立し、戻る操作やタブ切り替えでは残ったエントリの状態を維持する。
 - 一覧は `items`, `hasLoaded`, `isLoading`, `error`, `nextPage`, `incomplete` を持つ。初期は未取得、空一覧。初回・更新・追加取得を区別し、失敗しても取得済みの一覧は保持する。
 - 検索は確定時だけ取得。空白だけなら送信しない。言語は全て・Swift・Kotlin・TypeScript・Rust、並べ替えは関連度・Star 数・更新日時。検索語に `is:public` と選択言語を付ける。
 - 1 ページ 20 件。ID で重複を除外し、終端は API の次ページ情報で判断する。検索の 1,000 件上限と不完全な結果を表示する。
@@ -41,7 +43,7 @@
 
 ## OS 固有の差分
 - iOS は @MainActor / Observation と画面ごとの @State、Android は ViewModel / StateFlow と Navigation 3 のエントリごとの ViewModelStore。iOS の task と Android の viewModelScope で取得を所有する。
-- 画面名は Swift の View / Kotlin の Screen。API の略語は GitHubAPI / GitHubApi。Domain と Data の責務と型名は両 OS で揃える。
+- 公開入口は両 OS とも Screen。内部の描画は Swift の View / Kotlin の Content、API の略語は GitHubAPI / GitHubApi。Domain と Data の責務と型名は両 OS で揃える。
 - iOS の List / Picker / シートと Android の LazyColumn / 選択チップ / ボトムシートを使う。読み上げラベルと文字拡大に対応する。プロセス終了後の画面スタック復元は対象外。
 
 ## シナリオ

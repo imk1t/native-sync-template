@@ -1,11 +1,11 @@
 import DesignSystem
 import SwiftUI
 
-public struct RepositorySearchView: View {
+struct RepositorySearchView: View {
     @Bindable private var viewModel: RepositorySearchViewModel
-    public init(viewModel: RepositorySearchViewModel) { self.viewModel = viewModel }
+    init(viewModel: RepositorySearchViewModel) { self.viewModel = viewModel }
 
-    public var body: some View {
+    var body: some View {
         List {
             Section {
                 Picker("言語", selection: $viewModel.language) {

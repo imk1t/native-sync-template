@@ -28,7 +28,6 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.navigation.suite)
-    implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.navigation3)
     implementation(libs.navigation3.runtime)
     implementation(libs.navigation3.ui)

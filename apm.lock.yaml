@@ -1,5 +1,142 @@
 lockfile_version: '1'
-dependencies: []
+apm_version: 0.33.0
+dependencies:
+- repo_url: android/skills
+  name: adaptive
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: jetpack-compose/adaptive
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:172c058f860c017a5d9645c54732bbb7cd2f383a513ffe8b5f9369e825ae457f
+- repo_url: android/skills
+  name: jetpack-compose-performance
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: jetpack-compose/jetpack-compose-performance
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:333fae93ad9f596bd44926fd253bed62d32d83f4ef0a942fa84f4e483d23ba36
+- repo_url: android/skills
+  name: navigation-3
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: navigation/navigation-3
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:8475a7e54a5f986edd492a96ae1e4a71a825d1b0d41d5126301c3ffa8aa2f938
+- repo_url: android/skills
+  name: navigation-event
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: navigation/navigation-event
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:e249bbffbaa492c66822d46fed37cc45ea05df8764a7b485f4bb03c650d180eb
+- repo_url: android/skills
+  name: anr-audit-and-fix
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: performance/anr-audit-and-fix
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:b3fa11ca275763378c16689bb38b3ce92a610b1ad8f055ae9214635512651c21
+- repo_url: android/skills
+  name: r8-analyzer
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: performance/r8-analyzer
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:7bee16200224e69abcdcc421b1705c90d8b20b2c683a9985b96785e179239d54
+- repo_url: android/skills
+  name: android-intent-security
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: security/android-intent-security
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:f3eb7d785071d1a161685563b834c5d702c582e9767ced3fe87e921b3e16bc6f
+- repo_url: android/skills
+  name: android-permissions-security
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: security/android-permissions-security
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:3f9e87128f38487339ccd463443c27b8dc57d8e3b652726b8059e1753a442649
+- repo_url: android/skills
+  name: testing-setup
+  host: github.com
+  resolved_commit: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  resolved_ref: 6daa53ef27fa2aa87827d183a85c06cedceca833
+  version: unknown
+  virtual_path: testing/testing-setup
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:2d1090689966e496966fa71047db0190f2ecbd310e3a6d00b0b372cb44673954
+- repo_url: imk1t/apm-shared
+  name: apm-shared
+  host: github.com
+  resolved_commit: b22f16f98b9056d0db79d4eba98deb67a42ce94a
+  resolved_ref: v0.1.4
+  version: 0.1.4
+  package_type: apm_package
+  deployed_files:
+  - .agents/skills/code-docs
+  - .agents/skills/code-docs/SKILL.md
+  - .agents/skills/code-hygiene
+  - .agents/skills/code-hygiene/SKILL.md
+  - .agents/skills/create-pr
+  - .agents/skills/create-pr/SKILL.md
+  - .agents/skills/project-docs-sync
+  - .agents/skills/project-docs-sync/SKILL.md
+  - .claude/skills/code-docs
+  - .claude/skills/code-docs/SKILL.md
+  - .claude/skills/code-hygiene
+  - .claude/skills/code-hygiene/SKILL.md
+  - .claude/skills/create-pr
+  - .claude/skills/create-pr/SKILL.md
+  - .claude/skills/project-docs-sync
+  - .claude/skills/project-docs-sync/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/code-docs/SKILL.md: sha256:ae031f1add0c536573178f74ee4f6f15f1f8fe635f641fb7f85ea8a1c99141ad
+    .agents/skills/code-hygiene/SKILL.md: sha256:7d0ccaed24ad4c4fe15a0b48ada7d4c36a4f68c6d37e9baf4f7dae587930dfb5
+    .agents/skills/create-pr/SKILL.md: sha256:36a479b23945a381ef0ac995f57a641c883def290f67250c264f95812f48e518
+    .agents/skills/project-docs-sync/SKILL.md: sha256:d3362297049ceff6aa13e5943cf907c2a33aab1853d3f960af3fe988d58387c2
+    .claude/skills/code-docs/SKILL.md: sha256:ae031f1add0c536573178f74ee4f6f15f1f8fe635f641fb7f85ea8a1c99141ad
+    .claude/skills/code-hygiene/SKILL.md: sha256:7d0ccaed24ad4c4fe15a0b48ada7d4c36a4f68c6d37e9baf4f7dae587930dfb5
+    .claude/skills/create-pr/SKILL.md: sha256:36a479b23945a381ef0ac995f57a641c883def290f67250c264f95812f48e518
+    .claude/skills/project-docs-sync/SKILL.md: sha256:d3362297049ceff6aa13e5943cf907c2a33aab1853d3f960af3fe988d58387c2
+  content_hash: sha256:1a11039fea5184cca0eec70963479fe7ba47ca90d7a1a59d39ee96be8e5712cc
+  declared_license: MIT
+- repo_url: twostraws/swiftui-agent-skill
+  materialization_repo_url: twostraws/SwiftUI-Agent-Skill
+  name: swiftui-pro
+  host: github.com
+  resolved_commit: f2920b63995263f57b3e198674e89a602efba6d2
+  resolved_ref: f2920b63995263f57b3e198674e89a602efba6d2
+  version: unknown
+  virtual_path: swiftui-pro
+  is_virtual: true
+  package_type: claude_skill
+  content_hash: sha256:46ba1afccc1703ec1e72f791f5632b9c8acb5fb47a9fd4d3efae99b51d18b6f0
 deployments:
 - kind: project-relative
   target: claude
@@ -18,7 +155,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
+  content_hash: sha256:b6774d9e3058f423bc5e49ff20b4cdbf7afb8f42cc5c46e0d55f508d2720a367
 - kind: project-relative
   target: claude
   value: .claude/skills/add-third-party
@@ -36,7 +173,79 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
+  content_hash: sha256:b155b106f691df39893e26d78a68f22328b880c287dd4947946299571740c8bd
+- kind: project-relative
+  target: claude
+  value: .claude/skills/code-docs
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/code-docs/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:ae031f1add0c536573178f74ee4f6f15f1f8fe635f641fb7f85ea8a1c99141ad
+- kind: project-relative
+  target: claude
+  value: .claude/skills/code-hygiene
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/code-hygiene/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:7d0ccaed24ad4c4fe15a0b48ada7d4c36a4f68c6d37e9baf4f7dae587930dfb5
+- kind: project-relative
+  target: claude
+  value: .claude/skills/create-pr
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/create-pr/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:36a479b23945a381ef0ac995f57a641c883def290f67250c264f95812f48e518
+- kind: project-relative
+  target: claude
+  value: .claude/skills/project-docs-sync
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/project-docs-sync/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:d3362297049ceff6aa13e5943cf907c2a33aab1853d3f960af3fe988d58387c2
 - kind: project-relative
   target: claude
   value: .claude/skills/sync-feature
@@ -54,9 +263,81 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
+  content_hash: sha256:54fe59d91ef55af6717dff4234ab7b65a2b8e715f07b1da9d9fd2a3cc5774cb5
 - kind: project-relative
   target: codex
+  value: .agents/skills/code-docs
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/code-docs/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:ae031f1add0c536573178f74ee4f6f15f1f8fe635f641fb7f85ea8a1c99141ad
+- kind: project-relative
+  target: codex
+  value: .agents/skills/code-hygiene
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/code-hygiene/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:7d0ccaed24ad4c4fe15a0b48ada7d4c36a4f68c6d37e9baf4f7dae587930dfb5
+- kind: project-relative
+  target: codex
+  value: .agents/skills/create-pr
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/create-pr/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:36a479b23945a381ef0ac995f57a641c883def290f67250c264f95812f48e518
+- kind: project-relative
+  target: codex
+  value: .agents/skills/project-docs-sync
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/project-docs-sync/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - imk1t/apm-shared
+  active_owner: imk1t/apm-shared
+  content_hash: sha256:d3362297049ceff6aa13e5943cf907c2a33aab1853d3f960af3fe988d58387c2
+- kind: project-relative
+  target: legacy
   value: .agents/skills/add-module
   runtime: null
   scope: project
@@ -65,16 +346,16 @@ deployments:
   active_owner: .
   content_hash: null
 - kind: project-relative
-  target: codex
+  target: legacy
   value: .agents/skills/add-module/SKILL.md
   runtime: null
   scope: project
   owners:
   - .
   active_owner: .
-  content_hash: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
+  content_hash: sha256:b6774d9e3058f423bc5e49ff20b4cdbf7afb8f42cc5c46e0d55f508d2720a367
 - kind: project-relative
-  target: codex
+  target: legacy
   value: .agents/skills/add-third-party
   runtime: null
   scope: project
@@ -83,16 +364,16 @@ deployments:
   active_owner: .
   content_hash: null
 - kind: project-relative
-  target: codex
+  target: legacy
   value: .agents/skills/add-third-party/SKILL.md
   runtime: null
   scope: project
   owners:
   - .
   active_owner: .
-  content_hash: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
+  content_hash: sha256:b155b106f691df39893e26d78a68f22328b880c287dd4947946299571740c8bd
 - kind: project-relative
-  target: codex
+  target: legacy
   value: .agents/skills/sync-feature
   runtime: null
   scope: project
@@ -101,14 +382,14 @@ deployments:
   active_owner: .
   content_hash: null
 - kind: project-relative
-  target: codex
+  target: legacy
   value: .agents/skills/sync-feature/SKILL.md
   runtime: null
   scope: project
   owners:
   - .
   active_owner: .
-  content_hash: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
+  content_hash: sha256:54fe59d91ef55af6717dff4234ab7b65a2b8e715f07b1da9d9fd2a3cc5774cb5
 local_deployed_files:
 - .agents/skills/add-module
 - .agents/skills/add-module/SKILL.md
@@ -123,9 +404,9 @@ local_deployed_files:
 - .claude/skills/sync-feature
 - .claude/skills/sync-feature/SKILL.md
 local_deployed_file_hashes:
-  .agents/skills/add-module/SKILL.md: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
-  .agents/skills/add-third-party/SKILL.md: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
-  .agents/skills/sync-feature/SKILL.md: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
-  .claude/skills/add-module/SKILL.md: sha256:ae8992e35634535fda1f9f8d2c54e0c3718e67919eef4f4731b38c19afbea6a4
-  .claude/skills/add-third-party/SKILL.md: sha256:3ba038c1bc5165fb658b3eff634589ce3643ad90e988880cef45ee6c10d56b0b
-  .claude/skills/sync-feature/SKILL.md: sha256:f43922f66f4b9c8f2523d910d6c470fd42628f7c35e08fbc6d8184400a12cf54
+  .agents/skills/add-module/SKILL.md: sha256:b6774d9e3058f423bc5e49ff20b4cdbf7afb8f42cc5c46e0d55f508d2720a367
+  .agents/skills/add-third-party/SKILL.md: sha256:b155b106f691df39893e26d78a68f22328b880c287dd4947946299571740c8bd
+  .agents/skills/sync-feature/SKILL.md: sha256:54fe59d91ef55af6717dff4234ab7b65a2b8e715f07b1da9d9fd2a3cc5774cb5
+  .claude/skills/add-module/SKILL.md: sha256:b6774d9e3058f423bc5e49ff20b4cdbf7afb8f42cc5c46e0d55f508d2720a367
+  .claude/skills/add-third-party/SKILL.md: sha256:b155b106f691df39893e26d78a68f22328b880c287dd4947946299571740c8bd
+  .claude/skills/sync-feature/SKILL.md: sha256:54fe59d91ef55af6717dff4234ab7b65a2b8e715f07b1da9d9fd2a3cc5774cb5

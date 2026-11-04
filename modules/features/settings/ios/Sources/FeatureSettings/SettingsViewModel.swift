@@ -3,15 +3,15 @@ import Observation
 
 @MainActor
 @Observable
-public final class SettingsViewModel {
-    public let settings: DisplaySettings
-    public var showDescriptions = true
-    public private(set) var isLoaded = false
-    public private(set) var isSaving = false
-    public private(set) var error: String?
+final class SettingsViewModel {
+    let settings: DisplaySettings
+    var showDescriptions = true
+    private(set) var isLoaded = false
+    private(set) var isSaving = false
+    private(set) var error: String?
 
-    public init(settings: DisplaySettings) { self.settings = settings }
-    public func load() async {
+    init(settings: DisplaySettings) { self.settings = settings }
+    func load() async {
         do {
             try await settings.load()
             showDescriptions = settings.showDescriptions
@@ -19,7 +19,7 @@ public final class SettingsViewModel {
             error = nil
         } catch { self.error = "設定を読み込めませんでした。再試行してください。" }
     }
-    public func save() async {
+    func save() async {
         guard isLoaded, !isSaving, showDescriptions != settings.showDescriptions else { return }
         isSaving = true
         defer { isSaving = false }

@@ -2,7 +2,7 @@ import CoreNavigation
 import SwiftUI
 
 /// Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。
-struct RootView<Screen: View>: View {
+struct AppRoot<Screen: View>: View {
     @Bindable var navigator: Navigator
     let screen: (Route) -> Screen
 

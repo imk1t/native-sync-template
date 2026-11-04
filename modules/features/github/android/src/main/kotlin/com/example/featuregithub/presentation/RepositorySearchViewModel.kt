@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 data class SearchForm(val query: String = "", val language: String = "", val sort: String = "")
 
-class RepositorySearchViewModel(val dependencies: GitHubDependencies, private val navigator: Navigator) : ViewModel() {
+internal class RepositorySearchViewModel(val dependencies: GitHubDependencies, private val navigator: Navigator) :
+    ViewModel() {
     private val mutableForm = MutableStateFlow(SearchForm())
     val form: StateFlow<SearchForm> = mutableForm
     private val mutableStorageError = MutableStateFlow<String?>(null)

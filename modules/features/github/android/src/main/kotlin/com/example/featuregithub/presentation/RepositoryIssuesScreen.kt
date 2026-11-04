@@ -20,11 +20,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.corenavigation.Navigator
 import com.example.designsystem.StatusBadge
+
+@Composable
+fun RepositoryIssuesScreen(owner: String, repo: String, dependencies: GitHubDependencies, navigator: Navigator) {
+    val viewModel: RepositoryIssuesViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { RepositoryIssuesViewModel(owner, repo, dependencies.repository, navigator) }
+        }
+    )
+    RepositoryIssuesContent(viewModel)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepositoryIssuesScreen(viewModel: RepositoryIssuesViewModel) {
+private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
     val state by viewModel.content.state.collectAsState()
     val filter by viewModel.issueState.collectAsState()
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
