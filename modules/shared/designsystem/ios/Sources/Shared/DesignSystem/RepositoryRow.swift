@@ -1,5 +1,13 @@
 import SwiftUI
 
+private enum MetaKind { case language, stars, saved }
+
+private struct MetaItem: Identifiable {
+    let kind: MetaKind
+    let text: String
+    var id: MetaKind { kind }
+}
+
 public struct RepositoryRow: View {
     let repository: RepositoryRowData
     let saved: Bool
@@ -35,13 +43,6 @@ public struct RepositoryRow: View {
                 }.font(.caption).foregroundStyle(Tokens.Color.muted)
             }.frame(maxWidth: .infinity, alignment: .leading)
         }.accessibilityElement(children: .combine)
-    }
-
-    private struct MetaItem: Identifiable {
-        enum Kind { case language, stars, saved }
-        let kind: Kind
-        let text: String
-        var id: Kind { kind }
     }
 
     private var metaItems: [MetaItem] {
