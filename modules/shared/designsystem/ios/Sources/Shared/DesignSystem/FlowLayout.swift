@@ -18,24 +18,24 @@ struct FlowLayout: Layout {
     }
 
     private func arrange(width: CGFloat, subviews: Subviews) -> (size: CGSize, origins: [CGPoint]) {
-        var x: CGFloat = 0
-        var y: CGFloat = 0
+        var posX: CGFloat = 0
+        var posY: CGFloat = 0
         var rowHeight: CGFloat = 0
         var usedWidth: CGFloat = 0
         var origins: [CGPoint] = []
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
-            if x > 0, x + size.width > width {
-                x = 0
-                y += rowHeight + lineSpacing
+            if posX > 0, posX + size.width > width {
+                posX = 0
+                posY += rowHeight + lineSpacing
                 rowHeight = 0
             }
-            origins.append(CGPoint(x: x, y: y))
-            x += size.width
-            usedWidth = max(usedWidth, x)
-            x += spacing
+            origins.append(CGPoint(x: posX, y: posY))
+            posX += size.width
+            usedWidth = max(usedWidth, posX)
+            posX += spacing
             rowHeight = max(rowHeight, size.height)
         }
-        return (CGSize(width: usedWidth, height: y + rowHeight), origins)
+        return (CGSize(width: usedWidth, height: posY + rowHeight), origins)
     }
 }
