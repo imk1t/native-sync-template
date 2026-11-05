@@ -19,7 +19,7 @@ Located in `modules/shared/designsystem`. Only `core/utils` and `core/extensions
 
 Provide LoadingIndicator, EmptyState, ErrorState, and StatusBadge. Errors include accessible text and a retry action. Badges communicate state through text as well as color. Text sizes follow OS settings.
 
-RepositoryRow receives RepositoryRowData (string and numeric display values only) and image-loading behavior, sharing row rendering across search, details, and saved lists. It does not depend on API models or persistence. Use a fallback when image loading fails. A row shows the repository name in a monospaced face, an optional description in muted color, then the language (with its tint dot), star count, and a saved label in the primary color. It draws no background; callers wrap rows in a card (`DesignCard` / `designCard()`).
+RepositoryRow receives RepositoryRowData (string and numeric display values only) and image-loading behavior, sharing row rendering across search, details, and saved lists. It does not depend on API models or persistence. Use a fallback when image loading fails. A row shows the repository name in a monospaced face, an optional description in muted color, then the language (with its tint dot), star count, and a saved label in the primary color. These items wrap onto the next line when the width runs out, and never truncate or hide the star count. It draws no background; callers wrap rows in a card (`DesignCard` / `designCard()`).
 
 ## Design tokens
 

@@ -30,12 +30,8 @@ public struct RepositoryRow: View {
                 if showDescription, let description = repository.description, !description.isEmpty {
                     Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 10) { meta }
-                    VStack(alignment: .leading, spacing: 4) { meta }
-                }.font(.caption).foregroundStyle(Tokens.Color.muted)
-            }
-            Spacer(minLength: 0)
+                FlowLayout { meta }.font(.caption).foregroundStyle(Tokens.Color.muted)
+            }.frame(maxWidth: .infinity, alignment: .leading)
         }.accessibilityElement(children: .combine)
     }
 
