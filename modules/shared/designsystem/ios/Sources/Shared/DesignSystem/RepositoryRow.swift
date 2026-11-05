@@ -42,14 +42,15 @@ public struct RepositoryRow: View {
     @ViewBuilder private var meta: some View {
         if let language = repository.language {
             Label {
-                Text(language).lineLimit(1)
+                Text(language).lineLimit(1).fixedSize()
             } icon: {
                 Circle().fill(languageTint(language)).frame(width: 8, height: 8)
             }
         }
-        Label(starsLabel, systemImage: "star").lineLimit(1)
+        Label(starsLabel, systemImage: "star").lineLimit(1).fixedSize()
         if saved {
-            Label(savedLabel, systemImage: "bookmark.fill").lineLimit(1).foregroundStyle(Tokens.Color.primary)
+            Label(savedLabel, systemImage: "bookmark.fill").lineLimit(1).fixedSize()
+                .foregroundStyle(Tokens.Color.primary)
         }
     }
 }
