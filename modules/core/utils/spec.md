@@ -1,21 +1,25 @@
 # core/utils
 
-## 概要
-専用の型で提供する、機能を知らない汎用処理を置く。内部依存は必要な場合の `core/extensions` のみ許可し、外部ライブラリには依存しない。標準ライブラリ・Foundation・JDK は利用できる。
+## Overview
 
-## 提供するもの
-| 名前 | 内容 |
+Provide general operations through dedicated types, without feature-specific knowledge. The only permitted internal dependency is `core/extensions`, when needed. Do not depend on third-party libraries. The standard library, Foundation, and JDK are allowed.
+
+## Public API
+
+| Name | Behavior |
 | --- | --- |
-| `DateTimeUtils.formatTime(date, locale, timeZone)` | 指定された日時を、ロケールとタイムゾーンに応じた秒までの時刻に変換する |
+| `DateTimeUtils.formatTime(date, locale, timeZone)` | Formats a date as a time including seconds for the supplied locale and time zone |
 
-書式は OS の標準的な時刻表示（medium）を使い、12/24 時間表記・午前午後の表現はロケールに従う。ロケールとタイムゾーンは呼び出し側が表示時に渡す。日付・タイムゾーン名・ミリ秒は表示しない。翻訳リソース、UI、現在時刻には依存せず、変更可能な formatter を共有しない。
+Use the OS standard medium time format. The locale determines 12/24-hour notation and AM/PM labels. Callers supply the locale and time zone at display time. Do not show the date, time-zone name, or milliseconds. Do not depend on translation resources, UI, or the current time, and do not share mutable formatters.
 
-文字列の汎用拡張は `core/extensions` に移管する。数値を含む翻訳文と複数形は `core/localization` の Message を使い、ここでは扱わない。
+General string extensions belong in `core/extensions`. Translated text containing numbers and plurals uses Message in `core/localization`, outside this module.
 
-## OS 固有の差分
-モジュール名は iOS が `CoreUtils`、Android のパッケージは `com.example.core.utils`。 iOS の実装は `Sources/Core/Utils`、テストは `Tests/Core/Utils` に配置する。
+## Platform differences
 
-日時型は Swift の Date / Kotlin の Instant、タイムゾーン型は TimeZone / ZoneId。表示は Foundation の DateFormatter / JDK の DateTimeFormatter を使う。ローカライズされた空白や句読点などの細部は OS の書式に従う。
+The iOS module is `CoreUtils`, with implementation in `Sources/Core/Utils` and tests in `Tests/Core/Utils`. The Android package is `com.example.core.utils`.
 
-## 検証
-同じ日時を日本語・英語のロケールと異なるタイムゾーンで表示する。日付をまたぐ時差と夏時間も固定日時で検証する。
+Date/time types are Swift Date and Kotlin Instant; time-zone types are TimeZone and ZoneId. Formatting uses Foundation DateFormatter and JDK DateTimeFormatter. Localized whitespace, punctuation, and similar details follow the platform's format.
+
+## Verification
+
+Format the same instant using Japanese and English locales and different time zones. Verify date-boundary offsets and daylight saving time with fixed instants.

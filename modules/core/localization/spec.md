@@ -1,27 +1,35 @@
 # core/localization
 
-## 概要
-共通・機能別の UI 文言を集約する。翻訳原本は `specs/localization/messages-<言語>.yaml`。日本語を基準言語とし、英語も提供する。対応言語はファイル名から検出し、別の言語一覧は管理しない。
+## Overview
 
-## 提供するもの
-生成した `Message` はキーと型付き引数を保持し、表示時にネイティブリソースで解決する。引数は string / integer、複数形は整数引数一つを対象とする。日本語側だけで引数と複数形の契約を宣言する。全言語のキー・引数一致、other 必須、未対応構文を生成前に検査する。
+Centralize common and feature-specific UI text. Translation sources are `specs/localization/messages-<language>.yaml`. Japanese is the base language, with English also provided. Detect supported languages from filenames; do not maintain a separate list.
 
-## 言語と表示
-OS が選んだアプリ言語を使用する。未対応言語は日本語へフォールバックする。アプリ内切替は設けない。SwiftUI の Locale と Android のリソース Configuration を表示時に参照する。ユーザー入力、GitHub の本文・名前、検索条件の送信値は翻訳しない。数値・複数形は OS の規則に従う。
+## Public API
 
-## リソース管理
-iOS は一つの Localizable.xcstrings、Android は言語ごとの strings.xml を生成する。生成物はコミットし、手編集しない。アプリ名の OS メタデータと対応言語設定も同じ原本から生成する。新言語追加は全キーを持つファイルを追加して再生成する。削除時には古い生成リソースも除去する。
+Generated `Message` types retain keys and typed arguments, resolved through native resources at display time. Arguments are string/integer; plurals target one integer argument. Only Japanese declares the argument and plural contract. Before generation, verify matching keys and arguments across languages, required `other` forms, and unsupported syntax.
 
-## 依存
-他モジュールには依存しない。feature とアプリ層から参照する。designsystem には翻訳済みのラベルを渡す。
+## Language and display
 
-## OS 固有の差分
-モジュール名は iOS が `CoreLocalization`、Android のパッケージは `com.example.core.localization`。 iOS の実装は `Sources/Core/Localization`、テストは `Tests/Core/Localization` に配置する。
+Use the app language selected by the OS. Unsupported languages fall back to Japanese. Do not provide in-app language switching. Read SwiftUI Locale and Android resource Configuration at display time. Do not translate user input, GitHub bodies or names, or submitted search values. Numbers and plurals follow OS rules.
 
-iOS は SwiftPM のリソース bundle と Foundation、Android は Context の getString / getQuantityString を使う。Android 13 以降は OS のアプリ言語設定に対応し、それ以前はシステム言語に従う。
+## Resource management
 
-## 検証
-生成器の契約検証・エスケープ・引数順序・複数形・言語追加削除を tools のテストで確認する。両 OS のテストで日本語・英語・フォールバック・複数形・引数を確認する。Android は AndroidX Test の instrumentation で実リソースを解決する。ソースはリポジトリ規約の `src/test` に置き、このモジュールのビルド定義で androidTest に接続する。
+Generate one Localizable.xcstrings on iOS and a strings.xml per language on Android. Commit generated files; do not edit them by hand. Generate app-name metadata and supported-language settings from the same sources. To add a language, add a file containing all keys and regenerate. Remove old generated resources when deleting a language.
 
-## シナリオ
+## Dependencies
+
+No other module dependencies. Features and the app layer use this module. Pass resolved labels to designsystem.
+
+## Platform differences
+
+The iOS module is `CoreLocalization`, with implementation in `Sources/Core/Localization` and tests in `Tests/Core/Localization`. The Android package is `com.example.core.localization`.
+
+iOS uses the SwiftPM resource bundle and Foundation; Android uses Context's getString / getQuantityString. Android 13 and later supports OS per-app language settings; earlier versions follow the system language.
+
+## Verification
+
+Tooling tests verify generator contracts, escaping, argument order, plurals, and language addition/removal. Both platforms test Japanese, English, fallback, plurals, and arguments. Android resolves real resources through AndroidX Test instrumentation. Sources remain in the repository-standard `src/test` directory and are connected to androidTest by this module's build definition.
+
+## Scenarios
+
 - `specs/scenarios/localization.yaml`

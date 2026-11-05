@@ -1,32 +1,40 @@
 # shared/bookmarks
 
-## 概要
-複数 feature で使うブックマークのモデルと BookmarkRepository を提供する。core/storage の KeyValueStore を包み、保存 Key・JSON 形式・更新と通知を一箇所にまとめる。画面・ViewModel・API 通信は持たない。
+## Overview
 
-## 画面遷移
-なし。
+Provide bookmark models and BookmarkRepository for multiple features. Wrap core/storage's KeyValueStore to centralize the storage key, JSON format, updates, and notifications. This module has no screens, ViewModels, or API requests.
 
-## 画面と状態
-App で BookmarkRepository を一度生成し、search と bookmarks に同じインスタンスを渡す。読み込み済みのデータを保持し、書き込み成功後にだけ公開状態を更新する。呼び出し側は保存 Key や JSON 形式を扱わない。
+## Navigation
 
-## ユーザー操作と結果
-- `load`、`contains`、`toggle`、`remove`、`saveNote` を提供する。
-- 保存 Key は `github.bookmarks.v1`、JSON の version は 1。ID・表示用リポジトリ情報・メモ・保存日時の形式を維持し、移動前の保存データを読める。
-- ブックマークは最大 100 件、メモは空欄可・最大 1,000 Unicode コードポイント。
-- `BookmarkNoteRules` が `maxCodePoints`、`characterCount(note)`、`isValid(note)` を提供する。計数は `core/extensions` を使い、保存時検証と feature の文字数表示・保存可否で同じ規則を参照する。入力の正規化や切り詰めは行わない。
-- 更新は直列化し、同時操作で追加やメモを失わない。書き込み失敗時は公開状態を保つ。
-- 読み込み失敗・壊れた JSON・未知または欠落した version はエラーとし、空データで上書きしない。
+None.
 
-## 使う API とトークン
-`core/storage`（KeyValueStore）、`core/network`（RepositorySummary）、`core/extensions`（コードポイント数）に依存する。生成 DTO は扱わない。外部 API やトークンは使わない。
+## Screens and state
 
-## OS 固有の差分
-モジュール名は iOS が `SharedBookmarks`、Android のパッケージは `com.example.shared.bookmarks`。 iOS の実装は `Sources/Shared/Bookmarks`、テストは `Tests/Shared/Bookmarks` に配置する。
+Create BookmarkRepository once in the app and share the same instance with search and bookmarks. Retain loaded data and update public state only after successful writes. Callers do not handle the storage key or JSON format.
 
-iOS は @MainActor / Observation と Task の直列化、Android は StateFlow と Mutex を使用する。JSON の項目名と保存日時の単位（Unix 秒）は共通。
+## User actions and outcomes
 
-## シナリオ
+- Provide `load`, `contains`, `toggle`, `remove`, and `saveNote`.
+- Use storage key `github.bookmarks.v1` and JSON version 1. Preserve the ID, repository display snapshot, note, and saved-time format so data saved before the module move remains readable.
+- Allow at most 100 bookmarks. Notes may be empty and contain at most 1,000 Unicode code points.
+- BookmarkNoteRules provides `maxCodePoints`, `characterCount(note)`, and `isValid(note)`. Count through `core/extensions`, sharing the same rules for persistence validation, feature character counts, and save eligibility. Do not normalize or truncate input.
+- Serialize updates so concurrent actions do not lose additions or notes. Preserve public state after write failures.
+- Treat read failures, malformed JSON, and unknown or missing versions as errors. Do not overwrite them with empty data.
+
+## APIs and tokens
+
+Depend on `core/storage` (KeyValueStore), `core/network` (RepositorySummary), and `core/extensions` (code point counting). Do not handle generated DTOs. No external APIs or tokens.
+
+## Platform differences
+
+The iOS module is `SharedBookmarks`, with implementation in `Sources/Shared/Bookmarks` and tests in `Tests/Shared/Bookmarks`. The Android package is `com.example.shared.bookmarks`.
+
+iOS uses @MainActor / Observation and Task serialization; Android uses StateFlow and Mutex. JSON field names and saved-time units (Unix seconds) are identical.
+
+## Scenarios
+
 - `specs/scenarios/github-bookmarks.yaml`
 
-## エラーの表示
-エラー型は種類と関連データを保持し、翻訳済みの表示文言を持たない。表示側が core/localization の文言に変換する。
+## Error presentation
+
+Error types retain kinds and associated data, with no resolved display text. The presentation layer maps them to core/localization messages.

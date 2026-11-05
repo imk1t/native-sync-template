@@ -2,19 +2,19 @@ name: localization
 feature: core/localization
 steps:
   - id: language-change
-    name: 同じ文言を表示時の言語で解決し未対応言語は日本語に戻す
+    name: Resolve messages in the display language and fall back to Japanese for unsupported languages
     given:
       localization: {locale: ja}
-    when: 再試行メッセージを日本語・英語・未対応のフランス語で解決する
+    when: Resolve the retry message in Japanese, English, and unsupported French
     then:
       ja: 再試行
       en: Retry
       fr: 再試行
   - id: plural-arguments
-    name: 数量と引数をネイティブリソースで解決する
+    name: Resolve quantities and arguments through native resources
     given:
       localization: {locale: en}
-    when: Star 数 0・1・2、日本語の2、検索条件とHTTP503を表示する
+    when: Display 0, 1, and 2 stars in English; 2 in Japanese; search conditions; and HTTP 503
     then:
       singular: 1 star
       plural: 2 stars

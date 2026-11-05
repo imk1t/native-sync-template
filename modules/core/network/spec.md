@@ -1,29 +1,35 @@
 # core/network
 
-## 概要
-GitHub 公式 OpenAPI を元に必要な範囲を直接管理する API 契約からクライアントを生成し、公開リポジトリ・Issue・ページ情報へ変換する。生成 DTO と APIClient はモジュール外へ公開しない。
+## Overview
 
-## 提供するもの
-- アプリは常に https://api.github.com の実 API に接続する。通信の差し替えと固定レスポンスはテスト内でのみ使用し、アプリ向けのデモ起動モードは持たない。
-- GitHubAPI: searchRepositories(query, sort, page)、repository(owner, repo)、issues(owner, repo, state, page)、issue(owner, repo, number)。DefaultGitHubAPI が生成コードを呼ぶ。
-- RepositorySummary、GitHubIssue、Page<Value>。ID は Int64 / Long、次ページは Link から取得。検索は 1,000 件を上限にし incomplete_results を公開する。
-- HTTPRequest / HTTPResponse は body と headers を保持する。成功時も body と headers を同じ呼び出しの APIResponse に含め、並行呼び出しで共有しない。
-- GitHubTransport が Accept、User-Agent、X-GitHub-Api-Version: 2026-03-10 を付ける。レスポンスヘッダー名は小文字化する。
-- GitHub の 403 / 429 は残量・Retry-After・エラー body で分類し、制限時は再試行可能時刻を返す。通常の 403 と区別する。待機中は同じリソースへの再送を抑制する。
-- ImageLoader は HTTPS 画像のデータを取得し、サイズを制限したメモリキャッシュを持つ。UI には依存しない。
+Generate clients from a directly maintained API contract based on the required subset of GitHub's official OpenAPI definition. Map responses to public repositories, issues, and page information. Do not expose generated DTOs or APIClient outside the module.
 
-## 生成とエラー
-specs/openapi/openapi.yaml を API 契約の正として直接編集し、bun tools/generate.ts で両 OS の DTO と APIClient を生成する。生成処理は契約を書き換えず、オフラインで完結する。CI は再生成による差分と共通シナリオの契約適合を検査する。元になった公式定義と更新方法は docs/adr/0004-github-openapi.md に記録し、ライセンスは specs/openapi/GITHUB-LICENSE.md に保持する。
+## Public API
 
-省略可能と null 許容を別々に検証する。入力 enum の値は契約検査で確認する。レスポンスの未知のキーは無視し、状態文字列の未知値はそのまま表示する。空本文・不明な投稿者も表示可能。Issue 一覧から pull_request を除外するが、次ページ情報は除外前の HTTP ヘッダーに従う。
+- The app always connects to the live API at https://api.github.com. Replaceable transports and fixed responses are used only in tests; there is no app demo-launch mode.
+- GitHubAPI provides searchRepositories(query, sort, page), repository(owner, repo), issues(owner, repo, state, page), and issue(owner, repo, number). DefaultGitHubAPI calls the generated code.
+- `RepositorySummary`, `GitHubIssue`, and `Page<Value>`. IDs are Int64 / Long; next-page information comes from Link. Search is capped at 1,000 results and exposes incomplete_results.
+- HTTPRequest / HTTPResponse retain body and headers. Successful APIResponse values contain the body and headers from the same call, with no sharing across concurrent calls.
+- GitHubTransport adds Accept, User-Agent, and X-GitHub-Api-Version: 2026-03-10. Response header names are lowercased.
+- Classify GitHub 403 / 429 responses using remaining quota, Retry-After, and error bodies. Rate-limit errors include the earliest retry time and are distinct from ordinary 403 errors. Suppress requests to the same resource while waiting.
+- ImageLoader fetches HTTPS image data and maintains a bounded memory cache, with no UI dependency.
 
-## OS 固有の差分
-モジュール名は iOS が `CoreNetwork`、Android のパッケージは `com.example.core.network`。 iOS の実装は `Sources/Core/Network`、テストは `Tests/Core/Network` に配置する。
+## Generation and errors
 
-略語は Swift の API / HTTP と Kotlin の Api / Http。JSON は Codable / kotlinx.serialization。HTTP は URLSession / HttpURLConnection。Android は接続 15 秒・読み込み 30 秒のタイムアウトを持ち、キャンセル時は接続を切断・割り込みする。iOS は URLSession の task キャンセルに従う。画像データは Data / ByteArray。
+Edit specs/openapi/openapi.yaml as the API source of truth, then run bun tools/generate.ts to generate both platforms' DTOs and APIClient. Generation runs offline without modifying the contract. CI checks regenerated output and shared scenarios against the contract. The original official definition and update procedure are documented in docs/adr/0004-github-openapi.md; the license is retained in specs/openapi/GITHUB-LICENSE.md.
 
-## シナリオ
+Validate optionality and nullability separately. Validate input enum values against the contract. Ignore unknown response keys and display unknown state strings unchanged. Support empty bodies and unknown authors. Exclude pull_request entries from issue lists, while retaining pagination from the original HTTP headers.
+
+## Platform differences
+
+The iOS module is `CoreNetwork`, with implementation in `Sources/Core/Network` and tests in `Tests/Core/Network`. The Android package is `com.example.core.network`.
+
+Swift uses API / HTTP; Kotlin uses Api / Http. JSON uses Codable / kotlinx.serialization; HTTP uses URLSession / HttpURLConnection. Android uses 15-second connection and 30-second read timeouts, disconnecting and interrupting on cancellation. iOS follows URLSession task cancellation. Image data uses Data / ByteArray.
+
+## Scenarios
+
 - `specs/scenarios/github-network.yaml`
 
-## エラーの表示
-エラー型は種類と関連データを保持し、翻訳済みの表示文言を持たない。表示側が core/localization の文言に変換する。
+## Error presentation
+
+Error types retain kinds and associated data, with no resolved display text. The presentation layer maps them to core/localization messages.

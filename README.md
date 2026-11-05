@@ -1,338 +1,74 @@
 # native-sync-template
 
-iOS（Swift）と Android（Kotlin）をそれぞれネイティブで実装し、**仕様だけを共有して両 OS の同期を保つ**ためのモノレポの雛形です。
+[日本語](README.ja.md)
 
-- ロジックは OS ごとに書きます。共有するのは API スキーマ（OpenAPI）、デザイントークン、機能仕様（`spec.md`）、共通シナリオだけです。
-- 両 OS で同じ型名・同じ構造にそろえ、ズレは CI の検査で見つけます。
-- AI エージェント向けのルールは [AGENTS.md](AGENTS.md)、手順はスキル（`.apm/skills/`）にまとめています。
+A monorepo template for native iOS (Swift) and Android (Kotlin) apps. Each platform has its own implementation, kept aligned through shared specifications, generated contracts, and CI checks.
 
-## 目次
+The sample app browses GitHub repositories and issues, saves bookmarks and notes locally, and shares display settings across three tabs. It uses SwiftUI and Jetpack Compose, with matching MVVM structures.
 
-1. [セットアップ](#セットアップ)
-2. [ディレクトリ構成](#ディレクトリ構成)
-3. [開発の流れ](#開発の流れ)
-4. [アーキテクチャ](#アーキテクチャ)
-5. [共通定義からの生成と検査](#共通定義からの生成と検査)
-6. [コマンド一覧](#コマンド一覧)
-7. [CI](#ci)
-8. [現状](#現状)
+## Setup
 
-## セットアップ
-
-clone 後に一度だけ実行します。
-
-1. mise をインストールします。各自で入れます（apm は手順 2 の `mise install` で入ります）。
-
-   ```bash
-   brew install mise                          # macOS
-   curl https://mise.run | sh                 # Linux
-   ```
-
-   mise のシェル連携（`mise activate`）は [mise のドキュメント](https://mise.jdx.dev/getting-started.html)に沿って設定してください。
-
-2. `mise.toml` に書いたバージョンの Bun・apm・ktlint・SwiftLint（macOS のみ）を入れます。
-
-   ```bash
-   mise install
-   ```
-
-3. 型定義などの依存を取得し、エージェント用のスキルを配置します。
-
-   ```bash
-   mise run setup            # bun install と bun tools/setup.ts（中身は apm install）
-   ```
-
-   `.apm/skills/` の原本が `.claude/skills/` と `.agents/skills/` に配置されます（どちらもコミットしません）。
-   あわせて `apm.yml` の依存（共通の `apm-shared`、Android 公式の `android/skills`、SwiftUI Pro スキル）も配置されます。
-   あわせて MCP 設定（`.mcp.json`、`.codex/config.toml`）も生成されますが、コミットしません（`.gitignore` 済み）。依存の解決結果は `apm.lock.yaml` に記録されるので、依存や apm の版を変えたらコミットします。
-
-ネイティブのビルドには、iOS は Xcode（macOS）、Android は Android SDK が必要です。Lint に使う SwiftLint と ktlint は手順 2 の `mise install` で入ります。
-
-## ディレクトリ構成
-
-```
-apps/
-  ios/                  iOS アプリ（XcodeGen）。モジュールを組み立てるだけ
-  android/              Gradle のルートと app モジュール。組み立てるだけ
-specs/
-  openapi/              API スキーマ（単一の正）
-  tokens/               デザイントークン（単一の正）
-  scenarios/            両 OS のテストが実装する共通シナリオ
-  routes.yaml           画面の一覧（画面遷移の単一の正）
-  third-party.yaml      外部ライブラリの両 OS 対応表
-modules/
-  Package.swift         全 iOS モジュールをまとめた SwiftPM パッケージ
-  core/
-    extensions/         標準型に対する汎用 Extension（内部依存なし）
-    utils/              日時整形など、専用の型で提供する汎用処理
-    navigation/         画面遷移の状態と操作（Route は routes.yaml から生成）
-    network/            OpenAPI から生成した API クライアントとそのラッパー
-    storage/            UserDefaults / DataStore、Keychain / Keystore
-  shared/               複数 feature で使う共通実装（OS ごとに実装）
-    designsystem/       トークンから生成した値と共通 UI
-    bookmarks/          保存 Key・JSON・更新と通知をまとめる BookmarkRepository
-  features/
-    search/             探す・リポジトリ詳細・Issue一覧と詳細
-    bookmarks/          保存済み一覧・メモ編集
-    settings/           説明文表示設定とアプリ情報
-tools/                  コード生成と検査のスクリプト（Bun / TypeScript）
-docs/adr/               設計判断の記録
-docs/platforms/         OS 固有の設定・環境・注意点（ios.md, android.md）
-```
-
-`modules/` の各モジュールは次の形です。`spec.md` が両 OS の同期の基準です。テストは実装とは別のディレクトリに置きます。
-
-```
-modules/features/search/
-  spec.md                                  仕様（同期の基準）
-  ios/
-    Sources/Features/Search/                実装
-    Tests/Features/Search/                  テスト（Swift Testing）
-  android/
-    build.gradle.kts
-    src/main/kotlin/com/example/features/search/   実装
-    src/test/kotlin/com/example/features/search/   テスト（JUnit）
-```
-
-## 開発の流れ
-
-機能を追加・変更するときは、次の順に進めます（詳しくは [AGENTS.md](AGENTS.md) とスキル `sync-feature`）。
-
-1. `spec.md` を更新する。必要なら `specs/` の OpenAPI・トークン・シナリオも更新する。
-2. 片方の OS を実装する。
-3. もう片方を同じ型名・同じ構造で実装する。意図した違いは `spec.md` の「OS 固有の差分」に書く。
-4. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` で追従を記録する。
-5. 検査を通し、両 OS の変更を 1 つの PR にまとめる。
-
-## アーキテクチャ
-
-両 OS とも「MVVM + 単方向データフロー」と、Presentation / Domain / Data の 3 層でそろえます。TCA のように片方の OS にしかないフレームワークは使わず、両 OS の公式機能で同じ形を作ります。対応関係が 1 対 1 であるほど、AI による移植とレビューが正確になります。
-
-### モジュール内のレイヤー
-
-| レイヤー | 責務 | iOS の型 | Android の型 |
-| --- | --- | --- | --- |
-| Presentation | 画面と画面状態 | `RepositorySearchView` + `RepositorySearchViewModel`（`@Observable`） | `RepositorySearchScreen` + `RepositorySearchViewModel`（`StateFlow`） |
-| Domain | ビジネスルール、モデル、Repository の契約 | `Bookmark`、`protocol GitHubRepository` | `Bookmark`、`interface GitHubRepository` |
-| Data | Repository の実装、API・DB の型との変換 | `GitHubRepositoryImpl` | `GitHubRepositoryImpl` |
-
-画面は Swift の View / Kotlin の Screen、API の略語は API / Api とし、Domain と Data の責務・型名はそろえます。リモート取得は Domain の `GitHubRepository` を経由し、Data の実装をアプリ層から注入します。端末内保存は `shared/bookmarks` の `BookmarkRepository` と `core/storage` の `DisplaySettings` を購読します。`core/storage` の KeyValueStore は Key による保存・取得だけを提供し、ブックマークの保存形式と更新通知は共通ラッパーに閉じます。
-
-### モジュール間の依存ルール
-
-| モジュール | 依存してよい先 |
-| --- | --- |
-| `apps/*` | すべて（DI の組み立てと画面遷移の配線だけを持つ） |
-| `shared/designsystem` | `core/utils`・`core/extensions`（共通 UI・トークンを持つ。他の shared には依存しない） |
-| その他の `shared/*` | `core/*`（画面を持たず、features と他の shared には依存しない） |
-| `features/*` | `shared/*`、`core/*`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
-| その他の `core/*` | 他の `core/*`（循環は禁止） |
-| `core/utils` | `core/extensions` のみ（専用の型で提供する汎用処理） |
-| `core/extensions` | なし（標準型に対する汎用 Extension） |
-
-依存してよい向き（矢印は「依存する」）:
-
-```mermaid
-flowchart TD
-    apps["apps/ios, apps/android"] --> features["features/*"]
-    apps --> designsystem["shared/designsystem"]
-    apps --> core["core/*"]
-    apps --> shared["その他の shared/*"]
-    features --> shared
-    shared --> core
-    features --> designsystem
-    features --> core
-    features -.->|禁止| features
-    designsystem --> utils["core/utils"]
-    designsystem --> extensions["core/extensions"]
-    utils --> extensions
-    core --> utils
-    core --> extensions
-    core -->|循環禁止| core
-```
-
-現在のモジュール（iOS と Android で同じ形）:
-
-```mermaid
-flowchart TD
-    app["App"] --> search["features/search"]
-    app --> saved["features/bookmarks"]
-    app --> settings["features/settings"]
-    app --> bookmarks["shared/bookmarks"]
-    app --> network["core/network"]
-    app --> navigation["core/navigation"]
-    app --> storage["core/storage"]
-    search --> bookmarks
-    search --> network
-    search --> navigation
-    search --> storage
-    search --> designsystem["shared/designsystem"]
-    search --> utils["core/utils"]
-    search --> extensions["core/extensions"]
-    saved --> bookmarks
-    saved --> network
-    saved --> navigation
-    saved --> storage
-    saved --> designsystem
-    bookmarks --> storage
-    bookmarks --> network
-    bookmarks --> extensions
-    settings --> storage
-    settings --> navigation
-    settings --> designsystem
-    network --> utils["core/utils"]
-    network -.->|生成コード| openapi[("specs/openapi")]
-    navigation -.->|生成コード| routes[("specs/routes.yaml")]
-    designsystem -.->|生成コード| tokens[("specs/tokens")]
-```
-
-点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通 UI・モデル・処理です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。shared 同士の依存は禁止し、`shared/designsystem` の依存先は `core/utils`・`core/extensions` に制限します。
-
-汎用 Extension は `core/extensions`、日時整形など専用の型で提供する汎用処理は `core/utils` に置きます。Message・Route・業務モデルなど特定モジュールの知識を持つ Extension は、そのモジュールに置きます。両基盤モジュールは外部ライブラリに依存せず、実際に使う依存だけを追加します（[ADR 0007](docs/adr/0007-extensions-and-utils.md)）。
-
-`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/extensions`・`core/utils` を除く `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対応表の対象外ですが、両基盤モジュールでは直接利用できません。テスト用依存は除きます）。
-
-### 画面遷移
-
-画面遷移は 1 通りだけです（[ADR 0002](docs/adr/0002-navigation.md)）。機能の中でも外でも、すべて `core/navigation` の `Navigator` に `Route` を渡して遷移します。`NavigationLink` などで画面を直接開きません。
-
-- 画面の一覧（名前・引数・タブ・ディープリンク）は `specs/routes.yaml` に書き、`bun tools/generate.ts` で両 OS の `Route` と `AppTab` を生成します。
-- 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル）として持ち、7 つの操作で書き換えます。
-- スタックの要素は `NavigationEntry(id, route)` です。同じ Route を複数回開いても別の ID を持ち、戻る操作やタブ切り替えでは残った画面の ID を保ちます。タブの先頭エントリは `NavigationState.roots` が保持します。
-- URL から開くときは `Route(url:)` / `Route.fromUrl` を使います。エンコード済みパスを区切ってから一度だけデコードするため、ID に `/` や `%` が含まれていても保たれます。
-
-| 操作 | 使いどころ |
-| --- | --- |
-| `push(route)` / `pop()` / `popToRoot()` | 一覧 → 詳細、戻る、先頭まで戻る（モーダル表示中はモーダルの中で） |
-| `present(route, style)` / `dismiss()` | ハーフシート（`sheet`）・全画面モーダル（`fullScreen`）と、それを閉じる |
-| `selectTab(tab)` | タブ切り替え（モーダルは閉じる） |
-| `reset(state)` | ログイン後のホームなど戻れない遷移、ディープリンク（`NavigationState.opening`） |
-
-アプリ層は起動処理、`AppRoot` によるタブ・スタック・シートの枠、`AppDependencies` による共有依存の組み立て、`AppRouter` による `Route` → feature の公開入口の対応だけを持ちます。iOS の `AppMain.swift` と Android の `MainActivity.kt` がこれらを組み立てます。個別画面と ViewModel の生成・保持は各 feature の `*Screen` に置き、アプリ層から個別画面の ViewModel を参照しません。設定画面は他 feature の依存コンテナを受け取らず、共有の `DisplaySettings` だけを受け取ります。
-
-枠の描画には iOS は `TabView` / `NavigationStack` / `.sheet`、Android は `NavigationSuiteScaffold` / Navigation 3 / ボトムシートを使い、タブバーや大画面のレイアウトは OS の部品に任せます。画面を足したら、`routes.yaml` と feature の `*Screen`、両 OS の `AppRouter` に対応を足します（登録漏れは `switch` / `when` の網羅チェックでビルドが落ちます）。画面状態はエントリ ID に紐付け、タブ切り替えや戻る操作でも残ったエントリの状態を維持します。
-
-### 技術スタック
-
-| 領域 | iOS | Android |
-| --- | --- | --- |
-| UI | SwiftUI（必要な箇所だけ UIKit） | Jetpack Compose |
-| 状態管理 | Observation（`@Observable`） | ViewModel + StateFlow |
-| 非同期 | Swift Concurrency | Kotlin Coroutines / Flow |
-| DI | イニシャライザ注入 | コンストラクタ注入・ViewModel Factory |
-| 通信 | 生成クライアント + URLSession | 生成クライアント + HttpURLConnection |
-| キー・値の保存 | UserDefaults | DataStore |
-| 秘密情報の保存 | Keychain | Keystore で暗号化して DataStore |
-| 構造化データの保存 | SwiftData | Room |
-| ユニットテスト | Swift Testing | JUnit + kotlinx-coroutines-test |
-| UI テスト | XCUITest | Compose UI Test |
-| 静的解析 | SwiftLint / swift-format | ktlint / detekt |
-
-構造化データの保存、UI テスト、detekt は拡張候補です。現在の永続化は小規模な JSON を KeyValueStore に保存し、静的解析は SwiftLint / ktlint を実行します。
-
-### 最低対応バージョン（案）
-
-- **iOS 18 以上**: Observation と SwiftData を前提にできます。Liquid Glass（iOS 26）などの新しい API は `#available` で分岐し、`shared/designsystem` の中に閉じ込めます。
-- **Android minSdk 28 以上**: targetSdk は常に最新にします。
-- リリース時期が決まった時点で、利用者の OS 分布を見て見直します。
-
-## 共通定義からの生成と検査
-
-### OpenAPI から API クライアントを生成する
-
-`bun tools/generate.ts` が `specs/openapi/openapi.yaml` を読み、`core/network` に次のコードを生成します。この契約は公式 GitHub OpenAPI から必要な範囲だけを選んだものです。生成先の `Generated/`（iOS）と `generated/`（Android）は手で編集しません。
-
-| 生成物 | iOS | Android |
-| --- | --- | --- |
-| schema ごとの DTO | `struct RepoSummaryDTO: Codable` | `@Serializable data class RepoSummaryDTO` |
-| operation ごとのメソッド | `APIClient.searchRepos(q:)` | `ApiClient.searchRepos(q)` |
-
-- DTO とクライアントは `core/network` の内部（`internal`）に閉じます。手書きの `DefaultGitHubAPI` / `DefaultGitHubApi` がドメインモデル（`RepositorySummary`・`GitHubIssue`）に変換して公開します。
-- 通信は `HTTPTransport` / `HttpTransport` で差し替えられます。テストではスタブを渡します。
-- 生成器が対応する OpenAPI の範囲は `tools/lib/openapi.ts` の先頭に書いてあります。範囲外の構文は生成時にエラーになります。
-
-API を変更するときは `specs/openapi/openapi.yaml` を直接編集し、`bun tools/generate.ts` で両 OS のコードを再生成します。生成はオフラインで動作し、入力の契約は書き換えません。`specs/openapi` で管理するのは契約とライセンスの2ファイルです。元になった公式定義と更新時の確認事項は [ADR 0004](docs/adr/0004-github-openapi.md) を参照してください。
-
-同じコマンドで、`specs/tokens/tokens.json` から `shared/designsystem` の `Tokens`（色・余白）を、`specs/routes.yaml` から `core/navigation` の `Route`・`AppTab`・ディープリンクの解析も生成します。
-
-### 共通シナリオを両 OS のテストで実装する
-
-`specs/scenarios/*.yaml` の各 step に `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` と書きます。`bun tools/check-scenarios.ts` は次を検査します。
-
-- すべての step が、iOS と Android の両方のテストから参照されている
-- `given` の operationId が OpenAPI にあり、2xx の `body` がレスポンスの schema に合っている（`navigation` は画面遷移、`localState` は保存値と読み書きの失敗条件。API は文字列の `headers` と辞書のエラー `body` も指定可能）
-- 機能の `spec.md` がシナリオを参照している
-
-### spec と実装の追従を記録する
-
-各モジュールの `ios/.spec-sync` と `android/.spec-sync` に、その OS が追従した `spec.md` のハッシュを記録します。`bun tools/check-spec-sync.ts` は、片方でも古ければ失敗します。
-
-## コマンド一覧
-
-検査ツールは Bun（TypeScript）で書いています。外部の npm パッケージは使わず、YAML・TOML の読み込みとテストは Bun の組み込み機能を使います（`package.json` の依存は型検査用の `typescript` と `@types/bun` だけです）。依存の取得は `.npmrc` と `bunfig.toml` で制限しています（公式レジストリのみ、ライフサイクルスクリプトを実行しない、バージョンは固定、公開から 7 日未満のバージョンは入れない）。CI では `bun audit` で既知の脆弱性も検査します。
-
-| 目的 | コマンド |
-| --- | --- |
-| PR ごとの検査をすべて実行（CI の `repo-checks` と同じ） | `mise run check` |
-| トークンと OpenAPI から Swift / Kotlin を生成 | `bun tools/generate.ts` |
-| spec と両 OS の同期を検査 | `bun tools/check-spec-sync.ts` |
-| 追従を記録 | `bun tools/check-spec-sync.ts --update both modules/features/search` |
-| モジュールの依存ルールを検査 | `bun tools/check-deps.ts` |
-| 生成コードが最新かを検査 | `bun tools/check-generated.ts` |
-| 共通シナリオと両 OS のテストの対応を検査 | `bun tools/check-scenarios.ts` |
-| tools/ 自体のテスト | `bun test tools/tests` |
-| tools/ の型検査 | `bun x tsc --noEmit` |
-| tools/ の整形（`bun fmt`。設定は `bunfig.toml`） | `mise run fmt` |
-| Swift と Kotlin の Lint | `mise run lint` |
-| iOS のテスト（Xcode / macOS） | `cd modules && xcodebuild test -scheme Modules-Package -destination 'platform=iOS Simulator,name=iPhone 16'` |
-| Android のテスト（Android SDK と JDK 17 が必要。Gradle は wrapper で 8.14.3 に固定） | `cd apps/android && ./gradlew test` |
-| iOS アプリのプロジェクト生成 | `cd apps/ios && xcodegen generate` |
-| スキルの原本を変更したあとの再配置 | `apm install` |
-
-iOS のテストは iOS Simulator 上で実行します。iPhone 16 の Simulator がない場合は、`xcrun simctl list devices available` で利用できる機種名を確認し、`name=` を置き換えてください。`swift test` はホストの macOS 向けにビルドするため、このパッケージのテストには使いません。
-
-## CI
-
-| ワークフロー | タイミング | 内容 |
-| --- | --- | --- |
-| CI（`repo-checks`） | すべての PR と main への push | `mise run check`（tools の整形・型検査・テスト、spec の同期、依存ルール、生成差分、共通シナリオの検査。Linux、数秒） |
-| CI（`lint`） | すべての PR と main への push | SwiftLint と ktlint（Linux）。生成コードは対象外 |
-| CI（`actions-lock`） | すべての PR と main への push | ワークフローの `uses:` が `actions.lock` と一致するか（`gh actions-lock --verify`） |
-| Native build | 手動（Actions タブの「Run workflow」） | iOS: Simulator で全モジュールのテストとアプリ本体のビルド / Android: `./gradlew test assembleDebug` |
-
-ネイティブのビルドは時間とコストがかかるため、最初は手動にしています。
-
-### アクションの固定（actions.lock）
-
-ワークフローで使うアクションは、GitHub 公式の lockfile `.github/workflows/actions.lock` で固定しています。各 `uses:` のタグが指すコミットを（アクションが内部で使うアクションも含めて）記録し、実行時はそのコミットだけが動きます。タグを書き換えられても、記録と違うコミットは実行されません。
-
-- `uses:` を追加・変更したら、手元で `gh actions-lock` を実行し、ワークフローと `actions.lock` の差分を確認してコミットします。手で編集しないでください。
-- 拡張は `gh extension install github/gh-actions-lock --pin v0.4.0` で入れます（CI と同じバージョン）。
-- `uses:` には `@v4` ではなく `@v4.4.0` のように正確なバージョンを書きます（`gh actions-lock` も書き換えます）。
-- Docker イメージ（`docker run` や `container:`）とスクリプトでのダウンロードは対象外です。
-- lockfile のない状態での実行を禁止するには、リポジトリの設定で「Require lockfile」ポリシーを有効にします。
-
-## サンプルアプリの実行
-
-「探す」「保存済み」「設定」の3タブです。探す → リポジトリ詳細 → Issue一覧 → Issue詳細へ進み、保存済みからメモ編集シートを開けます。保存済み一覧にはスナップショットを表示するため、一覧のための通信は不要です。メモは最大1,000コードポイント、保存は最大100件です。
-
-通常起動は認証なしの GitHub REST API（`2026-03-10`）を使用します。GitHubへの変更操作はありません。検索は確定時のみ送信し、取得結果を5分キャッシュします。手動更新はキャッシュを迂回しますが、レート制限は守ります。403/429の制限中は再試行可能時刻を表示し、送信を抑制します。検索は最大1,000件、Issue一覧のPRは表示対象外です。
+Install and activate [mise](https://mise.jdx.dev/getting-started.html), then run:
 
 ```sh
-# iOS: XcodeGenで生成後、XcodeでApp schemeを実行
-cd apps/ios
-xcodegen generate
-
-# Android: JDK17とAndroid SDKを設定して実行
-cd apps/android
-./gradlew test assembleDebug
+mise install
+mise run setup
 ```
 
-アプリは両 OS とも GitHub の実 API に接続し、ブックマーク・メモ・表示設定は端末内に永続化します。単体テストではテスト内のスタブと応答データを使い、ネットワークに依存せず検証します。
+This installs the pinned development tools and dependencies and deploys agent skills through APM. Generated agent configuration is not committed.
 
-`TS2688: Cannot find type definition file for 'bun'` が出る場合は、`bun install --frozen-lockfile` で型検査依存を復元してから `mise run check` を実行してください。型定義は `package.json` / `bun.lock` に固定済みです。
+Native builds also require Xcode and XcodeGen on macOS for iOS, or JDK 17 and Android SDK 36 for Android. See the [iOS](docs/platforms/ios.md) and [Android](docs/platforms/android.md) guides for build and run instructions.
 
-## 現状
+## Repository layout
 
-- **実装済み**: GitHub検索・詳細・Issue、ローカルブックマークとメモ、表示設定、3タブとシート、OpenAPI契約の直接管理と両OSコード生成、キャッシュ・ページング・レート制限、共通シナリオと両OSテスト、同期・依存・生成差分検査、CI。
-- **拡張候補**: 認証、READMEやIssueのMarkdown表示、外部SDKラッパーのサンプル。
+| Path | Purpose |
+| --- | --- |
+| `apps/ios`, `apps/android` | App startup, dependency assembly, and routing |
+| `modules/core` | Platform infrastructure and general utilities |
+| `modules/shared` | UI, models, and logic shared across features on each platform |
+| `modules/features` | Search, bookmarks, and settings |
+| `specs` | OpenAPI, design tokens, routes, localization, and shared scenarios |
+| `tools` | Code generation and repository checks |
+| `docs` | Development guides and architecture decisions |
+
+Each module contains `spec.md`, `ios/`, and `android/`. Its specification is the source of truth for both implementations.
+
+## Architecture
+
+Both native implementations follow this structure. Arrows show dependency direction; see [dependency rules](AGENTS.md#rules) for module-specific restrictions.
+
+```mermaid
+flowchart TD
+    apps["apps<br/>Startup & dependency assembly"]
+    features["features<br/>Screens & state"]
+    shared["shared<br/>Common UI, models & logic"]
+    core["core<br/>Navigation, networking, storage & utilities"]
+    apps --> features
+    apps --> shared
+    apps --> core
+    features --> shared
+    features --> core
+    shared --> core
+```
+
+## Development
+
+1. Update the module's `spec.md` and any affected definitions in `specs/`.
+2. Implement both platforms with matching types and structure. Document intentional platform differences in the spec.
+3. Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>`.
+4. Run the checks and include both implementations in one PR.
+
+| Command | Purpose |
+| --- | --- |
+| `mise run generate` | Regenerate Swift/Kotlin code and native resources from `specs/` |
+| `mise run check` | Check formatting, types, tooling tests, spec alignment, dependencies, generated files, and scenarios |
+| `mise run lint` | Run SwiftLint and ktlint after Swift/Kotlin changes |
+| `mise run fmt` | Format TypeScript tooling and configuration |
+
+Do not edit generated files by hand. CI runs repository checks and lint on PRs and pushes to `main`; native builds are triggered manually.
+
+## Further reading
+
+- [Development guide](docs/development.md): architecture, generation, tests, and CI
+- [Architecture decisions](docs/adr): design rationale
+- [Agent instructions](AGENTS.md) and [project skills](.apm/skills): contribution rules and workflows

@@ -1,26 +1,27 @@
-# ADR 0002: 画面遷移は Navigator の状態として 1 通りに書く
+# ADR 0002: Use a single navigation model through Navigator state
 
-- 状態: 採用
-- 決定:
-  - 画面の一覧（名前・引数・タブ・ディープリンク）を `specs/routes.yaml` に集約し、両 OS の `Route` と `AppTab` を `tools/generate.ts` で生成する。
-  - 画面遷移は、機能の中でも外でも、すべて `core/navigation` の `Navigator` で行う。`NavigationLink` などで画面を直接開かない。
-  - 遷移は `NavigationState`（タブごとのスタックと、重なったモーダル。モーダルはそれぞれ自分のスタックを持つ）として持ち、`Navigator` の 7 つの操作（`push` / `pop` / `popToRoot` / `present` / `dismiss` / `selectTab` / `reset`）で書き換える。push かモーダルかは呼ぶ側が決める。
-  - スタックは `NavigationEntry(id, route)` を保持する。Route は遷移先、id は画面インスタンスを表す。同じ Route の push ごとに UUID を発行し、戻る操作で残るエントリは同じ ID を保つ。タブの先頭も NavigationState がエントリとして所有する。
-  - 描画時はエントリ ID に画面状態を紐付ける。iOS は NavigationStack の要素と View の `.id`、Android は NavEntry の `contentKey` に使用する。
-  - アプリ層（`apps/*`）は起動処理・共有依存の組み立て（AppDependencies）・Route と公開入口の対応（AppRouter）・タブとスタックとモーダルの枠（AppRoot）を持つ。個別画面と ViewModel の生成・保持は各 feature の公開入口 `*Screen` に閉じる。
-  - 枠の描画は iOS が `TabView` + `NavigationStack(path:)` + `.sheet` / `.fullScreenCover`、Android が `NavigationSuiteScaffold` + Navigation 3 の `NavDisplay` + ボトムシート / 全画面ダイアログ。feature の入口で作る ViewModel も、その枠が提供する画面エントリの寿命に従う。
-  - AppDependencies は設定画面へ DisplaySettings を直接渡す。SearchDependencies と BookmarksDependencies にも同じインスタンスを渡す。shared/bookmarks の BookmarkRepository と画像キャッシュも両者で共有し、features 同士を依存させない。
-- 理由:
-  - やり方を 1 つにすると、どこで書くかの判断が要らず、機能を足しても書き方がぶれない。
-  - features 同士の依存を禁止したまま（相互遷移で循環しない）、機能をまたぐ遷移とディープリンクを書ける。
-  - 遷移の振る舞いを純粋な状態遷移にすると、両 OS 共通のシナリオでテストでき、OS 間の差が出にくい。
-  - 描画は各 OS の公式部品に任せるので、Liquid Glass のタブバーや大画面の適応レイアウトに OS の更新だけで追随できる。
-- 結果:
-  - 画面を足すときは `routes.yaml` に 1 件足し、feature に `*Screen` を作り、両 OS の AppRouter に対応を足す。登録し忘れると `switch` / `when` の網羅チェックでビルドが落ちる。アプリ層に画面ごとのラッパーや ViewModel の factory は置かない。
-  - 画面間で結果を返す仕組みは作らない。結果はデータ層（`core/*`）を通して受け渡す。
-  - プロセス終了後のバックスタック復元は対象外（必要になったら `NavigationState` を保存できる形にする）。
+- Status: Accepted
+- Decision:
+  - Define screens (names, arguments, tabs, and deep links) in `specs/routes.yaml`. Generate `Route` and `AppTab` for both platforms with `tools/generate.ts`.
+  - Use `core/navigation`'s `Navigator` for all navigation within and across features. Do not open screens directly with `NavigationLink` or similar APIs.
+  - Represent navigation as `NavigationState`: per-tab stacks and layered modals, each with its own stack. Mutate it through seven `Navigator` operations: `push`, `pop`, `popToRoot`, `present`, `dismiss`, `selectTab`, and `reset`. The caller chooses between push and modal presentation.
+  - Stacks contain `NavigationEntry(id, route)`. The route identifies the destination; the ID identifies the screen instance. Every push creates a UUID, even for the same route. Entries remaining after back navigation retain their IDs. NavigationState also owns each tab's root entry.
+  - Associate screen state with entry IDs: NavigationStack elements and View `.id` on iOS, and NavEntry `contentKey` on Android.
+  - The app layer (`apps/*`) owns startup, shared dependency assembly (AppDependencies), route-to-entry-point mappings (AppRouter), and the tab/stack/modal container (AppRoot). Each feature's public `*Screen` entry point creates and retains individual screens and ViewModels.
+  - Render the container with `TabView`, `NavigationStack(path:)`, and `.sheet` / `.fullScreenCover` on iOS; use `NavigationSuiteScaffold`, Navigation 3's `NavDisplay`, and bottom sheets / full-screen dialogs on Android. Feature ViewModels follow the lifetime of the screen entry provided by that container.
+  - AppDependencies passes DisplaySettings directly to settings and shares the same instance with SearchDependencies and BookmarksDependencies. Both also share `shared/bookmarks`' BookmarkRepository and the image cache, without dependencies between features.
+- Rationale:
+  - One approach removes uncertainty about where navigation belongs and keeps new features consistent.
+  - Cross-feature navigation and deep links work without allowing feature dependencies or cycles.
+  - Pure state transitions can be tested through shared scenarios, reducing platform differences.
+  - Native rendering components allow adoption of OS changes such as Liquid Glass tab bars and adaptive layouts.
+- Consequences:
+  - Add a screen to `routes.yaml`, create its feature's `*Screen`, and register it in both AppRouters. Exhaustive `switch` / `when` checks fail the build if a mapping is missing. Do not put per-screen wrappers or ViewModel factories in the app layer.
+  - Do not introduce a screen-result mechanism. Pass results through the data layer (`core/*`).
+  - Restoring the back stack after process termination is out of scope. Make NavigationState persistable if that becomes necessary.
 
-## 検討した他の案
-- features 同士の依存を許可して直接開く: 相互遷移が循環依存になりビルドできない。変更の影響範囲が広がる。
-- 機能内は直接、機能間だけ Route: やり方が 2 つになり、後から外部の入口にしたくなると書き換えが要る。
-- コールバックで外に出してアプリが配線する: ディープリンクと両 OS の一致検査の拠り所がない。
+## Alternatives considered
+
+- Allow features to open each other directly: reciprocal navigation creates dependency cycles and widens the impact of changes.
+- Use direct navigation within features and routes between features: two approaches require rewrites when an internal screen becomes an external entry point.
+- Expose callbacks and wire them in the app: this provides no shared basis for deep links or cross-platform consistency checks.

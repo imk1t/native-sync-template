@@ -1,22 +1,24 @@
 ---
 name: add-module
-description: modules/ 配下に新しいモジュール（features/<名前>、core/<名前>、shared/<名前>）を iOS と Android の両方に新規作成するときに使う。Package.swift と settings.gradle.kts への登録まで含む。既存モジュールの変更は sync-feature を使う。
+description: Create a new module under modules/ (features/<name>, core/<name>, or shared/<name>) for both iOS and Android, including Package.swift and settings.gradle.kts registration. Use sync-feature for changes to existing modules.
 ---
 
-# モジュールの追加
+# Add a module
 
-## 置き場所と名前
-- 機能: `modules/features/<名前>/`、基盤: `modules/core/<名前>/`、feature 共通の UI・モデル・処理: `modules/shared/<名前>/`。
-- 共通 UI とトークンは `shared/designsystem`（依存先は `core/utils`・`core/extensions` のみ）。その他の shared の依存先は core のみ。shared 同士は依存しない。
-- 汎用の標準型拡張は `core/extensions`（内部依存なし）、専用の型で提供する汎用処理は `core/utils`（依存先は `core/extensions` のみ）。両者に外部ライブラリを追加しない。機能固有の Extension はその機能に置く。
-- 中身は `spec.md`、`ios/`、`android/`。名前は両 OS で対応させる（iOS の `FeatureLogin` ⇔ Android の `:features:login`）。
+## Location and naming
 
-## 手順
-1. AGENTS.md の依存ルールに沿って、置き場所と依存先を決める。
-2. `spec.md` を書く。既存の `modules/features/search/spec.md` と同じ見出し（概要、画面遷移、画面と状態、ユーザー操作と結果、使う API とトークン、OS 固有の差分、シナリオ）にする。画面を持つ機能は `core/navigation` に依存し、画面を `specs/routes.yaml` に足す。
-3. iOS: `modules/Package.swift` に target を**1 行 1 target**で足し、products に `.library` も足す。`path:` は `<module>/ios/Sources/<Group>/<Name>`（例: `features/login/ios/Sources/Features/Login`）。テストは `<module>/ios/Tests/<Group>/<Name>` に置き、`.testTarget(name: "<Target>Tests", dependencies: ["<Target>"], path: ...)` を足す。target 名は `FeatureLogin` など一意な名前を使う。個別の `Package.swift` は作らない（`ios/` が SwiftPM で衝突するため。docs/adr/0001）。
-4. Android: `modules/<module>/android/build.gradle.kts` を作り（実装は `src/main/kotlin/`、テストは `src/test/kotlin/`）、`apps/android/settings.gradle.kts` に `module(":<名前>", "<module のパス>")` を足す。JVM ターゲットは 17（`kotlin { jvmToolchain(17) }`）。
-5. 他モジュールへの依存は、iOS は `Package.swift` の `dependencies`、Android は `project(":...")` で書き、**両 OS で同じ依存**にする。
-6. 画面から使うなら `apps/ios` と `apps/android` に組み立てだけを足す。
-7. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` を実行し、`bun tools/check-deps.ts` と `bun tools/check-spec-sync.ts` を通す。
-8. 機能の中身は `sync-feature` の手順で実装する。
+- Features go in `modules/features/<name>/`, infrastructure in `modules/core/<name>/`, and UI, models, or logic shared across features in `modules/shared/<name>/`.
+- Common UI and tokens belong in `shared/designsystem`, which may depend only on `core/utils` and `core/extensions`. Other shared modules may depend only on core. Shared modules must not depend on each other.
+- General extensions of standard types belong in `core/extensions` (no internal dependencies); general operations exposed through dedicated types belong in `core/utils` (only `core/extensions` is allowed as an internal dependency). Neither may use third-party libraries. Keep feature-specific extensions in their feature.
+- Each module contains `spec.md`, `ios/`, and `android/`. Use corresponding names on both platforms (`FeatureLogin` on iOS ⇔ `:features:login` on Android).
+
+## Steps
+
+1. Choose the location and dependencies according to AGENTS.md.
+2. Write `spec.md` using the headings in `modules/features/search/spec.md`: Overview, Navigation, Screens and state, User actions and outcomes, APIs and tokens, Platform differences, and Scenarios. Features with screens depend on `core/navigation`; register their screens in `specs/routes.yaml`.
+3. iOS: Add a target to `modules/Package.swift`, with **one target per line**, and add a `.library` product. Set `path:` to `<module>/ios/Sources/<Group>/<Name>` (for example, `features/login/ios/Sources/Features/Login`). Put tests in `<module>/ios/Tests/<Group>/<Name>` and add `.testTarget(name: "<Target>Tests", dependencies: ["<Target>"], path: ...)`. Use a unique target name such as `FeatureLogin`. Do not create individual `Package.swift` files: identical `ios/` directory names collide in SwiftPM (docs/adr/0001).
+4. Android: Create `modules/<module>/android/build.gradle.kts` (implementation in `src/main/kotlin/`, tests in `src/test/kotlin/`) and add `module(":<name>", "<module-path>")` to `apps/android/settings.gradle.kts`. Set the JVM toolchain to 17 with `kotlin { jvmToolchain(17) }`.
+5. Declare module dependencies in `Package.swift`'s `dependencies` on iOS and with `project(":...")` on Android. **Keep dependencies identical across platforms.**
+6. If the module is used by screens, add assembly code only to `apps/ios` and `apps/android`.
+7. Run `bun tools/check-spec-sync.ts --update both <module-path>`, then pass `bun tools/check-deps.ts` and `bun tools/check-spec-sync.ts`.
+8. Implement behavior using the `sync-feature` workflow.

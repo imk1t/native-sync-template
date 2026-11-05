@@ -1,51 +1,58 @@
 # AGENTS.md
 
-iOS(Swift)と Android(Kotlin)をネイティブで同時に開発するモノレポ。両 OS の整合は `modules/**/spec.md` を基準に保つ。
+A monorepo for developing native iOS (Swift) and Android (Kotlin) apps together. Keep both platforms aligned using `modules/**/spec.md` as the source of truth.
 
-## 構成
-- `apps/{ios,android}`: 組み立てだけ。ロジックは置かない。
-- アプリ層は起動・AppRoot の枠・AppDependencies の共有依存・AppRouter の対応表を持つ。個別画面と ViewModel の生成・保持は各 feature の公開入口 `*Screen` に置く。
-- `specs/`: 単一の正。`openapi`(API)、`tokens`(デザイントークン)、`routes.yaml`(画面の一覧)、`scenarios`(共通シナリオ)、`third-party.yaml`(外部ライブラリ対応表)。
-- `modules/<core|shared|features>/<名前>/{spec.md, ios, android}`: 機能・基盤。`spec.md` が同期の基準。
-- `modules/shared/*`: 複数 feature で使う共通 UI・モデル・処理。共通 UI とトークンは `shared/designsystem` に置く。ルートの `specs/` は仕様・生成元で、共通実装とは分ける。
-- `docs/adr/`: 設計判断の記録。
-- `docs/platforms/{ios,android}.md`: OS 固有の設定・環境・注意点。OS 固有の設定や落とし穴を見つけたらここに書く。
+## Structure
 
-## コマンド
-ツールのバージョンは `mise.toml`、検査スクリプトは Bun(TypeScript)。変更後は次を通す。
+- `apps/{ios,android}`: Assembly only; no application logic.
+- The app layer owns startup, the AppRoot container, shared dependencies in AppDependencies, and route mappings in AppRouter. Each feature's public `*Screen` entry point creates and retains its screens and ViewModels.
+- `specs/`: Shared sources of truth: `openapi` (API), `tokens` (design tokens), `routes.yaml` (screens), `scenarios` (shared scenarios), and `third-party.yaml` (cross-platform library mappings).
+- `modules/<core|shared|features>/<name>/{spec.md, ios, android}`: Features and infrastructure. `spec.md` defines the contract for platform alignment.
+- `modules/shared/*`: UI, models, and logic used by multiple features. Common UI and tokens belong in `shared/designsystem`. Root-level `specs/` contains specifications and generation inputs, separate from shared implementations.
+- `docs/adr/`: Architecture decision records.
+- `docs/platforms/{ios,android}.md`: Platform-specific configuration, environment requirements, and pitfalls. Record new platform-specific findings here.
+
+## Commands
+
+Tool versions are pinned in `mise.toml`; check scripts use Bun (TypeScript). Run the following after changes:
+
+```sh
+bun tools/generate.ts     # Regenerate after changing tokens, OpenAPI, routes, or localization
+mise run check            # Formatting, types, tooling tests, dependencies, generated files, spec alignment, scenarios (same as CI)
+mise run lint             # SwiftLint and ktlint after Swift/Kotlin changes
+mise run fmt              # bun fmt after changing TypeScript in tools/
 ```
-bun tools/generate.ts     # トークン・OpenAPI・routes からの再生成（変更したとき）
-mise run check            # 整形・型検査・tools のテスト・依存ルール・生成物・spec の追従・シナリオ（CI と同じ）
-mise run lint             # SwiftLint・ktlint(Swift/Kotlin を変更したとき)
-mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
-```
-追従の記録: `bun tools/check-spec-sync.ts --update both <モジュールパス>`(実装していない OS は記録しない)。
 
-## 手順はスキルを使う
-- 機能・基盤の追加や変更 → `sync-feature`(spec 先行 → 一方の OS → もう一方を同じ型名・同じ構造で → 検査 → 1 つの PR)
-- モジュールの新規追加 → `add-module`
-- 外部ライブラリの追加 → `add-third-party`
+Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>`. Do not update a platform's marker unless its implementation matches the spec.
 
-## ルール
-- `Generated/` と `generated/` 配下は手で編集しない。`tools/generate.ts` で再生成する。
-- 生成された DTO・APIClient は `core/network` の外に出さない。手書きのラッパー(例: `DefaultGitHubAPI`)でドメインモデルに変換して公開する。
-- 画面遷移はすべて `core/navigation` の `Navigator`(`push`・`present` など)で行う。`NavigationLink` などで画面を直接開かない。画面を足すときは `specs/routes.yaml` に足し、その機能の spec.md の「画面遷移」に書き、アプリ層の `Route` → 画面の対応に足す(`docs/adr/0002`)。
-- OS 間の意図した違いは `spec.md` の「OS 固有の差分」に書く。書かれていない違いはバグ。
-- `specs/scenarios` の各 step は、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書いて実装する。
-- 依存: `core/extensions` は何にも依存しない / `core/utils` は `core/extensions` のみ / その他の `core/*` は他の `core/*` のみ / `shared/designsystem` は `core/utils`・`core/extensions` のみ / その他の `shared/*` は `core/*` のみ(shared 同士は禁止) / `features/*` は `shared/*`・`core/*` のみ(features 同士は禁止)。依存は実際に使う場合だけ追加する。
-- 汎用の標準型拡張は `core/extensions`、専用の型で提供する汎用処理は `core/utils` に置く。機能・業務・UI 固有の Extension はそのモジュールに置く。参照・判定はプロパティ、変換は関数とし、同じ処理を Utils と Extension の両方で公開しない。
-- 外部ライブラリは `core/*` のラッパー経由で使い、`specs/third-party.yaml` に両 OS の対応を書く。`core/extensions`・`core/utils` は外部ライブラリに依存しない(標準ライブラリ・Foundation・JDK は利用可)。AndroidX・Kotlin・kotlinx は公式基盤としてこの2モジュール以外から直接使え、対応表の対象外。テスト用依存はこの制約の対象外。
-- iOS のモジュールと外部依存(`.product(name:package:)`)は `modules/Package.swift` に、Android は `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
-- Android のビルドは `apps/android` の `./gradlew` で行う(Gradle 8.14.3 を `gradle/wrapper` で固定。JDK 17 が必要)。Gradle のバージョンは `./gradlew wrapper --gradle-version <版>` で上げ、手元の `gradle` は使わない。
-- テストは OS 標準の場所に置く(iOS: `ios/Tests`、Android: `android/src/test`)。
-- iOS の実装とテストは `ios/Sources/<Group>/<Name>`・`ios/Tests/<Group>/<Name>` に置く(例: `Core/Network`、`Features/Search`、`Shared/DesignSystem`)。SwiftPM の target 名は `CoreNetwork` など一意な名前とし、`Package.swift` の `path` で配置を指定する。
-- Android のパッケージと namespace は `com.example` にモジュールの階層を続ける(例: `core/network` → `com.example.core.network`、`features/search` → `com.example.features.search`)。ソースとテストのディレクトリも同じ階層にする。
-- 両 OS の変更は 1 つの PR にまとめる。
-- ワークフローの `uses:` は正確なバージョン(`@v4.4.0`)で書き、変えたら `gh actions-lock` で `.github/workflows/actions.lock` を更新する(手で編集しない)。
+## Use skills for workflows
 
-## スキルの管理(apm)
-- 原本は `.apm/skills/<名前>/SKILL.md`。配置先の `.claude/skills/`・`.agents/skills/` はコミットせず、手で編集しない。原本を直したら `apm install` をやり直す。
-- clone 後は `mise install` と `mise run setup`。mise のインストールは利用者が行う(README の「セットアップ」)。apm は `mise.toml` で版を固定している。エージェントは mise・apm をインストールしない。
-- `apm.lock.yaml` はコミットする。`.mcp.json`・`.codex/` は apm の生成物なのでコミットしない。
-- `apm compile` は実行しない(この AGENTS.md は手書きのため)。
-- スキルは短く保ち、`description` に「何をするか」と「いつ使うか」を書く。
+- Add or change feature/infrastructure behavior → `sync-feature` (spec first → one platform → the other with matching types and structure → checks → one PR).
+- Add a module → `add-module`.
+- Add a third-party library → `add-third-party`.
+
+## Rules
+
+- Do not edit files under `Generated/` or `generated/` by hand. Regenerate with `tools/generate.ts`.
+- Keep generated DTOs and APIClient inside `core/network`. Expose domain models through handwritten wrappers such as `DefaultGitHubAPI`.
+- Use `core/navigation`'s `Navigator` (`push`, `present`, etc.) for all navigation. Do not open screens directly with `NavigationLink` or similar APIs. When adding a screen, register it in `specs/routes.yaml`, document it under “Navigation” in the feature's spec, and add the app-layer `Route` → screen mapping ([ADR 0002](docs/adr/0002-navigation.md)).
+- Document intentional platform differences under “Platform differences” in `spec.md`. Undocumented differences are bugs.
+- Implement every step in `specs/scenarios` in both platforms' tests, annotated with `// @scenario <scenario-name>/<id>`.
+- Dependencies: `core/extensions` has no internal dependencies; `core/utils` may depend only on `core/extensions`; other `core/*` may depend only on other `core/*`; `shared/designsystem` may depend only on `core/utils` and `core/extensions`; other `shared/*` may depend only on `core/*` (no shared-to-shared dependencies); `features/*` may depend only on `shared/*` and `core/*` (no feature-to-feature dependencies). Add a dependency only when it is used.
+- Put general extensions of standard types in `core/extensions` and general operations exposed through dedicated types in `core/utils`. Keep feature-, business-, and UI-specific extensions in their owning modules. Use properties for queries and predicates, functions for transformations. Do not expose the same operation through both a utility and an extension.
+- Use third-party libraries through `core/*` wrappers and record both platforms in `specs/third-party.yaml`. `core/extensions` and `core/utils` must not depend on third-party libraries (the standard library, Foundation, and JDK are allowed). AndroidX, Kotlin, and kotlinx are official infrastructure and may be used directly outside those two modules; they do not require library mappings. Test dependencies are exempt.
+- Register iOS modules and external products (`.product(name:package:)`) in `modules/Package.swift`, and Android modules in `apps/android/settings.gradle.kts` ([ADR 0001](docs/adr/0001-monorepo-and-spec-sync.md)).
+- Build Android with `./gradlew` from `apps/android` (Gradle 8.14.3 is pinned in `gradle/wrapper`; JDK 17 is required). Upgrade using `./gradlew wrapper --gradle-version <version>`, not a locally installed `gradle`.
+- Use platform-standard test locations: `ios/Tests` and `android/src/test`.
+- Put iOS implementations and tests in `ios/Sources/<Group>/<Name>` and `ios/Tests/<Group>/<Name>` (for example, `Core/Network`, `Features/Search`, `Shared/DesignSystem`). Use unique SwiftPM target names such as `CoreNetwork`, with explicit `path` entries in `Package.swift`.
+- Android packages and namespaces follow `com.example` plus the module hierarchy (for example, `core/network` → `com.example.core.network`). Source and test directories follow the same hierarchy.
+- Include both platforms' changes in one PR.
+- Use exact versions in workflow `uses:` entries, such as `@v4.4.0`. After changing them, regenerate `.github/workflows/actions.lock` with `gh actions-lock`; do not edit it by hand.
+
+## Skill management (APM)
+
+- Sources live in `.apm/skills/<name>/SKILL.md`. Do not commit or manually edit deployed copies in `.claude/skills/` or `.agents/skills/`. Run `apm install` after changing a source.
+- After cloning, run `mise install` and `mise run setup`. Users install mise themselves (see “Setup” in the README). APM is pinned in `mise.toml`. Agents must not install mise or APM.
+- Commit `apm.lock.yaml`. Do not commit `.mcp.json` or `.codex/`, which are generated by APM.
+- Do not run `apm compile`; this AGENTS.md is maintained by hand.
+- Keep skills short. Their `description` must explain what they do and when to use them.
