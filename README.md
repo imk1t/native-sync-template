@@ -63,7 +63,8 @@ specs/
 modules/
   Package.swift         全 iOS モジュールをまとめた SwiftPM パッケージ
   core/
-    utils/              何にも依存しない汎用コード
+    extensions/         標準型に対する汎用 Extension（内部依存なし）
+    utils/              日時整形など、専用の型で提供する汎用処理
     navigation/         画面遷移の状態と操作（Route は routes.yaml から生成）
     network/            OpenAPI から生成した API クライアントとそのラッパー
     storage/            UserDefaults / DataStore、Keychain / Keystore
@@ -122,11 +123,12 @@ modules/features/search/
 | モジュール | 依存してよい先 |
 | --- | --- |
 | `apps/*` | すべて（DI の組み立てと画面遷移の配線だけを持つ） |
-| `shared/designsystem` | `core/utils`（共通 UI・トークンを持つ。他の shared には依存しない） |
+| `shared/designsystem` | `core/utils`・`core/extensions`（共通 UI・トークンを持つ。他の shared には依存しない） |
 | その他の `shared/*` | `core/*`（画面を持たず、features と他の shared には依存しない） |
 | `features/*` | `shared/*`、`core/*`（**features 同士は禁止**。画面遷移は `core/navigation` のルート定義を経由する） |
-| `core/*` | 他の `core/*`（循環は禁止） |
-| `core/utils` | なし（標準ライブラリの拡張など、機能を知らないコードだけ） |
+| その他の `core/*` | 他の `core/*`（循環は禁止） |
+| `core/utils` | `core/extensions` のみ（専用の型で提供する汎用処理） |
+| `core/extensions` | なし（標準型に対する汎用 Extension） |
 
 依存してよい向き（矢印は「依存する」）:
 
@@ -142,7 +144,10 @@ flowchart TD
     features --> core
     features -.->|禁止| features
     designsystem --> utils["core/utils"]
+    designsystem --> extensions["core/extensions"]
+    utils --> extensions
     core --> utils
+    core --> extensions
     core -->|循環禁止| core
 ```
 
@@ -162,6 +167,8 @@ flowchart TD
     search --> navigation
     search --> storage
     search --> designsystem["shared/designsystem"]
+    search --> utils["core/utils"]
+    search --> extensions["core/extensions"]
     saved --> bookmarks
     saved --> network
     saved --> navigation
@@ -169,6 +176,7 @@ flowchart TD
     saved --> designsystem
     bookmarks --> storage
     bookmarks --> network
+    bookmarks --> extensions
     settings --> storage
     settings --> navigation
     settings --> designsystem
@@ -178,9 +186,11 @@ flowchart TD
     designsystem -.->|生成コード| tokens[("specs/tokens")]
 ```
 
-点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通 UI・モデル・処理です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。shared 同士の依存は禁止し、`shared/designsystem` の依存先は `core/utils` のみに制限します。
+点線は依存ではなく、`tools/generate.ts` による生成元です。`specs/` は両 OS 共通の仕様・生成元、`modules/**/spec.md` は各モジュールの振る舞い、`modules/shared/` は複数 feature で使う OS ごとの共通 UI・モデル・処理です（[ADR 0005](docs/adr/0005-feature-boundaries.md)）。shared 同士の依存は禁止し、`shared/designsystem` の依存先は `core/utils`・`core/extensions` に制限します。
 
-`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対象外）。
+汎用 Extension は `core/extensions`、日時整形など専用の型で提供する汎用処理は `core/utils` に置きます。Message・Route・業務モデルなど特定モジュールの知識を持つ Extension は、そのモジュールに置きます。両基盤モジュールは外部ライブラリに依存せず、実際に使う依存だけを追加します（[ADR 0007](docs/adr/0007-extensions-and-utils.md)）。
+
+`bun tools/check-deps.ts` が、このルールと、iOS と Android の依存関係が一致していることを検査します。外部ライブラリは `core/extensions`・`core/utils` を除く `core/*` のラッパーからだけ使い、`specs/third-party.yaml` に両 OS の対応を書きます（AndroidX・Kotlin・kotlinx は対応表の対象外ですが、両基盤モジュールでは直接利用できません。テスト用依存は除きます）。
 
 ### 画面遷移
 

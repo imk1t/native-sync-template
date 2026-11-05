@@ -1,9 +1,10 @@
 /**
  * モジュール間の依存ルールを検査する。
  *
- *   core/utils          -> 何にも依存しない
- *   core/*              -> 他の core/* のみ（循環禁止）
- *   shared/designsystem -> core/utils のみ
+ *   core/extensions     -> 何にも依存しない
+ *   core/utils          -> core/extensions のみ
+ *   その他の core/*     -> 他の core/* のみ（循環禁止）
+ *   shared/designsystem -> core/utils, core/extensions のみ
  *   その他の shared/*   -> core/*（shared 同士は禁止）
  *   features/*          -> shared/*, core/*（features 同士は禁止）
  */
@@ -16,6 +17,7 @@ export type External = Set<string>;
 
 const pair = (mod: string, name: string) => `${mod}\t${name}`;
 const unpair = (value: string) => value.split("\t") as [string, string];
+const isFoundationModule = (mod: string) => mod === "core/extensions" || mod === "core/utils";
 
 export function iosDependencies(root: string = ROOT): [Graph, External] {
   const targets = iosTargets(root);
@@ -88,7 +90,7 @@ export function androidDependencies(root: string = ROOT): [Graph, External] {
       const official = ["androidx.", "org.jetbrains.kotlin:", "org.jetbrains.kotlinx:"].some((prefix) =>
         coordinate.startsWith(prefix),
       );
-      if (mod !== "core/utils" && official) continue;
+      if (!isFoundationModule(mod) && official) continue;
       external.add(pair(mod, alias));
     }
   }
@@ -122,7 +124,7 @@ export function checkExternal(used: { ios: External; android: External }, root: 
   for (const plat of ["ios", "android"] as const) {
     const dependencies = used[plat];
     for (const [mod, name] of sorted(dependencies).map(unpair)) {
-      if (!mod.startsWith("core/") || mod === "core/utils") {
+      if (!mod.startsWith("core/") || isFoundationModule(mod)) {
         errors.push(`${plat}: ${mod} は外部 SDK ${name} に直接依存できません`);
       }
     }
@@ -137,9 +139,10 @@ export function checkExternal(used: { ios: External; android: External }, root: 
 }
 
 export function allowed(src: string, dst: string): boolean {
-  if (src === dst || src === "core/utils") return false;
+  if (src === dst || src === "core/extensions") return false;
+  if (src === "core/utils") return dst === "core/extensions";
   if (src.startsWith("core/")) return dst.startsWith("core/");
-  if (src === "shared/designsystem") return dst === "core/utils";
+  if (src === "shared/designsystem") return isFoundationModule(dst);
   if (src.startsWith("shared/")) return dst.startsWith("core/");
   if (src.startsWith("features/")) {
     return dst.startsWith("shared/") || dst.startsWith("core/");

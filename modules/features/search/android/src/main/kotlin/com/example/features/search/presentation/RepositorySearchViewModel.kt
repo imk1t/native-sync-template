@@ -2,6 +2,7 @@ package com.example.features.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.extensions.trimmedWhitespace
 import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
@@ -32,7 +33,7 @@ internal class RepositorySearchViewModel(val dependencies: SearchDependencies, p
         job?.cancel()
         content.reset()
         val form = form.value
-        val query = form.query.trim()
+        val query = form.query.trimmedWhitespace()
         submitted = if (query.isEmpty()) {
             null
         } else {

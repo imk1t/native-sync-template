@@ -13,11 +13,12 @@ App で BookmarkRepository を一度生成し、search と bookmarks に同じ�
 - `load`、`contains`、`toggle`、`remove`、`saveNote` を提供する。
 - 保存 Key は `github.bookmarks.v1`、JSON の version は 1。ID・表示用リポジトリ情報・メモ・保存日時の形式を維持し、移動前の保存データを読める。
 - ブックマークは最大 100 件、メモは空欄可・最大 1,000 Unicode コードポイント。
+- `BookmarkNoteRules` が `maxCodePoints`、`characterCount(note)`、`isValid(note)` を提供する。計数は `core/extensions` を使い、保存時検証と feature の文字数表示・保存可否で同じ規則を参照する。入力の正規化や切り詰めは行わない。
 - 更新は直列化し、同時操作で追加やメモを失わない。書き込み失敗時は公開状態を保つ。
 - 読み込み失敗・壊れた JSON・未知または欠落した version はエラーとし、空データで上書きしない。
 
 ## 使う API とトークン
-`core/storage`（KeyValueStore）と `core/network`（RepositorySummary）に依存する。生成 DTO は扱わない。外部 API やトークンは使わない。
+`core/storage`（KeyValueStore）、`core/network`（RepositorySummary）、`core/extensions`（コードポイント数）に依存する。生成 DTO は扱わない。外部 API やトークンは使わない。
 
 ## OS 固有の差分
 モジュール名は iOS が `SharedBookmarks`、Android のパッケージは `com.example.shared.bookmarks`。 iOS の実装は `Sources/Shared/Bookmarks`、テストは `Tests/Shared/Bookmarks` に配置する。

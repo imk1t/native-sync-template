@@ -32,8 +32,9 @@ mise run fmt              # tools/ の TypeScript を変更したとき(bun fmt)
 - 画面遷移はすべて `core/navigation` の `Navigator`(`push`・`present` など)で行う。`NavigationLink` などで画面を直接開かない。画面を足すときは `specs/routes.yaml` に足し、その機能の spec.md の「画面遷移」に書き、アプリ層の `Route` → 画面の対応に足す(`docs/adr/0002`)。
 - OS 間の意図した違いは `spec.md` の「OS 固有の差分」に書く。書かれていない違いはバグ。
 - `specs/scenarios` の各 step は、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書いて実装する。
-- 依存: `core/utils` は何にも依存しない / `core/*` は他の `core/*` のみ / `shared/designsystem` は `core/utils` のみ / その他の `shared/*` は `core/*` のみ(shared 同士は禁止) / `features/*` は `shared/*`・`core/*` のみ(features 同士は禁止)。
-- 外部ライブラリは `core/*` のラッパー経由で使い、`specs/third-party.yaml` に両 OS の対応を書く。AndroidX・Kotlin・kotlinx は公式基盤として `core/utils` 以外から直接使え、対応表の対象外。
+- 依存: `core/extensions` は何にも依存しない / `core/utils` は `core/extensions` のみ / その他の `core/*` は他の `core/*` のみ / `shared/designsystem` は `core/utils`・`core/extensions` のみ / その他の `shared/*` は `core/*` のみ(shared 同士は禁止) / `features/*` は `shared/*`・`core/*` のみ(features 同士は禁止)。依存は実際に使う場合だけ追加する。
+- 汎用の標準型拡張は `core/extensions`、専用の型で提供する汎用処理は `core/utils` に置く。機能・業務・UI 固有の Extension はそのモジュールに置く。参照・判定はプロパティ、変換は関数とし、同じ処理を Utils と Extension の両方で公開しない。
+- 外部ライブラリは `core/*` のラッパー経由で使い、`specs/third-party.yaml` に両 OS の対応を書く。`core/extensions`・`core/utils` は外部ライブラリに依存しない(標準ライブラリ・Foundation・JDK は利用可)。AndroidX・Kotlin・kotlinx は公式基盤としてこの2モジュール以外から直接使え、対応表の対象外。テスト用依存はこの制約の対象外。
 - iOS のモジュールと外部依存(`.product(name:package:)`)は `modules/Package.swift` に、Android は `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
 - Android のビルドは `apps/android` の `./gradlew` で行う(Gradle 8.14.3 を `gradle/wrapper` で固定。JDK 17 が必要)。Gradle のバージョンは `./gradlew wrapper --gradle-version <版>` で上げ、手元の `gradle` は使わない。
 - テストは OS 標準の場所に置く(iOS: `ios/Tests`、Android: `android/src/test`)。

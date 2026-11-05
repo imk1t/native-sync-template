@@ -6,10 +6,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.core.localization.Message as LocalizedMessage
 import com.example.core.localization.localized
 import com.example.core.network.GitHubError
+import com.example.core.utils.DateTimeUtils
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 sealed interface SearchFailure {
     data class Message(val message: LocalizedMessage) : SearchFailure
@@ -33,8 +32,7 @@ internal fun SearchFailure.localized(): String {
     val message = when (this) {
         is SearchFailure.Message -> message
         is SearchFailure.RateLimited -> LocalizedMessage.ErrorRateLimited(
-            DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale)
-                .withZone(ZoneId.systemDefault()).format(Instant.ofEpochMilli(until))
+            DateTimeUtils.formatTime(Instant.ofEpochMilli(until), locale, ZoneId.systemDefault())
         )
     }
     return message.resolve(LocalContext.current)

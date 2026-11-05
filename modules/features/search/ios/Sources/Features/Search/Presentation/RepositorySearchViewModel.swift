@@ -1,4 +1,5 @@
 import CoreLocalization
+import CoreExtensions
 import CoreNavigation
 import CoreNetwork
 import Foundation
@@ -26,7 +27,7 @@ final class RepositorySearchViewModel {
 
     func submit() {
         content.reset()
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = query.trimmedWhitespace()
         submitted =
             trimmed.isEmpty
             ? nil

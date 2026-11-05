@@ -7,7 +7,8 @@ description: modules/ 配下に新しいモジュール（features/<名前>、co
 
 ## 置き場所と名前
 - 機能: `modules/features/<名前>/`、基盤: `modules/core/<名前>/`、feature 共通の UI・モデル・処理: `modules/shared/<名前>/`。
-- 共通 UI とトークンは `shared/designsystem`（依存先は `core/utils` のみ）。その他の shared の依存先は core のみ。shared 同士は依存しない。
+- 共通 UI とトークンは `shared/designsystem`（依存先は `core/utils`・`core/extensions` のみ）。その他の shared の依存先は core のみ。shared 同士は依存しない。
+- 汎用の標準型拡張は `core/extensions`（内部依存なし）、専用の型で提供する汎用処理は `core/utils`（依存先は `core/extensions` のみ）。両者に外部ライブラリを追加しない。機能固有の Extension はその機能に置く。
 - 中身は `spec.md`、`ios/`、`android/`。名前は両 OS で対応させる（iOS の `FeatureLogin` ⇔ Android の `:features:login`）。
 
 ## 手順
