@@ -1,33 +1,33 @@
-# ADR 0006: 言語別 YAML を原本にし、Core にネイティブ翻訳リソースを集約する
+# ADR 0006: Generate native localization resources in Core from per-language YAML
 
-- 状態: 採用・実装済み
-- 対応言語: 日本語・英語。既定言語は日本語。
-- 原本: `specs/localization/messages-ja.yaml` と `messages-en.yaml`
+- Status: Accepted and implemented
+- Supported languages: Japanese and English; Japanese is the default.
+- Sources: `specs/localization/messages-ja.yaml` and `messages-en.yaml`
 
-## 背景と決定
+## Context and decision
 
-画面が増えても翻訳の配置先を迷わず、1 回の文言変更を両 OS に反映できる構成にする。共通文言と画面固有の文言はすべて `core/localization` に集約する。iOS は String Catalog、Android は文字列リソースを使用し、YAML の読み込みや翻訳処理をアプリの実行時に持ち込まない。
+Keep translation ownership clear as screens are added, and apply each wording change to both platforms at once. Centralize all common and feature-specific UI text in `core/localization`. Use String Catalogs on iOS and string resources on Android, without loading YAML or introducing custom translation processing at runtime.
 
-原本は言語ごとに一つの YAML にする。`Common`・`App`・feature ごとのファイルには分けず、`common_`・`search_`・`bookmarks_`・`settings_` などのキー接頭辞で整理する。生成先も iOS の `Localizable.xcstrings` 一つ、Android の言語ごとの `strings.xml` 一つとする。
+Use one YAML file per language. Organize keys with prefixes such as `common_`, `search_`, `bookmarks_`, and `settings_`, rather than splitting files by Common, App, or feature. Generate one iOS `Localizable.xcstrings` and one Android `strings.xml` per language.
 
-`locales.yaml` と引数だけを管理する `messages.yaml` は設けない。対応言語は `messages-*.yaml` のファイル名から検出する。ファイルの存在はその言語を公開することを意味する。既定言語 `ja` は生成器の `DEFAULT_LOCALE` 一か所に定義し、SwiftPM・XcodeGen・Gradle 向けの設定へ反映する。
+Do not add `locales.yaml` or a separate `messages.yaml` for arguments. Detect supported languages from `messages-*.yaml` filenames: adding a file exposes that language. Define the default language `ja` once in the generator's `DEFAULT_LOCALE` and propagate it to SwiftPM, XcodeGen, and Gradle settings.
 
-## 責務と依存
+## Responsibilities and dependencies
 
-| 配置先 | 責務 |
+| Location | Responsibility |
 | --- | --- |
-| `specs/localization` | 文言 ID・翻訳・引数・複数形の原本 |
-| `tools/lib/localization.ts` | 入力検証、ネイティブリソース・型付き参照・言語設定の生成 |
-| `core/localization` | 生成したリソースと Message、表示時のネイティブ API 呼び出し |
-| feature の Presentation | 表示する文言の選択、業務エラーから Message への変換 |
-| designsystem | 呼び出し側が渡したラベルの表示 |
-| apps | 言語設定の接続、タブ名の対応、OS がアプリ本体から読むリソース |
+| `specs/localization` | Source message IDs, translations, arguments, and plurals |
+| `tools/lib/localization.ts` | Validate inputs and generate native resources, typed references, and language settings |
+| `core/localization` | Generated resources and Message types; native API calls at display time |
+| Feature Presentation | Select messages and map business errors to Message |
+| designsystem | Display labels supplied by callers |
+| apps | Connect language settings, map tab labels, and provide resources read by the OS from the app bundle |
 
-`features/* → core/localization` と `apps → core/localization` を追加する。CoreLocalization は他の内部モジュールに依存しない。画面、ViewModel、navigation、業務エラー型は置かない。
+Add `features/* → core/localization` and `apps → core/localization`. CoreLocalization has no internal module dependencies and contains no screens, ViewModels, navigation, or business error types.
 
-designsystem は従来の依存制約を維持する。LoadingIndicator・ErrorState・RepositoryRow は、読み込み・再試行・Star 数・保存済みのラベルを String で受け取る。呼び出し側が現在の表示言語で解決する。
+Keep designsystem's existing dependency constraints. LoadingIndicator, ErrorState, and RepositoryRow receive loading, retry, star-count, and saved labels as strings resolved by callers in the current display language.
 
-## ファイル構成
+## File layout
 
 ```text
 specs/localization/
@@ -58,11 +58,11 @@ apps/android/app/src/main/generated/localization/
   res/resources.properties
 ```
 
-原本は ID 順に並べる。生成物はコミットし、手編集しない。Xcode の翻訳編集から YAML への逆輸入は行わない。ファイル分割は編集競合や翻訳担当の分離など具体的な問題が発生した段階で検討し、画面追加だけを理由に増やさない。
+Sort source entries by ID. Commit generated files and do not edit them by hand. Do not import Xcode translation edits back into YAML. Consider splitting files only when concrete problems arise, such as editing conflicts or separate translation ownership, rather than whenever a screen is added.
 
-## YAML の契約
+## YAML contract
 
-通常の文言はスカラー文字列とする。引数・複数形・コメント・アプリメタデータが必要な項目だけ構造化する。
+Use scalar strings for ordinary messages. Use structured entries only when arguments, plurals, comments, or app metadata are needed. The Japanese example below intentionally retains Japanese message text.
 
 ```yaml
 # messages-ja.yaml
@@ -92,62 +92,62 @@ repository_stars:
     other: "{count} stars"
 ```
 
-日本語だけが引数と複数形の契約を宣言し、他言語は本文を持つ。引数は `string` / `integer`、複数形は整数引数一つを対象とする。全形式で全引数を参照する。語順変更と引数の繰り返しを許容する。波括弧は名前付き引数専用とする。
+Only Japanese declares the argument and plural contract; other languages provide text. Arguments are `string` or `integer`, and plurals target one integer argument. Every form must reference every argument. Reordering and repeating arguments is allowed. Braces are reserved for named arguments.
 
-日本語側では任意の `comment` と、アプリ名の `iosInfoPlist: CFBundleDisplayName` を指定できる。現時点の OS メタデータはこのキーだけを受理し、権限説明などの拡張は契約を追加してから行う。アプリ名は Core の文字列にも生成し、AndroidManifest から `@string/app_name` で参照する。
+Japanese entries may include an optional `comment` and `iosInfoPlist: CFBundleDisplayName` for the app name. This is currently the only accepted OS metadata key; extend the contract before adding permission descriptions or other metadata. The app name is also generated as a Core string and referenced from AndroidManifest as `@string/app_name`.
 
-言語タグは BCP 47 の `language[-Script][-REGION]` を受理する（例: `en`、`pt-BR`、`zh-Hant`）。Android の複合タグは `values-b+...` に変換する。翻訳漏れをフォールバックで隠さず、全言語のキー・引数一致を生成時に要求する。
+Accept BCP 47 tags in `language[-Script][-REGION]` form, such as `en`, `pt-BR`, and `zh-Hant`. Convert compound Android tags to `values-b+...`. Require matching keys and arguments across all languages during generation, rather than hiding missing translations through fallback.
 
-## ネイティブの参照
+## Native references
 
-両 OS に同じキー・引数を持つ `Message` を生成する。生成器がすべての参照を組み立てるため、呼び出し側に文字列キーや動的リソース ID 探索を持ち込まない。
+Generate Message types with matching keys and arguments on both platforms. The generator constructs all references, so callers do not use string keys or dynamic resource-ID lookups.
 
 ```swift
 @Environment(\.locale) private var locale
 Text(Message.repositoryStars(count: repository.stars).resolve(locale: locale))
 ```
 
-iOS は SwiftPM の `.process("Generated/Resources")` と `Bundle.module` を使う。`LocalizedStringResource` に bundle と locale を明示し、Foundation で文字列に変換する。`String(localized:bundle:locale:)` だけでは表示言語の明示切替が反映されなかったため、リソースを経由する API に統一する。未対応言語の場合は bundle の developmentLocalization に戻す。
+iOS uses SwiftPM's `.process("Generated/Resources")` and `Bundle.module`. Specify the bundle and locale in `LocalizedStringResource`, then resolve it through Foundation. Explicit display-language changes were not reflected by `String(localized:bundle:locale:)` alone, so use the resource-based API consistently. Unsupported languages fall back to the bundle's developmentLocalization.
 
-複数形には Catalog の substitutions を使い、対象引数の位置を指定する。翻訳中の位置指定と Swift の補間順序を対応させ、文字列引数の後に数量が来る場合や語順変更も扱う。
+Use Catalog substitutions for plurals, specifying the target argument's position. Match positional references in translations to Swift interpolation order, including quantities following string arguments and reordered text.
 
 ```kotlin
 Text(Message.RepositoryStars(repository.stars).localized())
 ```
 
-Android の `localized()` は Compose の Configuration と Context を参照し、`getString` / `getQuantityString` で解決する。リソースの選択と複数形の判定は OS が行う。生成ディレクトリを Gradle の sourceSets に登録する。
+Android's `localized()` reads Compose's Configuration and Context and resolves through `getString` / `getQuantityString`. The OS selects resources and plural categories. Register generated directories in Gradle sourceSets.
 
-## 言語選択とアプリ設定
+## Language selection and app configuration
 
-初期実装は OS 設定に従い、アプリ内の言語選択画面・独自の設定保存は設けない。iOS は OS のアプリ別言語と優先言語、Android 13 以降は OS のアプリ別言語、それ以前は端末言語を使う。対応言語がない場合の最終フォールバックは日本語とする。
+The initial implementation follows OS settings, with no in-app language picker or custom persistence. iOS uses per-app and preferred language settings; Android 13 and later uses per-app language settings, while earlier versions use the device language. Japanese is the final fallback when no supported language matches.
 
-SwiftPM の defaultLocalization と XcodeGen の developmentLanguage / knownRegions を生成設定に接続する。OS がアプリ本体から読む InfoPlist.xcstrings はアプリ側へ生成する。
+Connect SwiftPM's defaultLocalization and XcodeGen's developmentLanguage / knownRegions to generated settings. Generate InfoPlist.xcstrings in the app because the OS reads it from the app bundle.
 
-Android は `generateLocaleConfig` を使用し、生成した `resources.properties` の既定言語と、`locales.txt` の対応言語にリソース設定を限定する。依存ライブラリの翻訳言語をアプリの対応言語として公開しない。手書きの locale_config.xml は併用しない。
+Android uses `generateLocaleConfig`. Restrict resource settings to the default language in generated `resources.properties` and supported languages in `locales.txt`. Do not expose translations from dependencies as app-supported languages or combine this with a handwritten locale_config.xml.
 
-## 既存機能への適用
+## Applying localization to existing features
 
-search・bookmarks・settings のタイトル、説明、操作、エラーと読み上げラベルを置き換える。ユーザーのメモ、GitHub の名前・本文、検索条件の送信値、ID は翻訳しない。既知の Issue 状態だけラベルに変換し、未知の値はそのまま表示する。
+Replace titles, descriptions, actions, errors, and accessibility labels in search, bookmarks, and settings. Do not translate user notes, GitHub names or bodies, submitted search values, or IDs. Map only known issue states to labels; display unknown values unchanged.
 
-`specs/routes.yaml` の title と `AppTab.title` を除去する。アプリ層で AppTab を網羅的に分岐し、`searchTitle`・`commonSaved`・`settingsTitle` に対応付ける。core/navigation への翻訳依存は加えない。
+Remove title from `specs/routes.yaml` and `AppTab.title`. Exhaustively map AppTab to `searchTitle`, `commonSaved`, and `settingsTitle` in the app layer. Do not add a localization dependency to core/navigation.
 
-GitHubError と BookmarkError は種類と関連データを保持し、表示文言を持たない。feature で Message に変換し、未知の内部エラーメッセージはユーザーに表示しない。ViewModel は翻訳済み String を保持しない。レート制限の再試行時刻は SearchFailure に生の時刻として保持し、表示時に地域・タイムゾーンに従って整形する。
+GitHubError and BookmarkError contain error kinds and associated data, with no display text. Features map them to Message, keeping unknown internal error messages out of the UI. ViewModels do not retain resolved strings. SearchFailure retains the raw rate-limit retry timestamp, formatted with the display locale and time zone when shown.
 
-既存の API 呼び出し、取得済み一覧や入力の保持、再試行、キャンセル処理は維持する。
+Preserve existing API calls, loaded lists, input retention, retries, and cancellation behavior.
 
-## 検査と運用
+## Validation and maintenance
 
-`bun tools/generate.ts` は全入力を検証してから出力する。YAML の重複キーは開発用の `yaml` パーサーで拒否する。この依存は生成ツールだけに使い、アプリには含まれない。キー欠落・余分なキー・空の翻訳・未対応フィールド・不正な言語タグ・引数不一致・複数形不足・識別子の衝突をエラーにする。
+`bun tools/generate.ts` validates all inputs before writing outputs. The development-only `yaml` parser rejects duplicate keys and is not included in the app. Reject missing or extra keys, empty translations, unsupported fields, invalid language tags, mismatched arguments, missing plural forms, and identifier collisions.
 
-XML と JSON の特殊文字、改行、パーセント記号をエスケープする。生成器が所有するディレクトリだけを清掃し、削除言語の生成物を残さない。`check-generated` は固定出力とローカライズの生成先を検査する。未生成、手編集、削除済み言語の残存を tools のテストで確認する。
+Escape XML/JSON special characters, newlines, and percent signs. Clean only generator-owned directories and remove outputs for deleted languages. `check-generated` checks fixed outputs and localization destinations. Tooling tests cover missing outputs, manual edits, and stale resources for removed languages.
 
-共通シナリオ `localization.yaml` を両 OS で検証する。iOS は Simulator、Android は AndroidX Test とエミュレーターで、実際のリソースの日本語・英語・未対応言語・複数形・引数を確認する。Android のソースは規約の `src/test` に置き、当該モジュールのみ androidTest の sourceSet に接続する。通常の JVM 単体テストからは除外する。
+Verify the shared `localization.yaml` scenario on both platforms using real resources: Japanese, English, unsupported languages, plurals, and arguments. iOS uses a simulator; Android uses AndroidX Test on an emulator. Android sources remain in the conventional `src/test` directory, connected to androidTest only for this module and excluded from regular JVM unit tests.
 
-変更時は再生成、`mise run fmt`、`mise run check`、`mise run lint` を行い、必要なネイティブテストとビルドを実施する。両 OS の変更を一つの PR にまとめる。
+After changes, regenerate and run `mise run fmt`, `mise run check`, and `mise run lint`, plus relevant native tests and builds. Include both platforms in one PR.
 
-## 参考
+## References
 
-- [Apple: パッケージリソースのローカライズ](https://developer.apple.com/documentation/xcode/localizing-package-resources)
+- [Apple: Localizing package resources](https://developer.apple.com/documentation/xcode/localizing-package-resources)
 - [Apple: LocalizedStringResource.locale](https://developer.apple.com/documentation/foundation/localizedstringresource/locale)
-- [Android: アプリ別言語設定](https://developer.android.com/guide/topics/resources/app-languages)
+- [Android: Per-app language preferences](https://developer.android.com/guide/topics/resources/app-languages)
 - [Android: AndroidX Test](https://developer.android.com/jetpack/androidx/releases/test)

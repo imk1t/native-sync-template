@@ -1,10 +1,11 @@
-# ADR 0001: モノレポで仕様だけを共有する
+# ADR 0001: Share specifications in a monorepo
 
-- 状態: 採用
-- 決定: iOS と Android を 1 つのモノレポに置き、共有するのは API スキーマ・デザイントークン・機能仕様（spec.md）だけにする。ロジックは各 OS で書く。
-- 理由: AI により 2 プラットフォーム分を書くコストが下がった。OS の新機能（Liquid Glass など）に公式フレームワークで即日追随したい。
-- 結果: 仕様と両実装を同じ PR で変更できる。ズレは `tools/check-spec-sync.ts` で検知する。
+- Status: Accepted
+- Decision: Keep iOS and Android in one monorepo, sharing API schemas, design tokens, and feature specifications (`spec.md`). Implement logic separately for each platform.
+- Rationale: AI reduces the cost of maintaining two implementations. Native frameworks allow immediate adoption of OS features such as Liquid Glass.
+- Consequences: Specifications and both implementations can change in one PR. `tools/check-spec-sync.ts` detects alignment gaps.
 
-## 補足: iOS のパッケージ構成
-各モジュールの `ios/` を個別のローカル Swift Package にすると、同名ディレクトリ（`ios`）が SwiftPM で同一 ID として扱われ衝突する。
-そのため `modules/Package.swift` に全 iOS モジュールを target として集約し、各 target の `path` で各モジュールの `ios/` を指す。
+## iOS package structure
+
+Separate local Swift packages for each module's `ios/` directory would collide because SwiftPM treats those identical directory names as the same package identity.
+Instead, register all iOS modules as targets in `modules/Package.swift`, using each target's `path` to locate its implementation under `ios/`.

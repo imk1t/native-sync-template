@@ -1,21 +1,23 @@
 ---
 name: add-third-party
-description: 外部ライブラリ（OSS・サードパーティ SDK）を iOS と Android に導入するときに使う。core のラッパーモジュール経由で使い、ADR・specs/third-party.yaml・バージョン管理を更新する手順。AndroidX・Kotlin・kotlinx など公式基盤ライブラリの追加には不要。
+description: Add a third-party library or SDK to iOS and Android through a core wrapper, updating the ADR, specs/third-party.yaml, and version management. Not needed for official infrastructure such as AndroidX, Kotlin, or kotlinx.
 ---
 
-# 外部ライブラリの追加
+# Add a third-party library
 
-## 原則
-- 外部ライブラリは `core/*` のラッパーモジュール（例: `core/analytics`）の中だけで import する。feature からはラッパーの interface / protocol にだけ依存する。
-- 公式機能で足りるものは入れない。
+## Principles
 
-## 手順
-1. 導入前に `docs/adr/` に ADR を書く: 目的、代替案、ライセンス、メンテナンス状況、もう一方の OS での対応物。
-2. ラッパーモジュールを `add-module` の手順で作る。
-3. バージョンの置き場所:
-   - iOS: Swift Package Manager のみ（CocoaPods は使わない）。依存は `modules/Package.swift` に `.product(name:package:)` で書き、`Package.resolved` をコミットして全モジュールで 1 つのバージョンにする。
-   - Android: `apps/android/gradle/libs.versions.toml` にだけ書く。BoM がある SDK は BoM で揃える。
-4. `specs/third-party.yaml` に、役割・モジュール・iOS と Android それぞれのライブラリ名、ライセンス、担当を追記する。
-5. 分析イベント名や設定キーなど両 OS で一致すべき名前は `specs/` に定義し、定数を生成する。
-6. 環境ごとの設定ファイル（API キー、`GoogleService-Info.plist` や `google-services.json` など）はコミットしない。dev / prod をビルド設定（iOS の Configuration、Android の productFlavor）で切り替え、prod は CI のシークレットから注入する。
-7. `bun tools/check-deps.ts` を通す。
+- Import third-party libraries only inside `core/*` wrapper modules, such as `core/analytics`. Features depend only on the wrapper's interface or protocol.
+- Do not add a library when official platform APIs are sufficient.
+
+## Steps
+
+1. Before adding the library, write an ADR in `docs/adr/` covering its purpose, alternatives, license, maintenance status, and counterpart on the other platform.
+2. Create the wrapper module using `add-module`.
+3. Manage versions in these locations:
+   - iOS: Use Swift Package Manager only, not CocoaPods. Declare dependencies with `.product(name:package:)` in `modules/Package.swift` and commit `Package.resolved` to use one version across all modules.
+   - Android: Declare versions only in `apps/android/gradle/libs.versions.toml`. Use a BoM when the SDK provides one.
+4. Add the role, module, library names for both platforms, license, and owner to `specs/third-party.yaml`.
+5. Define names that must match across platforms, such as analytics events and configuration keys, in `specs/` and generate constants.
+6. Do not commit environment-specific configuration files (API keys, `GoogleService-Info.plist`, `google-services.json`, etc.). Select dev/prod through build settings (iOS Configuration, Android productFlavor), and inject production values from CI secrets.
+7. Pass `bun tools/check-deps.ts`.

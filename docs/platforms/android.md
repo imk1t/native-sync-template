@@ -1,36 +1,48 @@
-# Android 固有の設定と注意点
+# Android configuration and notes
 
-OS 固有の設定・環境・落とし穴をここに残す。機能ごとの意図した違いは各 `spec.md` の「OS 固有の差分」に書く。
+Record platform-specific configuration, environment requirements, and pitfalls here. Document intentional feature differences under “Platform differences” in each module's `spec.md`.
 
-## ビルド環境
-- Android SDK(compileSdk 36)と JDK 17 が必要。各モジュールが `jvmToolchain(17)` を指定している。
-- macOS で JDK を mise 管理する場合も、Gradle と ktlint が JDK 17 を使うよう `JAVA_HOME` を設定する。インストール済みでも未選択の場合、ktlint が Java Runtime を見つけられず失敗する。
-- SDK の場所は `ANDROID_HOME` または `apps/android/local.properties` の `sdk.dir` で指定する。Homebrew の android-commandlinetools を使う場合は、例として `/opt/homebrew/share/android-commandlinetools` が SDK ルートになる。`platforms/android-36` がある場所を指定する。
-- Gradle は `apps/android` の wrapper(`./gradlew`)で 8.14.3 に固定する。手元の `gradle` は使わない(理由: `docs/adr/0003`)。
-- モジュールは `apps/android/settings.gradle.kts` に追加する(理由: `docs/adr/0001`)。
+## Build environment
 
-## パッケージ構成
-- パッケージは `com.example.<modules/ からの階層>` とする。`core/network` は `com.example.core.network`、`shared/bookmarks` は `com.example.shared.bookmarks`、`features/search` は `com.example.features.search`。
-- `src/main/kotlin` と `src/test/kotlin` のディレクトリもパッケージに合わせる。Android ライブラリの `namespace` はそのモジュールのルートパッケージと一致させる。
-- `shared/designsystem` は `com.example.shared.designsystem`、アプリは `com.example.app`。`domain`・`data`・`presentation` は実装を分類するサブディレクトリで、パッケージはモジュール内で共通とする。
-- 生成コードは同じモジュールのパッケージを使う。API・画面遷移・トークンは各パッケージ下の `generated/`、ローカライズは `src/main/generated/kotlin/com/example/core/localization/` に置く。出力先と package 宣言は `tools/generate.ts` と `tools/lib/localization.ts` で管理する。
+- Android SDK (compileSdk 36) and JDK 17 are required. Each module specifies `jvmToolchain(17)`.
+- The app supports Android API 28 and later (`minSdk = 28`) and targets API 36.
+- On macOS, set `JAVA_HOME` so Gradle and ktlint use JDK 17, including when managing Java with mise. An installed but unselected JDK can cause ktlint to fail to find a Java runtime.
+- Set the SDK path through `ANDROID_HOME` or `sdk.dir` in `apps/android/local.properties`. With Homebrew's android-commandlinetools, an example SDK root is `/opt/homebrew/share/android-commandlinetools`. Choose the directory containing `platforms/android-36`.
+- Use the wrapper (`./gradlew`) in `apps/android`, pinned to Gradle 8.14.3. Do not use a local `gradle` installation ([ADR 0003](../adr/0003-gradle-wrapper.md)).
+- Register modules in `apps/android/settings.gradle.kts` ([ADR 0001](../adr/0001-monorepo-and-spec-sync.md)).
 
-## 実行
-```
-cd apps/android && ./gradlew assembleDebug
+## Package layout
+
+- Packages use `com.example.<hierarchy-under-modules/>`: `core/network` → `com.example.core.network`, `shared/bookmarks` → `com.example.shared.bookmarks`, and `features/search` → `com.example.features.search`.
+- Match directories under `src/main/kotlin` and `src/test/kotlin` to the package. Each Android library's `namespace` matches its root package.
+- `shared/designsystem` uses `com.example.shared.designsystem`; the app uses `com.example.app`. The `domain`, `data`, and `presentation` subdirectories organize implementation files while sharing the module's package.
+- Generated code uses the owning module's package. API, navigation, and token code lives under each package's `generated/`; localization lives in `src/main/generated/kotlin/com/example/core/localization/`. Output paths and package declarations are managed by `tools/generate.ts` and `tools/lib/localization.ts`.
+
+## Build and run
+
+```sh
+cd apps/android
+./gradlew assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.example.app/.MainActivity
 ```
 
-## 画面まわり
-- edge-to-edge で描画されるため、コンテンツはシステムバーの下まで描かれる。`AppRoot` が `safeDrawing` の上端 inset をスタックに適用している。下端はボトムバー(`NavigationSuiteScaffold`)が扱う。
-- システムバーのアイコン色は、`MainActivity.onCreate` の `enableEdgeToEdge()` で背景の明暗に合わせる。`targetSdk = 36` では OS が edge-to-edge を強制するが、アイコン色は自動では切り替わらない。
+## Tests
 
-## 落とし穴
-- Gradle 9.x では、実在しないディレクトリ `:core`(`settings.gradle.kts` の中間プロジェクト)が設定エラーになる。8.14.3 を使う。
+Run JVM tests from `apps/android` with `./gradlew test`. Localization resource tests require a connected emulator and run separately as described below.
 
-## ローカライズ
-- 原本は `specs/localization/messages-*.yaml`。`bun tools/generate.ts` で CoreLocalization の strings.xml とアプリの言語設定を生成する。
-- Compose は `Message.localized()` で現在の Configuration のリソースを解決する。ViewModel は Message と引数だけを保持する。
-- アプリの generateLocaleConfig と resourceConfigurations を生成した言語一覧に接続する。初期は日本語・英語のみを OS のアプリ言語設定に公開する。
-- CoreLocalization のリソーステストは AndroidX Test を使う。規約に従いソースは `src/test/kotlin` に置き、Gradle で androidTest に接続する。エミュレーター接続後、`./gradlew :core:localization:connectedDebugAndroidTest` で実行する。通常の `./gradlew test` はこのモジュールのリソーステストを含まない。
+## Layout
+
+- Edge-to-edge rendering places content underneath system bars. `AppRoot` applies the top `safeDrawing` inset to the stack; the bottom bar (`NavigationSuiteScaffold`) handles the bottom inset.
+- `enableEdgeToEdge()` in `MainActivity.onCreate` sets system-bar icon colors to match the background. With `targetSdk = 36`, the OS enforces edge-to-edge rendering but does not automatically switch icon colors.
+
+## Pitfalls
+
+- Gradle 9.x rejects the missing directory for `:core`, an intermediate project in `settings.gradle.kts`. Use 8.14.3.
+
+## Localization
+
+- Sources live in `specs/localization/messages-*.yaml`. `bun tools/generate.ts` creates CoreLocalization's strings.xml and app language settings.
+- Compose resolves resources for the current Configuration with `Message.localized()`. ViewModels retain only Message and its arguments.
+- Connect the app's `generateLocaleConfig` and `resourceConfigurations` to the generated language list. Initially, only Japanese and English are exposed in the OS app-language settings.
+- CoreLocalization resource tests use AndroidX Test. Following repository conventions, sources live in `src/test/kotlin` and are connected to androidTest through Gradle. With an emulator connected, run `./gradlew :core:localization:connectedDebugAndroidTest`. Regular `./gradlew test` does not include these resource tests.
