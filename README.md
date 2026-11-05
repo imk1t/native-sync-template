@@ -15,7 +15,8 @@ iOS（Swift）と Android（Kotlin）をそれぞれネイティブで実装し�
 5. [共通定義からの生成と検査](#共通定義からの生成と検査)
 6. [コマンド一覧](#コマンド一覧)
 7. [CI](#ci)
-8. [現状](#現状)
+8. [画面](#画面)
+9. [現状](#現状)
 
 ## セットアップ
 
@@ -331,6 +332,19 @@ cd apps/android
 アプリは両 OS とも GitHub の実 API に接続し、ブックマーク・メモ・表示設定は端末内に永続化します。単体テストではテスト内のスタブと応答データを使い、ネットワークに依存せず検証します。
 
 `TS2688: Cannot find type definition file for 'bun'` が出る場合は、`bun install --frozen-lockfile` で型検査依存を復元してから `mise run check` を実行してください。型定義は `package.json` / `bun.lock` に固定済みです。
+
+## 画面
+
+同じ仕様から実装した、iOS（SwiftUI）と Android（Jetpack Compose）のサンプルアプリです。日本語・ライトの外観で、同じ操作をした状態を並べています。
+
+| 画面 | iOS | Android |
+| --- | --- | --- |
+| 探す（検索結果） | <img src="docs/images/ios-search.png" alt="iOS の探す画面。「swift」の検索結果にリポジトリが並んでいる" width="240"> | <img src="docs/images/android-search.png" alt="Android の探す画面。「swift」の検索結果にリポジトリが並んでいる" width="240"> |
+| リポジトリ詳細 | <img src="docs/images/ios-detail.png" alt="iOS のリポジトリ詳細画面。swiftlang/swift の説明と保存ボタンが表示されている" width="240"> | <img src="docs/images/android-detail.png" alt="Android のリポジトリ詳細画面。swiftlang/swift の説明と保存ボタンが表示されている" width="240"> |
+| 保存済み | <img src="docs/images/ios-saved.png" alt="iOS の保存済み画面。保存した swiftlang/swift が表示されている" width="240"> | <img src="docs/images/android-saved.png" alt="Android の保存済み画面。保存した swiftlang/swift が表示されている" width="240"> |
+| 設定 | <img src="docs/images/ios-settings.png" alt="iOS の設定画面。一覧に説明文を表示するスイッチがある" width="240"> | <img src="docs/images/android-settings.png" alt="Android の設定画面。一覧に説明文を表示するスイッチがある" width="240"> |
+
+見た目の違いは、各 OS の標準部品（iOS は Liquid Glass のタブバー、Android は Material 3 のナビゲーション）を使っているためです。機能と構造は `modules/**/spec.md` でそろえています。
 
 ## 現状
 
