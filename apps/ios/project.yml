@@ -26,6 +26,8 @@ targets:
       - package: Modules
         product: SharedBookmarks
       - package: Modules
+        product: DesignSystem
+      - package: Modules
         product: FeatureSettings
       - package: Modules
         product: CoreStorage

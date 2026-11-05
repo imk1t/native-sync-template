@@ -3,9 +3,18 @@ import SwiftUI
 
 public enum Tokens {
     public enum Color {
-        public static let background = SwiftUI.Color(hex: 0xFFFFFF)
-        public static let onBackground = SwiftUI.Color(hex: 0x111111)
-        public static let primary = SwiftUI.Color(hex: 0x0A84FF)
+        public static let background = SwiftUI.Color(light: 0xF3F1EC, dark: 0x0F1115)
+        public static let line = SwiftUI.Color(light: 0xE3DFD6, dark: 0x2B2F37)
+        public static let muted = SwiftUI.Color(light: 0x5E636B, dark: 0xA9AEB7)
+        public static let onBackground = SwiftUI.Color(light: 0x14161A, dark: 0xF3F1EC)
+        public static let primary = SwiftUI.Color(light: 0x3D4DFF, dark: 0x8C98FF)
+        public static let surface = SwiftUI.Color(light: 0xFFFFFF, dark: 0x1B1E24)
+    }
+    public enum Radius {
+        public static let card: CGFloat = 22
+        public static let chip: CGFloat = 22
+        public static let hero: CGFloat = 28
+        public static let pill: CGFloat = 34
     }
     public enum Spacing {
         public static let large: CGFloat = 24
@@ -17,5 +26,10 @@ public enum Tokens {
 extension SwiftUI.Color {
     init(hex: UInt32) {
         self.init(.sRGB, red: Double((hex >> 16) & 0xFF) / 255, green: Double((hex >> 8) & 0xFF) / 255, blue: Double(hex & 0xFF) / 255)
+    }
+
+    /// OS のライト・ダーク設定に追従する色
+    init(light: UInt32, dark: UInt32) {
+        self.init(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(Color(hex: dark)) : UIColor(Color(hex: light)) })
     }
 }
