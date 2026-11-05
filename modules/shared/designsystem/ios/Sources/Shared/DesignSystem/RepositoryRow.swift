@@ -24,16 +24,27 @@ public struct RepositoryRow: View {
         HStack(alignment: .top, spacing: 12) {
             AvatarView(url: repository.avatarURL, loadImage: loadImage)
             VStack(alignment: .leading, spacing: 6) {
-                Text(repository.fullName).font(.headline).foregroundStyle(.primary)
+                Text(repository.fullName)
+                    .font(.system(.subheadline, design: .monospaced).weight(.medium))
+                    .foregroundStyle(Tokens.Color.onBackground)
                 if showDescription, let description = repository.description, !description.isEmpty {
-                    Text(description).font(.subheadline).foregroundStyle(.secondary).lineLimit(3)
+                    Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
-                HStack {
+                HStack(spacing: 12) {
+                    if let language = repository.language {
+                        Label {
+                            Text(language)
+                        } icon: {
+                            Circle().fill(languageTint(language)).frame(width: 8, height: 8)
+                        }
+                    }
                     Label(starsLabel, systemImage: "star")
-                    if let language = repository.language { Text(language) }
-                    if saved { Label(savedLabel, systemImage: "bookmark.fill") }
-                }.font(.caption).foregroundStyle(.secondary)
+                    if saved {
+                        Label(savedLabel, systemImage: "bookmark.fill").foregroundStyle(Tokens.Color.primary)
+                    }
+                }.font(.caption).foregroundStyle(Tokens.Color.muted)
             }
-        }.padding(.vertical, 6).accessibilityElement(children: .combine)
+            Spacer(minLength: 0)
+        }.accessibilityElement(children: .combine)
     }
 }

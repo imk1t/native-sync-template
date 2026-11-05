@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 import com.example.shared.designsystem.RepositoryRow
@@ -52,24 +53,26 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
             item { Text(Message.RepositoryTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
             state.items.firstOrNull()?.let { repository ->
                 item {
-                    RepositoryRow(
-                        RepositoryRowData(
-                            repository.fullName,
-                            repository.owner,
-                            repository.avatarURL,
-                            repository.description,
-                            repository.language,
-                            repository.stars
-                        ),
-                        bookmarks.any {
-                            it.id == repository.id
-                        },
-                        true,
-                        Message.RepositoryStars(repository.stars).localized(),
-                        Message.CommonSaved.localized(),
-                        viewModel.dependencies.images::load
-                    )
-                    Text(Message.RepositoryForks(repository.forks).localized())
+                    DesignCard {
+                        RepositoryRow(
+                            RepositoryRowData(
+                                repository.fullName,
+                                repository.owner,
+                                repository.avatarURL,
+                                repository.description,
+                                repository.language,
+                                repository.stars
+                            ),
+                            bookmarks.any {
+                                it.id == repository.id
+                            },
+                            true,
+                            Message.RepositoryStars(repository.stars).localized(),
+                            Message.CommonSaved.localized(),
+                            viewModel.dependencies.images::load
+                        )
+                        Text(Message.RepositoryForks(repository.forks).localized())
+                    }
                 }
                 item {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -22,6 +22,7 @@ object Tokens {
         val surface = Color(0xFF1B1E24)
     }
     object Radius {
+        val avatar = 14.dp
         val card = 22.dp
         val chip = 22.dp
         val hero = 28.dp

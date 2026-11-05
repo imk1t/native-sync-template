@@ -11,6 +11,7 @@ public enum Tokens {
         public static let surface = SwiftUI.Color(light: 0xFFFFFF, dark: 0x1B1E24)
     }
     public enum Radius {
+        public static let avatar: CGFloat = 14
         public static let card: CGFloat = 22
         public static let chip: CGFloat = 22
         public static let hero: CGFloat = 28

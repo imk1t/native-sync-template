@@ -20,7 +20,8 @@ struct RepositoryDetailView: View {
                         showDescription: true,
                         starsLabel: Message.repositoryStars(count: repository.stars).resolve(locale: locale),
                         savedLabel: Message.commonSaved.resolve(locale: locale),
-                        loadImage: { try await viewModel.dependencies.images.load($0) })
+                        loadImage: { try await viewModel.dependencies.images.load($0) }
+                    ).designCard().designListRow()
                     Text(Message.repositoryForks(count: repository.forks).resolve(locale: locale))
                     if !repository.topics.isEmpty {
                         ScrollView(.horizontal) {
@@ -52,6 +53,7 @@ struct RepositoryDetailView: View {
                 }
             }
         }
+        .designScreenBackground()
         .navigationTitle(Message.repositoryTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.loadIfNeeded() }
         .refreshable { await viewModel.refresh() }

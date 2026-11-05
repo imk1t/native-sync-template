@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -36,24 +38,46 @@ fun RepositoryRow(
     savedLabel: String,
     loadImage: suspend (String) -> ByteArray
 ) {
-    Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Avatar(repository.avatarURL, repository.owner, loadImage)
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(repository.fullName, style = MaterialTheme.typography.titleMedium)
+            Text(
+                repository.fullName,
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Monospace
+            )
             if (showDescription) {
                 repository.description?.takeIf { it.isNotEmpty() }?.let {
                     Text(
                         it,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = muted,
                         maxLines = 3
                     )
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(starsLabel, style = MaterialTheme.typography.labelMedium)
-                repository.language?.let { Text(it, style = MaterialTheme.typography.labelMedium) }
-                if (saved) Text(savedLabel, style = MaterialTheme.typography.labelMedium)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repository.language?.let {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(Modifier.size(8.dp).clip(CircleShape).background(languageTint(it)))
+                        Text(it, style = MaterialTheme.typography.labelMedium, color = muted)
+                    }
+                }
+                Text(starsLabel, style = MaterialTheme.typography.labelMedium, color = muted)
+                if (saved) {
+                    Text(
+                        savedLabel,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
@@ -75,7 +99,7 @@ private fun Avatar(url: String?, owner: String, loadImage: suspend (String) -> B
         }
     }
     Box(
-        Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.secondaryContainer),
+        Modifier.size(44.dp).clip(RoundedCornerShape(Tokens.Radius.avatar)).background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
         val image = bitmap
