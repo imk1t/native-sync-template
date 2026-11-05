@@ -1,48 +1,55 @@
 # core/navigation
 
-## 概要
-画面遷移の状態と操作を持つ（docs/adr/0002）。画面の一覧は `specs/routes.yaml` から生成する。描画はアプリ層が各 OS の部品で行い、このモジュールは UI に依存しない。
+## Overview
 
-## 提供するもの
-| 名前 | 内容 |
+Own navigation state and operations (docs/adr/0002). Generate screens from `specs/routes.yaml`. The app layer renders them using native components; this module has no UI dependency.
+
+## Public API
+
+| Name | Behavior |
 | --- | --- |
-| `Route`（生成） | `specs/routes.yaml` の画面。引数を持つ画面は引数付き |
-| `AppTab`（生成） | タブ。`root`（タブの先頭の画面）と `title` を持つ |
-| `Route(path:)`（生成） | ディープリンクのパスから `Route` を作る。一致しなければ無し |
-| `Route(url:)` | URL のエンコード済みパスを `Route(path:)` に渡す。パスを区切ってから各区切りを 1 回だけデコードする |
-| `NavigationEntry` | 不変の `id: String`（既定は UUID）と `route: Route`。画面インスタンスを識別する |
+| `Route` (generated) | Screens from `specs/routes.yaml`, with arguments where defined |
+| `AppTab` (generated) | Tabs with a `root` route; display labels are mapped in the app layer |
+| `Route(path:)` (generated) | Creates a Route from a deep-link path; returns no value if unmatched |
+| `Route(url:)` | Passes the URL's encoded path to `Route(path:)`; splits the path before decoding each segment exactly once |
+| `NavigationEntry` | Immutable `id: String` (UUID by default) and `route: Route`, identifying a screen instance |
 | `ModalStyle` | `sheet` / `fullScreen` |
-| `Modal` | `style` と `stack: [NavigationEntry]`（先頭がモーダルで開いた画面） |
-| `NavigationState` | `selectedTab`、`roots`（タブごとの先頭エントリ）、`stacks`（全タブ分のエントリ。先頭は含めない）、`modals`（下から順） |
-| `NavigationState.root(tab)` | タブの先頭エントリ。状態の更新やタブ切り替えで ID は変わらない |
-| `NavigationState.opening(route, in: tab)` | ディープリンク用の状態。`route` がタブの先頭ならそのタブを空のスタックで選び、それ以外は `tab` のスタックに新しいエントリを 1 つ置く |
-| `Navigator` | `state` を持ち、次の操作で書き換える |
+| `Modal` | `style` and `stack: [NavigationEntry]`; the first entry is the initially presented screen |
+| `NavigationState` | `selectedTab`, `roots` (root entry per tab), `stacks` (entries for every tab, excluding roots), and `modals` (bottom to top) |
+| `NavigationState.root(tab)` | The tab's root entry; its ID survives state updates and tab switches |
+| `NavigationState.opening(route, in: tab)` | Deep-link state: select a root route's tab with an empty stack, or place one new entry on the specified tab's stack for other routes |
+| `Navigator` | Owns `state`, updated through the operations below |
 
-## 操作
-| 操作 | 結果 |
+## Operations
+
+| Operation | Result |
 | --- | --- |
-| `push(route)` | モーダルが無ければ選択中のタブのスタックに、あれば一番上のモーダルの `stack` に積む |
-| `pop()` | モーダルがあれば一番上のモーダルの `stack` から 1 つ外す。`stack` が 1 つだけならそのモーダルを閉じる。モーダルが無ければ選択中のタブのスタックから 1 つ外す（空なら何もしない） |
-| `popToRoot()` | モーダルがあれば一番上のモーダルの `stack` を先頭だけにする。無ければ選択中のタブのスタックを空にする |
-| `present(route, style)` | `stack: [route]` のモーダルを一番上に重ねる。`style` の既定は `sheet` |
-| `dismiss()` | 一番上のモーダルを閉じる（無ければ何もしない） |
-| `selectTab(tab)` | すべてのモーダルを閉じて `tab` を選ぶ。各タブのスタックはそのまま |
-| `reset(state)` | 状態を丸ごと差し替える |
+| `push(route)` | Pushes onto the selected tab's stack, or the top modal's stack if one is open |
+| `pop()` | Removes one entry from the top modal's stack, dismissing the modal if it has only one entry. With no modal, removes one entry from the selected tab's stack; does nothing if empty |
+| `popToRoot()` | Keeps only the top modal's first entry, or clears the selected tab's stack if no modal is open |
+| `present(route, style)` | Adds a new top modal with the route as its initial entry; style defaults to `sheet` |
+| `dismiss()` | Closes the top modal; does nothing if none is open |
+| `selectTab(tab)` | Closes all modals and selects the tab, preserving each tab's stack |
+| `reset(state)` | Replaces the entire state |
 
-`push` と `present` は呼び出しごとに新しいエントリ ID を発行する。同じ Route を複数回開いても別の画面として扱う。`pop`・`popToRoot`・タブ切り替えで残るエントリの ID は維持する。描画側も Route の値ではなくエントリ ID に画面状態と ViewModel を紐付ける。
-ディープリンクのパスにはエンコード済みの文字列を渡す。たとえば `/items/a%2F1` の ID は `a/1`、`/items/a%252F1` の ID は `a%2F1` となる。
+Every `push` and `present` creates a new entry ID. Opening the same Route multiple times creates independent screens. Entries remaining after `pop`, `popToRoot`, or tab changes retain their IDs. Rendering associates screen state and ViewModels with entry IDs, not Route values.
 
-## OS 固有の差分
-- モジュール名は iOS が `CoreNavigation`、Android のパッケージは `com.example.core.navigation`。 iOS の実装は `Sources/Core/Navigation`、テストは `Tests/Core/Navigation` に配置する。
-- 命名: Android は Kotlin の規約に合わせて先頭を大文字にする（`Route.ItemDetail(id)`、`AppTab.Home`、`ModalStyle.Sheet`）。`Route(path:)` は Android では `Route.fromPath(path)`、`opening(route, in:)` は `NavigationState.opening(route, tab)`。
-- URL の入口は iOS が `Route(url: URL)`（URLComponents.percentEncodedPath）、Android が `Route.fromUrl(String)`（java.net.URI.rawPath）。Android アプリは Intent の URI 全体を文字列として渡す。
-- 引数の `integer` は iOS が `Int`、Android が `Long`（どちらも 64 bit）。
-- 状態の公開: iOS は `@Observable` の `state`（アプリ層が `Binding` で書き戻す。スワイプで戻る操作など）。Android は `StateFlow<NavigationState>` で、書き換えは操作経由のみ。
-- 全タブを持たない `stacks` は、iOS は足りないタブを空のスタックで補い、Android は例外にする。
-- 描画（アプリ層の AppRoot）: Android は各タブの decorated entries と ViewModelStore を常時保持し、表示する NavDisplay だけを切り替える。iOS の TabView も各タブの画面を保持する。各 feature の Screen がそのエントリ内で ViewModel を生成・保持し、タブを離れても取得済み状態を維持する。
+Pass encoded strings as deep-link paths. For example, `/items/a%2F1` yields ID `a/1`, while `/items/a%252F1` yields `a%2F1`.
 
-## シナリオ
+## Platform differences
+
+- The iOS module is `CoreNavigation`, with implementation in `Sources/Core/Navigation` and tests in `Tests/Core/Navigation`. The Android package is `com.example.core.navigation`.
+- Android names follow Kotlin capitalization conventions: `Route.ItemDetail(id)`, `AppTab.Home`, and `ModalStyle.Sheet`. `Route(path:)` becomes `Route.fromPath(path)`; `opening(route, in:)` becomes `NavigationState.opening(route, tab)`.
+- URL entry points are `Route(url: URL)` using URLComponents.percentEncodedPath on iOS and `Route.fromUrl(String)` using java.net.URI.rawPath on Android. The Android app passes the full Intent URI as a string.
+- Integer arguments use Int on iOS and Long on Android, both 64-bit.
+- iOS exposes `state` through `@Observable`; the app writes back through Binding for interactions such as swipe-to-go-back. Android exposes `StateFlow<NavigationState>` and only changes state through operations.
+- If `stacks` omits tabs, iOS fills them with empty stacks; Android throws an exception.
+- Rendering in AppRoot: Android retains decorated entries and ViewModelStores for all tabs, switching only the displayed NavDisplay. iOS TabView also retains each tab's screens. Feature Screen entry points create and retain ViewModels within each entry, preserving loaded state when leaving a tab.
+
+## Scenarios
+
 `specs/scenarios/navigation.yaml`
 
-## タブの表示名
-AppTab は識別子と root のみを生成する。表示名はアプリ層が core/localization の Message に網羅的に対応付ける。
+## Tab labels
+
+AppTab generates only identifiers and roots. The app layer exhaustively maps display labels to core/localization Message values.

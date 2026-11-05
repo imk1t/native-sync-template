@@ -1,24 +1,26 @@
 ---
 name: sync-feature
-description: 機能や基盤モジュールの振る舞い（画面、画面遷移、状態、API、デザイントークン、シナリオ）を追加・変更し、iOS と Android を同じ構造で揃えるときに使う。spec.md を先に更新し、同期マーカーを記録するまでの手順。新しいモジュールの作成は add-module、外部ライブラリは add-third-party を使う。
+description: Add or change feature or infrastructure behavior (screens, navigation, state, APIs, design tokens, or scenarios) with matching iOS and Android structures. Follow a spec-first workflow through sync-marker updates. Use add-module for new modules and add-third-party for external libraries.
 ---
 
-# 機能の追加・変更（spec 先行で両 OS を揃える）
+# Add or change a feature with a spec-first workflow
 
-仕様の正は各モジュールの `spec.md`。実装より先に仕様を変える。
+Each module's `spec.md` is the source of truth. Update the specification before the implementation.
 
-## 手順
-1. 対象モジュールの `spec.md` を更新する。必要なら `specs/openapi`、`specs/tokens`、`specs/scenarios` も変える。
-   - API: `specs/openapi/openapi.yaml` を直し、`bun tools/generate.ts` で `core/network` の DTO と APIClient を再生成する。ドメインモデルへの変換は `core/network` の手書きラッパーに足す。
-   - 色・余白: `specs/tokens/tokens.json` を直し、`bun tools/generate.ts` で再生成する。
-   - 画面: `specs/routes.yaml` に足して再生成し、spec.md の「画面遷移」に画面と遷移（`push(...)` など）を書く。遷移は ViewModel から `Navigator` を呼ぶ。各 feature の公開入口 `*Screen` で ViewModel を生成・保持し、両 OS のアプリ層の `AppRouter` に `Route` → 入口の対応を足す。アプリ層には個別画面やその ViewModel の生成処理を置かない。
-2. 一方の OS を実装する（iOS: `<module>/ios/`、Android: `<module>/android/`）。
-3. もう一方を**同じ型名・同じ構造**で実装する。意図した違いは `spec.md` の「OS 固有の差分」に書く。
-4. 状態遷移やエラーを変えたら `specs/scenarios/*.yaml` を更新する。新しい step には `id` を付け、両 OS のテストに `// @scenario <シナリオ名>/<id>` を書く。
-5. `bun tools/check-spec-sync.ts --update both <モジュールのパス>` で追従を記録する（片方だけなら `ios` か `android`）。
-6. AGENTS.md の「コマンド」の検査をすべて通す。
-7. 両 OS の変更を 1 つの PR にまとめる。片方だけの PR にする場合は、もう片方の追従 Issue へのリンクを書く。
+## Steps
 
-## 注意
-- `.spec-sync` は「その OS が追従済みの spec のハッシュ」。実装していないのに `--update` で記録しない。
-- 依存ルールは AGENTS.md に従う。
+1. Update the module's `spec.md`. Update `specs/openapi`, `specs/tokens`, and `specs/scenarios` as needed.
+   - APIs: Edit `specs/openapi/openapi.yaml` and run `bun tools/generate.ts` to regenerate DTOs and APIClient in `core/network`. Add domain-model mapping to its handwritten wrapper.
+   - Colors and spacing: Edit `specs/tokens/tokens.json` and regenerate with `bun tools/generate.ts`.
+   - Screens: Add entries to `specs/routes.yaml`, regenerate, and describe screens and transitions (such as `push(...)`) under “Navigation” in the spec. ViewModels call `Navigator`. Each feature's public `*Screen` entry point creates and retains its ViewModel. Add the `Route` → entry-point mapping to both platforms' app-layer `AppRouter`. Do not create individual screens or their ViewModels in the app layer.
+2. Implement one platform (`<module>/ios/` or `<module>/android/`).
+3. Implement the other with **matching type names and structure**. Document intentional differences under “Platform differences” in `spec.md`.
+4. If state transitions or errors change, update `specs/scenarios/*.yaml`. Give new steps an `id` and annotate both platforms' tests with `// @scenario <scenario-name>/<id>`.
+5. Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>` (use `ios` or `android` if only one platform is aligned).
+6. Pass all applicable checks under “Commands” in AGENTS.md.
+7. Include both platforms' changes in one PR. If a PR covers only one platform, link to the issue tracking the other platform's implementation.
+
+## Notes
+
+- `.spec-sync` contains the hash of the spec implemented by that platform. Do not run `--update` before the implementation is aligned.
+- Follow the dependency rules in AGENTS.md.

@@ -1,29 +1,37 @@
 # features/settings
 
-## 概要
-一覧の説明文表示を切り替え、アプリ情報を表示する。
+## Overview
 
-## 画面遷移
-`settings` は「設定」タブのルート。画面遷移は core/navigation の Navigator を経由する。
+Toggle descriptions in lists and display app information.
 
-## 画面と状態
-初回読み込み中・表示可能・保存中・失敗を持つ。説明文表示の初期値は true。読み込み・保存失敗を表示し、再試行できる。
+## Navigation
 
-公開入口は両 OS とも SettingsScreen とし、core/storage の DisplaySettings だけを受け取る。ViewModel の生成と画面エントリ単位の保持、画面本体は feature 内に閉じる。アプリ層の AppDependencies が GitHub 画面と同じ DisplaySettings を渡し、AppRouter が入口を呼ぶ。タブを切り替えても状態を維持する。
+`settings` is the Settings tab's root. Navigation goes through core/navigation's Navigator.
 
-## ユーザー操作と結果
-スイッチ操作で core/storage の DisplaySettings に保存する。書き込み成功後に全画面へ反映し、再起動後も復元する。保存中は操作を無効にし、失敗時は保存済みの値を維持する。
+## Screens and state
 
-## 使う API とトークン
-外部 API は使わない。`core/storage`、`core/navigation`、`shared/designsystem` に依存し、他 feature には依存しない。
+Support initial loading, ready, saving, and error states. Description visibility defaults to true. Display read/write failures and allow retries.
 
-## OS 固有の差分
-モジュール名は iOS が `FeatureSettings`、Android のパッケージは `com.example.features.settings`。 iOS の実装は `Sources/Features/Settings`、テストは `Tests/Features/Settings` に配置する。
+The public entry point is SettingsScreen on both platforms, receiving only core/storage's DisplaySettings. ViewModel creation, retention per screen entry, and rendering remain within the feature. AppDependencies passes the same DisplaySettings used by GitHub screens, and AppRouter calls the entry point. Preserve state across tab changes.
 
-iOS は Observation と SwiftUI の Form / Toggle、Android は StateFlow と Compose の Switch。公開入口は SettingsScreen、内部の描画は SettingsView / SettingsContent、状態管理は SettingsViewModel。iOS は @State、Android は Navigation 3 のエントリの ViewModelStore で ViewModel を保持する。
+## User actions and outcomes
 
-## シナリオ
+A switch change saves through core/storage's DisplaySettings. Reflect changes on all screens only after a successful write, and restore them after relaunch. Disable interaction while saving; preserve the saved value on failure.
+
+## APIs and tokens
+
+No external APIs. Depend on `core/storage`, `core/navigation`, and `shared/designsystem`, with no dependencies on other features.
+
+## Platform differences
+
+The iOS module is `FeatureSettings`, with implementation in `Sources/Features/Settings` and tests in `Tests/Features/Settings`. The Android package is `com.example.features.settings`.
+
+iOS uses Observation and SwiftUI Form / Toggle; Android uses StateFlow and Compose Switch. The public entry point is SettingsScreen, internal rendering is SettingsView / SettingsContent, and state is managed by SettingsViewModel. Retain the ViewModel with @State on iOS and the Navigation 3 entry's ViewModelStore on Android.
+
+## Scenarios
+
 - `specs/scenarios/settings.yaml`
 
-## ローカライズ
-UI 文言は core/localization の Message を表示時の言語で解決する。ViewModel は翻訳前のキー・引数を保持する。通信・保存の失敗は意味に応じて表示し、未知のエラーの内部メッセージは表示しない。既存の状態遷移・再試行・キャンセル動作は維持する。API の本文・名前やユーザーのメモは翻訳しない。
+## Localization
+
+Resolve UI text through core/localization Message in the display language. ViewModels retain unresolved keys and arguments. Present network/storage failures according to their meaning; do not expose internal messages from unknown errors. Preserve state transitions, retries, and cancellation behavior. Do not translate API bodies/names or user notes.

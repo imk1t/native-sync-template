@@ -2,7 +2,7 @@ name: github-search
 feature: features/search
 steps:
   - id: load-succeeds
-    name: 確定した検索結果を表示し再表示で二重取得しない
+    name: Show submitted search results without fetching twice on redisplay
     given: &a1
       search/repos:
         status: 200
@@ -25,38 +25,38 @@ steps:
                 - android
                 - sample
               html_url: https://github.com/octocat/Hello-World
-    when: swift を確定し再表示する
+    when: Submit swift and redisplay the screen
     then:
       count: 1
       requests: 1
   - id: blank
-    name: 空白のみの入力は送信しない
+    name: Do not submit whitespace-only input
     given:
       localState:
         values: {}
-    when: 空白だけを確定する
+    when: Submit whitespace-only input
     then:
       requests: 0
   - id: change-conditions
-    name: 言語・並べ替えを反映し結果をリセットする
+    name: Apply language and sort order and reset results
     given: *a1
-    when: Swift/stars 検索後 Kotlin に変更する
+    when: Search Swift sorted by stars then change to Kotlin
     then:
       query: kotlin is:public language:Kotlin
       page: 1
   - id: load-fails
-    name: 失敗を表示して手動で再試行できる
+    name: Display failures and allow manual retry
     given:
       search/repos:
         status: 500
         body:
           message: failed
-    when: 取得失敗後に再試行し200を返す
+    when: Retry after a fetch failure and return 200
     then:
       count: 1
       error: null
   - id: empty
-    name: 0件を読み込み済みの空状態として表示する
+    name: Show zero results as a loaded empty state
     given:
       search/repos:
         status: 200
@@ -64,53 +64,53 @@ steps:
           total_count: 0
           incomplete_results: false
           items: []
-    when: 検索する
+    when: Submit a search
     then:
       hasLoaded: true
       count: 0
   - id: pagination
-    name: 追加失敗でも一覧を保ち重複IDと終端を処理する
+    name: Preserve items after pagination failure and handle duplicate IDs and the final page
     given: *a1
-    when: 1件を取得、2ページ目失敗、重複を含む2件で再試行する
+    when: Fetch one item, fail page two, then retry with two items including a duplicate
     then:
       ids:
         - 1
         - 2
       nextPage: null
-      incomplete: APIの値を表示
-      limitReached: APIの値を表示
+      incomplete: Display the API value
+      limitReached: Display the API value
   - id: stale-response
-    name: 条件変更前の結果が遅れても上書きしない
+    name: Ignore delayed results from previous search conditions
     given: &a2
       search/repos:
         pending: true
-    when: 未完了の取得を残して条件を変更し新しい結果を取得する
+    when: Change conditions while a request is pending and fetch new results
     then:
       ids:
         - 2
       error: null
   - id: cancellation
-    name: 画面の取得キャンセルはエラーにしない
+    name: Do not treat screen request cancellation as an error
     given: *a2
-    when: 取得をキャンセルし再表示する
+    when: Cancel the request and redisplay the screen
     then:
       isLoading: false
       error: null
       reload: true
   - id: cache
-    name: 同条件の再取得を5分抑制し明示的な更新は迂回する
+    name: Cache matching requests for five minutes and bypass the cache on explicit refresh
     given: *a1
-    when: 同条件2回、更新、301秒経過、別の並べ替えで取得する
+    when: Fetch twice with matching conditions, refresh, wait 301 seconds, then fetch with a different sort order
     then:
       requests: 4
   - id: localized-failure
-    name: 通信エラーは翻訳前のキーとステータスを保持する
+    name: Network errors retain unresolved message keys and status codes
     given:
       search/repos:
         status: 500
         body:
           message: failed
-    when: 検索が失敗する
+    when: Fail the search request
     then:
       errorKey: error_server
       arguments:

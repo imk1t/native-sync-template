@@ -1,27 +1,33 @@
 # core/storage
 
-## 概要
-端末内に小さな値を保存する。設定などの普通の値は `KeyValueStore`、認証トークンなどの秘密情報は `SecureStore` に分ける。どちらも OS 標準・AndroidX だけで実装し、外部 SDK は使わない。
-一覧データのキャッシュのような構造化データ（SwiftData / Room）は、必要な機能が出てきたときに別途追加する。
+## Overview
 
-## 提供するもの
-| 名前 | 内容 |
+Persist small values on the device. Use `KeyValueStore` for ordinary values such as settings and `SecureStore` for secrets such as authentication tokens. Both use platform APIs and AndroidX only, without third-party SDKs.
+
+Add structured storage such as SwiftData / Room separately when a feature requires it, for example to cache lists.
+
+## Public API
+
+| Name | Behavior |
 | --- | --- |
-| `KeyValueStore` | `get(key) -> String?` / `set(key, value)`。`value` に null を渡すと削除する。非同期で、失敗すると例外を投げる |
-| `SecureStore` | `KeyValueStore` と同じ操作。秘密情報専用で、`KeyValueStore` とは型で分ける |
-| `UserDefaultsStore(suiteName:)` / `DataStoreKeyValueStore(dataStore)` | `KeyValueStore` の実装 |
-| `KeychainSecureStore(service:)` / `KeystoreSecureStore(dataStore, cipher)` | `SecureStore` の実装 |
-| `InMemoryKeyValueStore` / `InMemorySecureStore` | テストやプレビュー用の実装 |
+| `KeyValueStore` | `get(key) -> String?` / `set(key, value)`; passing null deletes the value. Asynchronous, throwing on failure |
+| `SecureStore` | The same operations as KeyValueStore, with a separate type for secrets |
+| `UserDefaultsStore(suiteName:)` / `DataStoreKeyValueStore(dataStore)` | KeyValueStore implementations |
+| `KeychainSecureStore(service:)` / `KeystoreSecureStore(dataStore, cipher)` | SecureStore implementations |
+| `InMemoryKeyValueStore` / `InMemorySecureStore` | Test and preview implementations |
 
-値は文字列だけを扱う。数値や構造体は呼び出し側で文字列（JSON など）にする。両 OS で保存できる型を揃えるため。
-`SecureStore.set` は既存値を先に削除しない。更新が失敗した場合は例外を返し、更新前の値を保持する。削除するのは value が null の場合だけ。
+Values are strings only. Callers encode numbers and structures as strings, such as JSON, to keep supported storage types aligned across platforms.
 
-## 表示設定
-DisplaySettings は一覧の説明文を表示する showDescriptions（初期 true）を KeyValueStore に保存する。初回読み込みを共有し、書き込みを直列化する。書き込み成功後だけ公開状態を更新する。読み込み・保存に失敗した場合は呼び出し側へ例外を返す。iOS は @MainActor / Observation、Android は StateFlow を使って全画面に反映する。
+`SecureStore.set` must not delete the existing value before updating. If an update fails, throw and preserve the previous value. Delete only when value is null.
 
-## OS 固有の差分
-- モジュール名は iOS が `CoreStorage`、Android のパッケージは `com.example.core.storage`。 iOS の実装は `Sources/Core/Storage`、テストは `Tests/Core/Storage` に配置する。
-- iOS の `KeyValueStore` は UserDefaults、Android は Preferences DataStore。DataStore は 1 ファイルにつき 1 インスタンスにする必要があるため、Application の依存グラフで `DataStoreKeyValueStore.persistent(context, name)` を 1 回だけ呼んで共有する。DataStoreを直接注入する場合は `create(context, name)` を使う。
-- iOS の `SecureStore` は Keychain（`kSecClassGenericPassword`、`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`）。Android には Keychain に当たる値の保管庫が無いので、Android Keystore の AES-GCM 鍵で暗号化した値を DataStore に保存する。暗号化は `ValueCipher`（実装は `AndroidKeystoreCipher(alias)`）に分け、JVM のテストでは差し替える。
-- iOS の更新は SecItemUpdate を使い、未登録のキーだけ SecItemAdd で追加する。Android は暗号化の成功後に DataStore のトランザクションで更新する。
-- 同じ理由で iOS は SecItem の呼び出しを内部の `KeychainItems` に分け、テストでは差し替える。ホストアプリの無いパッケージのテストでは Keychain の entitlement が無く、本物の Keychain を使えない（`errSecMissingEntitlement`）ため。本物の Keychain の確認は、アプリをホストにしたテストで行う。
+## Display settings
+
+DisplaySettings persists showDescriptions, initially true, through KeyValueStore. Share the initial load and serialize writes. Update public state only after a successful write. Propagate read/write failures to callers. Use @MainActor / Observation on iOS and StateFlow on Android to update all screens.
+
+## Platform differences
+
+- The iOS module is `CoreStorage`, with implementation in `Sources/Core/Storage` and tests in `Tests/Core/Storage`. The Android package is `com.example.core.storage`.
+- KeyValueStore uses UserDefaults on iOS and Preferences DataStore on Android. DataStore requires one instance per file: call `DataStoreKeyValueStore.persistent(context, name)` once in the Application dependency graph and share it. Use `create(context, name)` when injecting DataStore directly.
+- SecureStore uses Keychain on iOS (`kSecClassGenericPassword`, `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`). Android has no equivalent value vault, so encrypt values with an Android Keystore AES-GCM key and store them in DataStore. Isolate encryption behind ValueCipher, implemented by AndroidKeystoreCipher(alias), so JVM tests can replace it.
+- iOS updates use SecItemUpdate, falling back to SecItemAdd only for missing keys. Android updates through a DataStore transaction after encryption succeeds.
+- Likewise, isolate iOS SecItem calls behind internal KeychainItems for tests. Package tests without a host app lack Keychain entitlements and cannot use the real Keychain (`errSecMissingEntitlement`). Verify the real Keychain with app-hosted tests.
