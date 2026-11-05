@@ -6,6 +6,19 @@ iOS（Swift）と Android（Kotlin）をネイティブで開発するモノレ�
 
 サンプルアプリは GitHub のリポジトリ・Issue の閲覧、ブックマークとメモの端末内保存、3 タブで共有する表示設定を備えています。SwiftUI と Jetpack Compose を使い、MVVM の構造を両 OS で揃えています。
 
+## 画面
+
+同じ状態（日本語・ライト）の iOS（SwiftUI）と Android（Jetpack Compose）のサンプルアプリです。
+
+| 画面 | iOS | Android |
+| --- | --- | --- |
+| 探す | <img src="docs/images/ios-search.png" alt="iOS: 「swift」の検索結果" width="240"> | <img src="docs/images/android-search.png" alt="Android: 「swift」の検索結果" width="240"> |
+| リポジトリ詳細 | <img src="docs/images/ios-detail.png" alt="iOS: swiftlang/swift の詳細と保存ボタン" width="240"> | <img src="docs/images/android-detail.png" alt="Android: swiftlang/swift の詳細と保存ボタン" width="240"> |
+| 保存済み | <img src="docs/images/ios-saved.png" alt="iOS: 保存した swiftlang/swift" width="240"> | <img src="docs/images/android-saved.png" alt="Android: 保存した swiftlang/swift" width="240"> |
+| 設定 | <img src="docs/images/ios-settings.png" alt="iOS: 一覧に説明文を表示するスイッチ" width="240"> | <img src="docs/images/android-settings.png" alt="Android: 一覧に説明文を表示するスイッチ" width="240"> |
+
+見た目の違いは各 OS の標準部品によるものです。機能と構造は各モジュールの `spec.md` でそろえています。
+
 ## セットアップ
 
 [mise](https://mise.jdx.dev/getting-started.html) をインストールし、シェル連携を設定してから実行します。
