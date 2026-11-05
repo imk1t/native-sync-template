@@ -36,11 +36,13 @@ class RepositorySearchViewModelTest {
         val transport = RecordingTransport()
         val navigator = Navigator()
         val model = RepositorySearchViewModel(dependencies(transport), navigator)
-        model.edit(SearchForm("   "))
-        model.submit()
-        advanceUntilIdle()
-        assertTrue(transport.requests.isEmpty())
-        model.edit(SearchForm("  swift  ", "Swift", "stars"))
+        for (query in listOf("   ", "\u0085\u00A0\u3000\n")) {
+            model.edit(SearchForm(query))
+            model.submit()
+            advanceUntilIdle()
+            assertTrue(transport.requests.isEmpty())
+        }
+        model.edit(SearchForm(" \u0085\u3000swift\u00A0 ", "Swift", "stars"))
         model.submit()
         advanceUntilIdle()
         assertEquals(5_000_000_001, model.content.state.value.items.first().id)

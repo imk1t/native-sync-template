@@ -1,5 +1,7 @@
 # ADR 0005: タブごとの feature と共通実装・仕様の境界
 
+汎用基盤の分割と designsystem の依存先の拡張は [ADR 0007](0007-extensions-and-utils.md) で更新する。
+
 ## 決定
 - 画面は `features/search`（探す・リポジトリ詳細・Issue）、`features/bookmarks`（保存済み・メモ）、`features/settings`（設定）に分ける。
 - `modules/shared/*` は複数 feature で使う共通 UI・モデル・処理を置く層とする。共通 UI とトークンは `shared/designsystem` に配置し、依存先を `core/utils` のみに制限する。その他の shared の依存先は core のみとし、shared 同士は依存しない。features は shared・core を使え、features 同士は依存しない。

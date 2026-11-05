@@ -18,6 +18,7 @@
 - 画面状態は NavigationEntry の ID ごとに保持する。同じ Route を複数回開いた場合は独立し、戻る操作やタブ切り替えでは残ったエントリの状態を維持する。
 - 一覧は `items`, `hasLoaded`, `isLoading`, `error`, `nextPage`, `incomplete` を持つ。初期は未取得、空一覧。初回・更新・追加取得を区別し、失敗しても取得済みの一覧は保持する。
 - 検索は確定時だけ取得。空白だけなら送信しない。言語は全て・Swift・Kotlin・TypeScript・Rust、並べ替えは関連度・Star 数・更新日時。検索語に `is:public` と選択言語を付ける。
+- 検索語の前後の空白は `core/extensions` の trimmedWhitespace で除去し、内部の空白は保持する。空白集合は同モジュールの spec に従う。
 - 1 ページ 20 件。ID で重複を除外し、終端は API の次ページ情報で判断する。検索の 1,000 件上限と不完全な結果を表示する。
 - 詳細は取得中・取得成功・失敗を持つ。説明・言語・投稿者・本文が null でも表示できる。Issue 本文はプレーンテキスト。
 - Issue は Open / Closed を選択する。PR は除外するが、PR だけのページでも次ページへの操作を残す。
@@ -31,7 +32,7 @@
 
 ## 使う API とトークン
 - API: `search/repos`, `repos/get`, `issues/list-for-repo`, `issues/get`。`core/network` の GitHubAPI を Repository で包む。
-- `core/navigation`、`core/network`、`core/storage`、`shared/bookmarks`、`shared/designsystem` に依存。他 feature には依存しない。
+- `core/navigation`、`core/network`、`core/storage`、`core/extensions`、`core/utils`、`shared/bookmarks`、`shared/designsystem` に依存。他 feature には依存しない。
 - 共通 UI は `shared/designsystem` の行・状態表示・バッジを利用する。
 
 ## OS 固有の差分
@@ -45,4 +46,5 @@
 - `specs/scenarios/github-detail.yaml`
 
 ## ローカライズ
+再試行時刻は SearchFailure に生の時刻を保持し、表示時に DateTimeUtils.formatTime へ現在の表示ロケールとタイムゾーンを渡す。エラーから Message への変換と翻訳の解決は feature に残す。
 UI 文言は core/localization の Message を表示時の言語で解決する。ViewModel は翻訳前のキー・引数を保持する。通信・保存の失敗は意味に応じて表示し、未知のエラーの内部メッセージは表示しない。既存の状態遷移・再試行・キャンセル動作は維持する。API の本文・名前やユーザーのメモは翻訳しない。

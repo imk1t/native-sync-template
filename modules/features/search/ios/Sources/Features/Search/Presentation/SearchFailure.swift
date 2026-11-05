@@ -1,5 +1,6 @@
 import CoreLocalization
 import CoreNetwork
+import CoreUtils
 import Foundation
 
 public enum SearchFailure: Equatable, Sendable {
@@ -21,7 +22,7 @@ public enum SearchFailure: Equatable, Sendable {
         switch self {
         case .message(let message): message.resolve(locale: locale)
         case .rateLimited(let until):
-            Message.errorRateLimited(time: until.formatted(.dateTime.hour().minute().second().locale(locale)))
+            Message.errorRateLimited(time: DateTimeUtils.formatTime(until, locale: locale, timeZone: .current))
                 .resolve(locale: locale)
         }
     }

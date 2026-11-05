@@ -3,7 +3,7 @@
 ## 概要
 `specs/tokens` から生成した値と、それを使う共通 UI 部品を置く。
 
-`modules/shared/designsystem` に配置する。依存先は `core/utils` のみとし、他の `shared/*`、features、通信・保存処理には依存しない。他の `shared/*` からの依存も禁止する。
+`modules/shared/designsystem` に配置する。依存先は `core/utils` と `core/extensions` のみ許可し、実際に利用する場合だけ追加する。他の `shared/*`、features、通信・保存処理には依存しない。他の `shared/*` からの依存も禁止する。
 
 ## 提供するもの
 | 名前 | 内容 |

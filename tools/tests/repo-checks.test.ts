@@ -25,9 +25,12 @@ describe("repo checks", () => {
   const write = (name: string, text: string) => writeFileSync(join(root, name), text);
 
   function addSdk(mod = "core/network", register = true) {
-    const target = { "core/network": "CoreNetwork", "core/utils": "CoreUtils", "features/search": "FeatureSearch" }[
-      mod
-    ];
+    const target = {
+      "core/network": "CoreNetwork",
+      "core/utils": "CoreUtils",
+      "core/extensions": "CoreExtensions",
+      "features/search": "FeatureSearch",
+    }[mod];
     const product = '.product(name: "ExampleSDK", package: "example-sdk")';
     const rows = read("modules/Package.swift")
       .split("\n")
@@ -82,7 +85,7 @@ describe("repo checks", () => {
     expect(output).toContain("android: core/network");
   });
 
-  test.each(["features/search", "shared/bookmarks", "shared/designsystem", "core/utils"])(
+  test.each(["features/search", "shared/bookmarks", "shared/designsystem", "core/utils", "core/extensions"])(
     "%s は SDK に直接依存できない",
     (mod) => {
       const errors = deps.checkExternal({ ios: new Set([`${mod}\texample-sdk`]), android: new Set() }, root);
@@ -95,6 +98,16 @@ describe("repo checks", () => {
     ["features/bookmarks", "shared/bookmarks", true],
     ["features/search", "shared/designsystem", true],
     ["shared/designsystem", "core/utils", true],
+    ["shared/designsystem", "core/extensions", true],
+    ["core/utils", "core/extensions", true],
+    ["core/utils", "core/network", false],
+    ["core/utils", "shared/bookmarks", false],
+    ["core/extensions", "core/utils", false],
+    ["core/extensions", "core/network", false],
+    ["core/extensions", "features/search", false],
+    ["core/extensions", "core/extensions", false],
+    ["shared/bookmarks", "core/extensions", true],
+    ["features/search", "core/extensions", true],
     ["shared/designsystem", "core/network", false],
     ["shared/designsystem", "core/storage", false],
     ["shared/designsystem", "core/navigation", false],
@@ -149,13 +162,10 @@ describe("repo checks", () => {
 
   test("Android の project 名は settings から解決する", () => {
     replace(root, "apps/android/settings.gradle.kts", '":core:utils"', '":utilities"', true);
-    replace(
-      root,
-      "modules/core/network/android/build.gradle.kts",
-      'project(":core:utils")',
-      'project(path = ":utilities")',
-      true,
-    );
+    for (const path of glob(join(root, "modules"), "**/android/build.gradle.kts")) {
+      const build = `modules/${path}`;
+      write(build, read(build).replaceAll('project(":core:utils")', 'project(path = ":utilities")'));
+    }
     expect(depsResult().code).toBe(0);
   });
 
@@ -164,12 +174,39 @@ describe("repo checks", () => {
     expect(depsResult().code).toBe(1);
   });
 
-  test("core/utils は Android の公式ライブラリにも依存できない", () => {
-    const build = "modules/core/utils/android/build.gradle.kts";
+  test.each(["core/utils", "core/extensions"])("%s は Android の公式ライブラリにも依存できない", (mod) => {
+    const build = `modules/${mod}/android/build.gradle.kts`;
     write(build, `${read(build)}\ndependencies { implementation(libs.coroutines.core) }\n`);
     const { code, output } = depsResult();
     expect(code).toBe(1);
     expect(output).toContain("直接依存できません");
+  });
+
+  test("core/extensions は登録済みの外部 SDK も拒否する", () => {
+    addSdk("core/extensions");
+    const { code, output } = depsResult();
+    expect(code).toBe(1);
+    expect(output).toContain("ios: core/extensions は外部 SDK");
+    expect(output).toContain("android: core/extensions は外部 SDK");
+  });
+
+  test.each([
+    ["core/extensions", "CoreExtensions", "core/utils", "CoreUtils"],
+    ["core/utils", "CoreUtils", "core/network", "CoreNetwork"],
+  ])("%s の禁止された内部依存を両 OS で検出する", (source, sourceTarget, target, targetName) => {
+    replace(
+      root,
+      "modules/Package.swift",
+      `.target(name: "${sourceTarget}", path:`,
+      `.target(name: "${sourceTarget}", dependencies: ["${targetName}"], path:`,
+      true,
+    );
+    const build = `modules/${source}/android/build.gradle.kts`;
+    write(build, `${read(build)}\ndependencies { implementation(project(":${target.replaceAll("/", ":")}")) }\n`);
+    const { code, output } = depsResult();
+    expect(code).toBe(1);
+    expect(output).toContain(`ios: ${source} は ${target} に依存できません`);
+    expect(output).toContain(`android: ${source} は ${target} に依存できません`);
   });
 
   test("どのモジュールの spec.md を消しても検出する", () => {

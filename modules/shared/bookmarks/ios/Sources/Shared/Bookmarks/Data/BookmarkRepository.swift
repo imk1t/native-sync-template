@@ -57,7 +57,7 @@ public final class BookmarkRepository {
     public func remove(_ id: Int64) async throws { try await mutate { $0.filter { $0.id != id } } }
 
     public func saveNote(id: Int64, note: String) async throws {
-        guard note.unicodeScalars.count <= 1_000 else { throw BookmarkError.noteTooLong }
+        guard BookmarkNoteRules.isValid(note) else { throw BookmarkError.noteTooLong }
         try await mutate { items in
             var items = items
             guard let index = items.firstIndex(where: { $0.id == id }) else { throw BookmarkError.notFound }

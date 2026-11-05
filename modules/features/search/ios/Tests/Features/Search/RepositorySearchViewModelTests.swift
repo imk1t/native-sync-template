@@ -15,11 +15,13 @@ struct RepositorySearchViewModelTests {
         let transport = RecordingTransport()
         let navigator = Navigator()
         let model = RepositorySearchViewModel(dependencies: dependencies(transport), navigator: navigator)
-        model.query = "   "
-        model.submit()
-        await model.loadIfNeeded()
-        #expect(await transport.requests.isEmpty)
-        model.query = "  swift  "
+        for query in ["   ", "\u{0085}\u{00A0}\u{3000}\n"] {
+            model.query = query
+            model.submit()
+            await model.loadIfNeeded()
+            #expect(await transport.requests.isEmpty)
+        }
+        model.query = " \u{0085}\u{3000}swift\u{00A0} "
         model.language = "Swift"
         model.sort = "stars"
         model.submit()

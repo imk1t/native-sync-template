@@ -44,7 +44,7 @@ class BookmarkRepository(private val store: KeyValueStore) {
     suspend fun remove(id: Long) = mutate { it.filter { bookmark -> bookmark.id != id } }
 
     suspend fun saveNote(id: Long, note: String) {
-        if (note.codePointCount(0, note.length) > 1_000) throw BookmarkError.NoteTooLong()
+        if (!BookmarkNoteRules.isValid(note)) throw BookmarkError.NoteTooLong()
         mutate { items ->
             if (items.none { it.id == id }) throw BookmarkError.NotFound()
             items.map { if (it.id == id) it.copy(note = note) else it }

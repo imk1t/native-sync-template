@@ -20,6 +20,7 @@ fun module(name: String, dir: String) {
     include(name)
     project(name).projectDir = file("../../modules/$dir/android")
 }
+module(":core:extensions", "core/extensions")
 module(":core:utils", "core/utils")
 module(":core:navigation", "core/navigation")
 module(":core:network", "core/network")

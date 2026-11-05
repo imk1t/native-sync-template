@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
 import com.example.shared.bookmarks.BookmarkError
+import com.example.shared.bookmarks.BookmarkNoteRules
 import com.example.shared.bookmarks.BookmarkRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +18,8 @@ data class NoteState(
     val isSaving: Boolean = false,
     val error: Message? = null
 ) {
-    val characterCount: Int get() = note.codePointCount(0, note.length)
-    val canSave: Boolean get() = isLoaded && !isSaving && characterCount <= 1_000
+    val characterCount: Int get() = BookmarkNoteRules.characterCount(note)
+    val canSave: Boolean get() = isLoaded && !isSaving && BookmarkNoteRules.isValid(note)
 }
 
 internal class BookmarkNoteViewModel(

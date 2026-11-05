@@ -14,6 +14,8 @@ android {
 }
 kotlin { jvmToolchain(17) }
 dependencies {
+    implementation(project(":core:extensions"))
+    implementation(project(":core:utils"))
     implementation(project(":core:localization"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))

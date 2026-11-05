@@ -14,8 +14,8 @@ final class BookmarkNoteViewModel {
     private let bookmarks: BookmarkRepository
     private let navigator: Navigator
     private let entryID: String?
-    var characterCount: Int { note.unicodeScalars.count }
-    var canSave: Bool { isLoaded && !isSaving && characterCount <= 1_000 }
+    var characterCount: Int { BookmarkNoteRules.characterCount(note) }
+    var canSave: Bool { isLoaded && !isSaving && BookmarkNoteRules.isValid(note) }
 
     init(repositoryId: String, bookmarks: BookmarkRepository, navigator: Navigator) {
         id = Int64(repositoryId)
