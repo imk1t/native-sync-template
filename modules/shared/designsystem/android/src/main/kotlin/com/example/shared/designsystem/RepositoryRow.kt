@@ -99,7 +99,10 @@ private fun Avatar(url: String?, owner: String, loadImage: suspend (String) -> B
         }
     }
     Box(
-        Modifier.size(44.dp).clip(RoundedCornerShape(Tokens.Radius.avatar)).background(MaterialTheme.colorScheme.secondaryContainer),
+        Modifier
+            .size(44.dp)
+            .clip(RoundedCornerShape(Tokens.Radius.avatar))
+            .background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
         val image = bitmap
