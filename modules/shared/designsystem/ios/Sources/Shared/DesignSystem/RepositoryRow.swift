@@ -30,23 +30,41 @@ public struct RepositoryRow: View {
                 if showDescription, let description = repository.description, !description.isEmpty {
                     Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
-                FlowLayout { meta }.font(.caption).foregroundStyle(Tokens.Color.muted)
+                FlowLayout {
+                    ForEach(metaItems) { item in metaView(item) }
+                }.font(.caption).foregroundStyle(Tokens.Color.muted)
             }.frame(maxWidth: .infinity, alignment: .leading)
         }.accessibilityElement(children: .combine)
     }
 
-    @ViewBuilder private var meta: some View {
-        if let language = repository.language {
-            Label {
-                Text(language).lineLimit(1).fixedSize()
-            } icon: {
-                Circle().fill(languageTint(language)).frame(width: 8, height: 8)
+    private struct MetaItem: Identifiable {
+        enum Kind { case language, stars, saved }
+        let kind: Kind
+        let text: String
+        var id: Kind { kind }
+    }
+
+    private var metaItems: [MetaItem] {
+        var items: [MetaItem] = []
+        if let language = repository.language { items.append(MetaItem(kind: .language, text: language)) }
+        items.append(MetaItem(kind: .stars, text: starsLabel))
+        if saved { items.append(MetaItem(kind: .saved, text: savedLabel)) }
+        return items
+    }
+
+    @ViewBuilder private func metaView(_ item: MetaItem) -> some View {
+        HStack(spacing: 4) {
+            switch item.kind {
+            case .language:
+                Circle().fill(languageTint(item.text)).frame(width: 8, height: 8)
+            case .stars:
+                Image(systemName: "star")
+            case .saved:
+                Image(systemName: "bookmark.fill")
             }
+            Text(item.text).lineLimit(1)
         }
-        Label(starsLabel, systemImage: "star").lineLimit(1).fixedSize()
-        if saved {
-            Label(savedLabel, systemImage: "bookmark.fill").lineLimit(1).fixedSize()
-                .foregroundStyle(Tokens.Color.primary)
-        }
+        .fixedSize()
+        .foregroundStyle(item.kind == .saved ? Tokens.Color.primary : Tokens.Color.muted)
     }
 }
