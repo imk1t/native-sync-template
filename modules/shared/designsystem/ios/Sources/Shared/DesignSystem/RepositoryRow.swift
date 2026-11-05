@@ -30,21 +30,26 @@ public struct RepositoryRow: View {
                 if showDescription, let description = repository.description, !description.isEmpty {
                     Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
-                HStack(spacing: 12) {
-                    if let language = repository.language {
-                        Label {
-                            Text(language)
-                        } icon: {
-                            Circle().fill(languageTint(language)).frame(width: 8, height: 8)
-                        }
-                    }
-                    Label(starsLabel, systemImage: "star")
-                    if saved {
-                        Label(savedLabel, systemImage: "bookmark.fill").foregroundStyle(Tokens.Color.primary)
-                    }
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 10) { meta }
+                    VStack(alignment: .leading, spacing: 4) { meta }
                 }.font(.caption).foregroundStyle(Tokens.Color.muted)
             }
             Spacer(minLength: 0)
         }.accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder private var meta: some View {
+        if let language = repository.language {
+            Label {
+                Text(language).lineLimit(1)
+            } icon: {
+                Circle().fill(languageTint(language)).frame(width: 8, height: 8)
+            }
+        }
+        Label(starsLabel, systemImage: "star").lineLimit(1)
+        if saved {
+            Label(savedLabel, systemImage: "bookmark.fill").lineLimit(1).foregroundStyle(Tokens.Color.primary)
+        }
     }
 }

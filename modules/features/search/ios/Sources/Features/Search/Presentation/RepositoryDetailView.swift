@@ -11,23 +11,25 @@ struct RepositoryDetailView: View {
         List {
             if let repository = viewModel.content.state.items.first {
                 Section {
-                    RepositoryRow(
-                        repository: RepositoryRowData(
-                            fullName: repository.fullName, owner: repository.owner,
-                            avatarURL: repository.avatarURL, description: repository.description,
-                            language: repository.language, stars: repository.stars),
-                        saved: viewModel.dependencies.bookmarks.contains(repository.id),
-                        showDescription: true,
-                        starsLabel: Message.repositoryStars(count: repository.stars).resolve(locale: locale),
-                        savedLabel: Message.commonSaved.resolve(locale: locale),
-                        loadImage: { try await viewModel.dependencies.images.load($0) }
-                    ).designCard().designListRow()
-                    Text(Message.repositoryForks(count: repository.forks).resolve(locale: locale))
-                    if !repository.topics.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack { ForEach(repository.topics, id: \.self) { StatusBadge($0) } }
+                    VStack(alignment: .leading, spacing: 12) {
+                        RepositoryRow(
+                            repository: RepositoryRowData(
+                                fullName: repository.fullName, owner: repository.owner,
+                                avatarURL: repository.avatarURL, description: repository.description,
+                                language: repository.language, stars: repository.stars),
+                            saved: viewModel.dependencies.bookmarks.contains(repository.id),
+                            showDescription: true,
+                            starsLabel: Message.repositoryStars(count: repository.stars).resolve(locale: locale),
+                            savedLabel: Message.commonSaved.resolve(locale: locale),
+                            loadImage: { try await viewModel.dependencies.images.load($0) })
+                        Text(Message.repositoryForks(count: repository.forks).resolve(locale: locale))
+                            .font(.subheadline).foregroundStyle(Tokens.Color.muted)
+                        if !repository.topics.isEmpty {
+                            ScrollView(.horizontal) {
+                                HStack { ForEach(repository.topics, id: \.self) { StatusBadge($0) } }
+                            }
                         }
-                    }
+                    }.designCard().designListRow()
                 }
                 Section {
                     Button {
