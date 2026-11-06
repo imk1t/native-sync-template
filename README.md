@@ -6,6 +6,19 @@ A monorepo template for native iOS (Swift) and Android (Kotlin) apps. Each platf
 
 The sample app browses GitHub repositories and issues, saves bookmarks and notes locally, and shares display settings across three tabs. It uses SwiftUI and Jetpack Compose, with matching MVVM structures.
 
+## Screenshots
+
+The iOS (SwiftUI) and Android (Jetpack Compose) sample apps, in the same state: Japanese, light appearance.
+
+| Screen | iOS | Android |
+| --- | --- | --- |
+| Search | <img src="docs/images/ios-search.png" alt="iOS: search results for "swift"" width="240"> | <img src="docs/images/android-search.png" alt="Android: search results for "swift"" width="240"> |
+| Repository details | <img src="docs/images/ios-detail.png" alt="iOS: swiftlang/swift details with a Save button" width="240"> | <img src="docs/images/android-detail.png" alt="Android: swiftlang/swift details with a Save button" width="240"> |
+| Saved | <img src="docs/images/ios-saved.png" alt="iOS: the saved swiftlang/swift repository" width="240"> | <img src="docs/images/android-saved.png" alt="Android: the saved swiftlang/swift repository" width="240"> |
+| Settings | <img src="docs/images/ios-settings.png" alt="iOS: the toggle for showing descriptions in lists" width="240"> | <img src="docs/images/android-settings.png" alt="Android: the toggle for showing descriptions in lists" width="240"> |
+
+Visual differences come from each platform's standard components. Behavior and structure are aligned through each module's `spec.md`.
+
 ## Setup
 
 Install and activate [mise](https://mise.jdx.dev/getting-started.html), then run:
