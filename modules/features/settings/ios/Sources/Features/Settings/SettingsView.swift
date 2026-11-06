@@ -7,25 +7,31 @@ struct SettingsView: View {
     @Bindable private var viewModel: SettingsViewModel
     init(viewModel: SettingsViewModel) { self.viewModel = viewModel }
     var body: some View {
-        Form {
-            Section(Message.settingsDisplay.resolve(locale: locale)) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Tokens.Spacing.medium) {
+                Text(Message.settingsDisplay.resolve(locale: locale)).font(.footnote).bold()
+                    .foregroundStyle(Tokens.Color.muted)
                 Toggle(Message.settingsDescriptions.resolve(locale: locale), isOn: $viewModel.showDescriptions)
                     .disabled(!viewModel.isLoaded || viewModel.isSaving)
                     .onChange(of: viewModel.showDescriptions) { Task { await viewModel.save() } }
-            }
-            if viewModel.isSaving { LoadingIndicator(Message.commonLoading.resolve(locale: locale)) }
-            if let error = viewModel.error {
-                ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
-                    Task { await viewModel.load() }
+                    .designCard()
+                if viewModel.isSaving { LoadingIndicator(Message.commonLoading.resolve(locale: locale)) }
+                if let error = viewModel.error {
+                    ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
+                        Task { await viewModel.load() }
+                    }
                 }
-            }
-            Section(Message.settingsAbout.resolve(locale: locale)) {
-                Text(Message.appName.resolve(locale: locale)).font(.headline)
-                Text(Message.settingsDescription.resolve(locale: locale))
-                Text(Message.settingsStorageNote.resolve(locale: locale))
-                    .font(.footnote).foregroundStyle(.secondary)
-            }
+                Text(Message.settingsAbout.resolve(locale: locale)).font(.footnote).bold()
+                    .foregroundStyle(Tokens.Color.muted)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(Message.appName.resolve(locale: locale)).font(.headline)
+                    Text(Message.settingsDescription.resolve(locale: locale))
+                    Text(Message.settingsStorageNote.resolve(locale: locale))
+                        .font(.footnote).foregroundStyle(Tokens.Color.muted)
+                }.designCard()
+            }.padding(Tokens.Spacing.medium)
         }
+        .background(Tokens.Color.background)
         .navigationTitle(Message.settingsTitle.resolve(locale: locale))
         .task { await viewModel.load() }
     }

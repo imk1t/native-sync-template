@@ -9,7 +9,7 @@ public struct StatusBadge: View {
     }
     public var body: some View {
         Text(text).font(.caption).bold().padding(.horizontal, 10).padding(.vertical, 5)
-            .foregroundStyle(emphasized ? Color.green : Color.secondary)
-            .background((emphasized ? Color.green : Color.secondary).opacity(0.12), in: Capsule())
+            .foregroundStyle(emphasized ? Tokens.Color.primary : Tokens.Color.muted)
+            .background((emphasized ? Tokens.Color.primary : Tokens.Color.muted).opacity(0.12), in: Capsule())
     }
 }

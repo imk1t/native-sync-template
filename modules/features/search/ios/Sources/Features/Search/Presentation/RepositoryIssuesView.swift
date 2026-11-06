@@ -13,6 +13,7 @@ struct RepositoryIssuesView: View {
                 Text(Message.issueOpen.resolve(locale: locale)).tag("open")
                 Text(Message.issueClosed.resolve(locale: locale)).tag("closed")
             }.pickerStyle(.segmented).onChange(of: viewModel.issueState) { viewModel.changeState() }
+                .designListRow()
             ForEach(viewModel.content.state.items) { issue in
                 Button {
                     viewModel.select(issue)
@@ -21,14 +22,15 @@ struct RepositoryIssuesView: View {
                         Text(issue.title).font(.headline).foregroundStyle(.primary)
                         HStack {
                             StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
-                            Text("#\(String(issue.number))").foregroundStyle(.secondary)
+                            Text("#\(String(issue.number))").foregroundStyle(Tokens.Color.muted)
                         }
-                        Text(issue.updatedAt).font(.caption).foregroundStyle(.secondary)
-                    }.padding(.vertical, 4)
-                }.buttonStyle(.plain)
+                        Text(issue.updatedAt).font(.caption).foregroundStyle(Tokens.Color.muted)
+                    }.designCard()
+                }.buttonStyle(.plain).designListRow()
             }
             PageFooter(state: viewModel.content.state, retry: viewModel.retry, next: viewModel.nextPage)
         }
+        .listStyle(.plain).designScreenBackground()
         .navigationTitle(Message.issuesTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.inline)
         .task(id: viewModel.revision) { await viewModel.loadIfNeeded() }
         .refreshable { await viewModel.refresh() }
