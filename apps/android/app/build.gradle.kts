@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":shared:bookmarks"))
+    implementation(project(":shared:designsystem"))
     implementation(project(":features:bookmarks"))
     implementation(project(":features:search"))
     implementation(project(":features:settings"))

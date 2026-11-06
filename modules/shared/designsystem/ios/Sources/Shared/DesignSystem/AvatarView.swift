@@ -10,10 +10,10 @@ struct AvatarView: View {
             if let data, let image = UIImage(data: data) {
                 Image(uiImage: image).resizable().scaledToFill()
             } else {
-                Image(systemName: "person.crop.circle.fill").resizable().foregroundStyle(.secondary)
+                Image(systemName: "person.crop.circle.fill").resizable().foregroundStyle(Tokens.Color.muted)
             }
         }
-        .frame(width: 40, height: 40).clipShape(RoundedRectangle(cornerRadius: 10))
+        .frame(width: 44, height: 44).clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.avatar))
         .accessibilityHidden(true)
         .task(id: url) {
             data = nil

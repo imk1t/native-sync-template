@@ -49,8 +49,10 @@ struct BookmarksView: View {
                         }
                     }.buttonStyle(.borderless).font(.subheadline)
                 }
+                .designCard().designListRow()
             }
         }
+        .designScreenBackground()
         .navigationTitle(Message.commonSaved.resolve(locale: locale))
         .task { await viewModel.load() }
         .alert(

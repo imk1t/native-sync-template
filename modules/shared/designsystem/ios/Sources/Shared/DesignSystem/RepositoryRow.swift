@@ -1,5 +1,13 @@
 import SwiftUI
 
+private enum MetaKind { case language, stars, saved }
+
+private struct MetaItem: Identifiable {
+    let kind: MetaKind
+    let text: String
+    var id: MetaKind { kind }
+}
+
 public struct RepositoryRow: View {
     let repository: RepositoryRowData
     let saved: Bool
@@ -24,16 +32,40 @@ public struct RepositoryRow: View {
         HStack(alignment: .top, spacing: 12) {
             AvatarView(url: repository.avatarURL, loadImage: loadImage)
             VStack(alignment: .leading, spacing: 6) {
-                Text(repository.fullName).font(.headline).foregroundStyle(.primary)
+                Text(repository.fullName)
+                    .font(.system(.subheadline, design: .monospaced).weight(.medium))
+                    .foregroundStyle(Tokens.Color.onBackground)
                 if showDescription, let description = repository.description, !description.isEmpty {
-                    Text(description).font(.subheadline).foregroundStyle(.secondary).lineLimit(3)
+                    Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
-                HStack {
-                    Label(starsLabel, systemImage: "star")
-                    if let language = repository.language { Text(language) }
-                    if saved { Label(savedLabel, systemImage: "bookmark.fill") }
-                }.font(.caption).foregroundStyle(.secondary)
+                FlowLayout {
+                    ForEach(metaItems) { item in metaView(item) }
+                }.font(.caption).foregroundStyle(Tokens.Color.muted)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }.accessibilityElement(children: .combine)
+    }
+
+    private var metaItems: [MetaItem] {
+        var items: [MetaItem] = []
+        if let language = repository.language { items.append(MetaItem(kind: .language, text: language)) }
+        items.append(MetaItem(kind: .stars, text: starsLabel))
+        if saved { items.append(MetaItem(kind: .saved, text: savedLabel)) }
+        return items
+    }
+
+    @ViewBuilder private func metaView(_ item: MetaItem) -> some View {
+        HStack(spacing: 4) {
+            switch item.kind {
+            case .language:
+                Circle().fill(languageTint(item.text)).frame(width: 8, height: 8)
+            case .stars:
+                Image(systemName: "star")
+            case .saved:
+                Image(systemName: "bookmark.fill")
             }
-        }.padding(.vertical, 6).accessibilityElement(children: .combine)
+            Text(item.text).lineLimit(1)
+        }
+        .fixedSize()
+        .foregroundStyle(item.kind == .saved ? Tokens.Color.primary : Tokens.Color.muted)
     }
 }

@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -37,9 +38,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.RepositoryRow
 import com.example.shared.designsystem.RepositoryRowData
+import com.example.shared.designsystem.Tokens
 
 @Composable
 fun RepositorySearchScreen(dependencies: SearchDependencies, navigator: Navigator) {
@@ -61,7 +64,7 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
     val descriptions by viewModel.dependencies.settings.showDescriptions.collectAsState()
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
-        LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 Text(Message.SearchTitle.localized(), style = MaterialTheme.typography.headlineLarge)
                 OutlinedTextField(
@@ -73,7 +76,7 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { viewModel.submit() })
                 )
-                Row {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterMenu(
                         Message.SearchLanguage.localized(),
                         form.language.ifEmpty { Message.SearchAll.localized() },
@@ -117,25 +120,26 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
                 }
             }
             items(state.items, key = { it.id }) { repository ->
-                Column(Modifier.fillMaxWidth().clickable { viewModel.select(repository) }) {
-                    RepositoryRow(
-                        RepositoryRowData(
-                            repository.fullName,
-                            repository.owner,
-                            repository.avatarURL,
-                            repository.description,
-                            repository.language,
-                            repository.stars
-                        ),
-                        bookmarks.any {
-                            it.id == repository.id
-                        },
-                        descriptions,
-                        Message.RepositoryStars(repository.stars).localized(),
-                        Message.CommonSaved.localized(),
-                        viewModel.dependencies.images::load
-                    )
-                    HorizontalDivider()
+                DesignCard {
+                    Column(Modifier.fillMaxWidth().clickable { viewModel.select(repository) }) {
+                        RepositoryRow(
+                            RepositoryRowData(
+                                repository.fullName,
+                                repository.owner,
+                                repository.avatarURL,
+                                repository.description,
+                                repository.language,
+                                repository.stars
+                            ),
+                            bookmarks.any {
+                                it.id == repository.id
+                            },
+                            descriptions,
+                            Message.RepositoryStars(repository.stars).localized(),
+                            Message.CommonSaved.localized(),
+                            viewModel.dependencies.images::load
+                        )
+                    }
                 }
             }
             item { PageFooter(state, viewModel::retry, viewModel::nextPage) }
@@ -147,7 +151,11 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
 private fun FilterMenu(label: String, value: String, options: List<Pair<String, String>>, select: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Column {
-        TextButton({ expanded = true }) { Text(Message.SearchFilter(label, value).localized()) }
+        AssistChip(
+            onClick = { expanded = true },
+            label = { Text(Message.SearchFilter(label, value).localized()) },
+            shape = RoundedCornerShape(Tokens.Radius.chip)
+        )
         DropdownMenu(expanded, { expanded = false }) {
             options.forEach { (key, title) ->
                 DropdownMenuItem(text = { Text(title) }, onClick = {

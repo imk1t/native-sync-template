@@ -52,11 +52,13 @@ struct RepositorySearchView: View {
                             starsLabel: Message.repositoryStars(count: repository.stars).resolve(locale: locale),
                             savedLabel: Message.commonSaved.resolve(locale: locale),
                             loadImage: { try await viewModel.dependencies.images.load($0) })
-                    }.buttonStyle(.plain)
+                        .designCard()
+                    }.buttonStyle(.plain).designListRow()
                 }
                 PageFooter(state: viewModel.content.state, retry: viewModel.retry, next: viewModel.nextPage)
             }
         }
+        .designScreenBackground()
         .navigationTitle(Message.searchTitle.resolve(locale: locale))
         .searchable(
             text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always),

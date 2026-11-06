@@ -28,11 +28,22 @@ export const OUTPUTS = {
   androidRoutes: "modules/core/navigation/android/src/main/kotlin/com/example/core/navigation/generated/Routes.kt",
 } as const;
 
-type Tokens = Record<string, Record<string, { $value: string }>>;
+type Tokens = Record<string, Record<string, { $value: string; $extensions?: { dark?: string } }>>;
 
 function flat(tokens: Tokens, group: string): [string, string][] {
   const entries = Object.entries(tokens[group] ?? {}).map(([k, v]): [string, string] => [k, String(v.$value)]);
   return entries.sort(([a], [b]) => compare(a, b));
+}
+
+/** 暗いときの値（$extensions.dark）。色トークンはすべて持つこと。 */
+function darkColors(tokens: Tokens): [string, string][] {
+  return Object.entries(tokens.color ?? {})
+    .map(([k, v]): [string, string] => {
+      const dark = v.$extensions?.dark;
+      if (!dark) throw new Error(`color.${k} に $extensions.dark がありません`);
+      return [k, dark];
+    })
+    .sort(([a], [b]) => compare(a, b));
 }
 
 function hex(value: string): string {
@@ -47,9 +58,12 @@ function swiftTokens(tokens: Tokens): string {
     "public enum Tokens {",
     "    public enum Color {",
   ];
+  const dark = new Map(darkColors(tokens));
   for (const [k, v] of flat(tokens, "color")) {
-    out.push(`        public static let ${k} = SwiftUI.Color(hex: 0x${hex(v)})`);
+    out.push(`        public static let ${k} = SwiftUI.Color(light: 0x${hex(v)}, dark: 0x${hex(dark.get(k) ?? v)})`);
   }
+  out.push("    }", "    public enum Radius {");
+  for (const [k, v] of flat(tokens, "radius")) out.push(`        public static let ${k}: CGFloat = ${v}`);
   out.push("    }", "    public enum Spacing {");
   for (const [k, v] of flat(tokens, "spacing")) out.push(`        public static let ${k}: CGFloat = ${v}`);
   out.push(
@@ -59,6 +73,11 @@ function swiftTokens(tokens: Tokens): string {
     "extension SwiftUI.Color {",
     "    init(hex: UInt32) {",
     "        self.init(.sRGB, red: Double((hex >> 16) & 0xFF) / 255, green: Double((hex >> 8) & 0xFF) / 255, blue: Double(hex & 0xFF) / 255)",
+    "    }",
+    "",
+    "    /// OS のライト・ダーク設定に追従する色",
+    "    init(light: UInt32, dark: UInt32) {",
+    "        self.init(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(Color(hex: dark)) : UIColor(Color(hex: light)) })",
     "    }",
     "}",
     "",
@@ -78,6 +97,10 @@ function kotlinTokens(tokens: Tokens): string {
     "    object Colors {",
   ];
   for (const [k, v] of flat(tokens, "color")) out.push(`        val ${k} = Color(0xFF${hex(v).toUpperCase()})`);
+  out.push("    }", "    object DarkColors {");
+  for (const [k, v] of darkColors(tokens)) out.push(`        val ${k} = Color(0xFF${hex(v).toUpperCase()})`);
+  out.push("    }", "    object Radius {");
+  for (const [k, v] of flat(tokens, "radius")) out.push(`        val ${k} = ${v}.dp`);
   out.push("    }", "    object Spacing {");
   for (const [k, v] of flat(tokens, "spacing")) out.push(`        val ${k} = ${v}.dp`);
   out.push("    }", "}", "");
