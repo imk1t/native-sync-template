@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 
@@ -47,17 +48,23 @@ private fun BookmarkNoteContent(viewModel: BookmarkNoteViewModel) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(Message.BookmarksEditNote.localized(), style = MaterialTheme.typography.headlineSmall)
-        OutlinedTextField(
-            state.note,
-            viewModel::edit,
-            Modifier.fillMaxWidth(),
-            enabled = state.isLoaded && !state.isSaving,
-            label = { Text(Message.BookmarksNotePrompt.localized()) },
-            minLines = 6,
-            maxLines = 10,
-            isError = state.characterCount > 1_000
-        )
-        Text(Message.BookmarksNoteCount(state.characterCount).localized())
+        DesignCard {
+            OutlinedTextField(
+                state.note,
+                viewModel::edit,
+                Modifier.fillMaxWidth(),
+                enabled = state.isLoaded && !state.isSaving,
+                label = { Text(Message.BookmarksNotePrompt.localized()) },
+                minLines = 6,
+                maxLines = 10,
+                isError = state.characterCount > 1_000
+            )
+            Text(
+                Message.BookmarksNoteCount(state.characterCount).localized(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         state.error?.let {
             if (state.isLoaded) {
                 Text(

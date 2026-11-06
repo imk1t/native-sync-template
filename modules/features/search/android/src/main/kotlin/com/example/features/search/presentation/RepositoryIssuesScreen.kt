@@ -2,7 +2,6 @@ package com.example.features.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +25,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.StatusBadge
 
 @Composable
@@ -58,18 +58,17 @@ private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
                 }
             }
             items(state.items, key = { it.id }) { issue ->
-                Column(
-                    Modifier.fillMaxWidth().clickable {
-                        viewModel.select(issue)
-                    },
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                DesignCard(Modifier.clickable { viewModel.select(issue) }) {
                     Text(issue.title, style = MaterialTheme.typography.titleMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         StatusBadge(issueStateLabel(issue.state), issue.state == "open")
-                        Text("#${issue.number}")
+                        Text("#${issue.number}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    Text(issue.updatedAt, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        issue.updatedAt,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
             item { PageFooter(state, viewModel::retry, viewModel::nextPage) }

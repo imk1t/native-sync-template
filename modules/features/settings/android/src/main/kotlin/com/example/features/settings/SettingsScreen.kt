@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.storage.DisplaySettings
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 
@@ -48,19 +49,27 @@ private fun SettingsContent(viewModel: SettingsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(Message.SettingsTitle.localized(), style = MaterialTheme.typography.headlineLarge)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(Message.SettingsDescriptions.localized(), Modifier.weight(1f))
-            Switch(
-                descriptions,
-                viewModel::save,
-                enabled = state.isLoaded && !state.isSaving,
-                modifier = Modifier.semantics { contentDescription = descriptionsLabel }
-            )
+        DesignCard {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(Message.SettingsDescriptions.localized(), Modifier.weight(1f))
+                Switch(
+                    descriptions,
+                    viewModel::save,
+                    enabled = state.isLoaded && !state.isSaving,
+                    modifier = Modifier.semantics { contentDescription = descriptionsLabel }
+                )
+            }
         }
         if (state.isSaving) LoadingIndicator(Message.CommonLoading.localized())
         state.error?.let { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load) }
-        Text(Message.AppName.localized(), style = MaterialTheme.typography.titleLarge)
-        Text(Message.SettingsDescription.localized())
-        Text(Message.SettingsStorageNote.localized())
+        DesignCard {
+            Text(Message.AppName.localized(), style = MaterialTheme.typography.titleLarge)
+            Text(Message.SettingsDescription.localized())
+            Text(
+                Message.SettingsStorageNote.localized(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
