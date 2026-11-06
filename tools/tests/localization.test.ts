@@ -108,6 +108,7 @@ test("quotes, percent signs, whitespace, XML and resource-reference characters s
 test("adding and removing a language updates metadata and removes only owned outputs", () => {
   const repo = copyRepo([
     "specs",
+    "DESIGN.md",
     "modules/features/search/spec.md",
     "modules/features/bookmarks/spec.md",
     "modules/features/settings/spec.md",

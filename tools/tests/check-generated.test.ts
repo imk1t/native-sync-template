@@ -12,7 +12,7 @@ const FILES = [
   "tools/generate.ts",
   "tools/check-generated.ts",
   "tools/lib",
-  "specs/tokens/tokens.json",
+  "DESIGN.md",
   "specs/openapi",
   "specs/routes.yaml",
   "specs/localization",
@@ -66,10 +66,8 @@ describe("check-generated", () => {
   });
 
   test("トークンを変えて再生成しないと失敗する", () => {
-    const path = join(repo, "specs/tokens/tokens.json");
-    const tokens = JSON.parse(readFileSync(path, "utf-8"));
-    tokens.spacing.medium.$value = "20";
-    writeFileSync(path, JSON.stringify(tokens));
+    const path = join(repo, "DESIGN.md");
+    writeFileSync(path, readFileSync(path, "utf-8").replace("medium: 16px", "medium: 20px"));
     git("add", ".");
     commit();
     expect(checkGenerated().code).toBe(1);

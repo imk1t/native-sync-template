@@ -2,7 +2,7 @@
 
 ## Overview
 
-Provide values generated from `specs/tokens` and common UI components built on them.
+Provide values generated from the front matter of the root `DESIGN.md` and common UI components built on them.
 
 Located in `modules/shared/designsystem`. Only `core/utils` and `core/extensions` dependencies are allowed, and only when used. Do not depend on other shared modules, features, networking, or storage. Other `shared/*` modules must not depend on designsystem either.
 
@@ -23,7 +23,7 @@ RepositoryRow receives RepositoryRowData (string and numeric display values only
 
 ## Design tokens
 
-Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `specs/tokens/tokens.json` (dark values live in `$extensions.dark`). Corner radii are chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
+Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (`colors` and `colorsDark`; every color needs both). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
 
 ## Theme
 

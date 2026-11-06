@@ -9,9 +9,9 @@ Each module's `spec.md` is the source of truth. Update the specification before 
 
 ## Steps
 
-1. Update the module's `spec.md`. Update `specs/openapi`, `specs/tokens`, and `specs/scenarios` as needed.
+1. Update the module's `spec.md`. Update `specs/openapi`, `DESIGN.md`, and `specs/scenarios` as needed.
    - APIs: Edit `specs/openapi/openapi.yaml` and run `bun tools/generate.ts` to regenerate DTOs and APIClient in `core/network`. Add domain-model mapping to its handwritten wrapper.
-   - Colors and spacing: Edit `specs/tokens/tokens.json` and regenerate with `bun tools/generate.ts`.
+   - Colors and spacing: Edit the front matter of `DESIGN.md` (add each color to both `colors` and `colorsDark`) and regenerate with `bun tools/generate.ts`.
    - Screens: Add entries to `specs/routes.yaml`, regenerate, and describe screens and transitions (such as `push(...)`) under “Navigation” in the spec. ViewModels call `Navigator`. Each feature's public `*Screen` entry point creates and retains its ViewModel. Add the `Route` → entry-point mapping to both platforms' app-layer `AppRouter`. Do not create individual screens or their ViewModels in the app layer.
 2. Implement one platform (`<module>/ios/` or `<module>/android/`).
 3. Implement the other with **matching type names and structure**. Document intentional differences under “Platform differences” in `spec.md`.
