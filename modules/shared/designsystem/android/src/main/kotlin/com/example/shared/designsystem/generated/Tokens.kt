@@ -6,9 +6,27 @@ import androidx.compose.ui.unit.dp
 
 object Tokens {
     object Colors {
-        val background = Color(0xFFFFFFFF)
-        val onBackground = Color(0xFF111111)
-        val primary = Color(0xFF0A84FF)
+        val background = Color(0xFFF3F1EC)
+        val line = Color(0xFFE3DFD6)
+        val muted = Color(0xFF5E636B)
+        val onBackground = Color(0xFF14161A)
+        val primary = Color(0xFF3D4DFF)
+        val surface = Color(0xFFFFFFFF)
+    }
+    object DarkColors {
+        val background = Color(0xFF0F1115)
+        val line = Color(0xFF2B2F37)
+        val muted = Color(0xFFA9AEB7)
+        val onBackground = Color(0xFFF3F1EC)
+        val primary = Color(0xFF8C98FF)
+        val surface = Color(0xFF1B1E24)
+    }
+    object Radius {
+        val avatar = 14.dp
+        val card = 22.dp
+        val chip = 22.dp
+        val hero = 28.dp
+        val pill = 34.dp
     }
     object Spacing {
         val large = 24.dp

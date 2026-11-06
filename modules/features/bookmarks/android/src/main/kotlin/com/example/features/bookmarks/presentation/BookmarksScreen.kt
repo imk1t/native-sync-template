@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +28,7 @@ import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
 import com.example.shared.bookmarks.Bookmark
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.EmptyState
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
@@ -64,7 +64,7 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
             item { EmptyState(Message.BookmarksEmptyTitle.localized(), Message.BookmarksEmptyMessage.localized()) }
         }
         items(bookmarks, key = { it.id }) { bookmark ->
-            Column {
+            DesignCard {
                 Column(Modifier.fillMaxWidth().clickable { viewModel.select(bookmark) }) {
                     RepositoryRow(
                         RepositoryRowData(
@@ -89,7 +89,6 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
                         pendingDelete = bookmark
                     }) { Text(Message.CommonDelete.localized(), color = MaterialTheme.colorScheme.error) }
                 }
-                HorizontalDivider()
             }
         }
     }

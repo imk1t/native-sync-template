@@ -1,5 +1,6 @@
 import CoreLocalization
 import CoreNavigation
+import DesignSystem
 import SwiftUI
 
 /// Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。
@@ -31,6 +32,7 @@ struct AppRoot<Screen: View>: View {
             }
         }
         .modifier(ModalLayer(navigator: navigator, level: 0, screen: screen))
+        .designTheme()
     }
 
     private func tabMessage(_ tab: AppTab) -> Message {

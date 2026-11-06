@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
+import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 import com.example.shared.designsystem.StatusBadge
@@ -43,12 +44,26 @@ private fun IssueDetailContent(viewModel: IssueDetailViewModel) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Text(Message.IssueTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
             state.items.firstOrNull()?.let { issue ->
-                item { Text(issue.title, style = MaterialTheme.typography.headlineSmall) }
-                item { StatusBadge(issueStateLabel(issue.state), issue.state == "open") }
-                item { Text("#${issue.number} · ${issue.author ?: Message.IssueUnknownAuthor.localized()}") }
                 item {
-                    SelectionContainer {
-                        Text(issue.body?.takeIf { it.isNotEmpty() } ?: Message.IssueEmptyBody.localized())
+                    DesignCard {
+                        Text(issue.title, style = MaterialTheme.typography.headlineSmall)
+                        StatusBadge(issueStateLabel(issue.state), issue.state == "open")
+                        Text(
+                            "#${issue.number} · ${issue.author ?: Message.IssueUnknownAuthor.localized()}",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                item {
+                    DesignCard {
+                        Text(
+                            Message.IssueBody.localized(),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        SelectionContainer {
+                            Text(issue.body?.takeIf { it.isNotEmpty() } ?: Message.IssueEmptyBody.localized())
+                        }
                     }
                 }
             }
