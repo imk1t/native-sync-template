@@ -24,7 +24,9 @@ struct BookmarkNoteView: View {
                     if viewModel.isLoaded {
                         Text(error.resolve(locale: locale)).foregroundStyle(.red)
                     } else {
-                        ErrorState(error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)) {
+                        ErrorState(
+                            error.resolve(locale: locale), retryLabel: Message.commonRetry.resolve(locale: locale)
+                        ) {
                             Task { await viewModel.load() }
                         }
                     }
