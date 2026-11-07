@@ -2,18 +2,42 @@
 name: Return Native
 colors:
   background: "#F3F1EC"
+  background-dark: "#0F1115"
   line: "#E3DFD6"
+  line-dark: "#2B2F37"
   muted: "#5E636B"
+  muted-dark: "#A9AEB7"
   onBackground: "#14161A"
+  onBackground-dark: "#F3F1EC"
   primary: "#3D4DFF"
+  primary-dark: "#8C98FF"
   surface: "#FFFFFF"
-colorsDark:
-  background: "#0F1115"
-  line: "#2B2F37"
-  muted: "#A9AEB7"
-  onBackground: "#F3F1EC"
-  primary: "#8C98FF"
-  surface: "#1B1E24"
+  surface-dark: "#1B1E24"
+typography:
+  h1:
+    fontFamily: Inter Tight
+    fontSize: 40px
+    fontWeight: 700
+  h2:
+    fontFamily: Inter Tight
+    fontSize: 34px
+    fontWeight: 700
+  h3:
+    fontFamily: Inter Tight
+    fontSize: 28px
+    fontWeight: 700
+  body:
+    fontFamily: Inter Tight
+    fontSize: 15px
+    fontWeight: 400
+  caption:
+    fontFamily: Inter Tight
+    fontSize: 13px
+    fontWeight: 500
+  mono:
+    fontFamily: JetBrains Mono
+    fontSize: 14px
+    fontWeight: 500
 rounded:
   avatar: 14px
   card: 22px
@@ -28,7 +52,7 @@ spacing:
 
 # Return Native design system
 
-This file is the source of truth for design tokens. `bun tools/generate.ts` turns the front matter into `Tokens` for iOS (Swift) and Android (Kotlin) in `shared/designsystem`; never edit the generated files. The format follows [DESIGN.md](https://stitch.withgoogle.com/docs/design-md/specification); the spec has no theme modes, so dark values live in the custom `colorsDark` section, and every color needs both.
+This file is the source of truth for design tokens. `bun tools/generate.ts` turns the front matter into `Tokens` for iOS (Swift) and Android (Kotlin) in `shared/designsystem`; never edit the generated files. The format follows [DESIGN.md](https://stitch.withgoogle.com/docs/design-md/specification); the spec has no theme modes, so each color's dark value is a second entry named `<name>-dark` (for example `primary` and `primary-dark`), and every color needs both.
 
 ## Overview
 
@@ -43,7 +67,7 @@ A paper-colored background, dark ink, and one indigo accent. Content sits on whi
 
 ## Typography
 
-Headings 40 / 34 / 28, body 15, captions 12–13. Inter Tight with Noto Sans JP for text, and a monospaced face (JetBrains Mono) for identifiers and numbers. iOS and Android may substitute the system face (SF, Roboto). Type sizes are not generated yet.
+`h1` 40, `h2` 34, `h3` 28, `body` 15, and `caption` 13. Inter Tight with Noto Sans JP for Japanese text, and a monospaced face (`mono`, JetBrains Mono) for identifiers and numbers. iOS and Android may substitute the system face (SF, Roboto). Typography is documented here but not generated into `Tokens` yet.
 
 ## Layout
 
@@ -63,6 +87,6 @@ Cards are flat: a `line` border, no shadow. The floating tab bar is the only tra
 
 ## Do's and Don'ts
 
-- Do add a color to both `colors` and `colorsDark`; generation fails otherwise.
+- Do add every color as a pair, `<name>` and `<name>-dark`; generation fails otherwise.
 - Do change a token here and regenerate, then run `mise run check`.
 - Don't hard-code colors, radii, or spacing in a feature module.

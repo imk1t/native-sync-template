@@ -23,7 +23,7 @@ RepositoryRow receives RepositoryRowData (string and numeric display values only
 
 ## Design tokens
 
-Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (`colors` and `colorsDark`; every color needs both). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
+Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
 
 ## Theme
 

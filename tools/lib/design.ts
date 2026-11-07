@@ -1,4 +1,4 @@
-/** DESIGN.md の front matter からデザイントークンを読む。色の暗い値は `colorsDark` に書く（DESIGN.md 仕様にモードはないため独自セクション）。 */
+/** DESIGN.md の front matter からデザイントークンを読む。色の暗い値は同じ `colors` に `<名前>-dark` で書く（DESIGN.md 仕様にモードはないため）。 */
 import { compare, type Dict, isDict } from "./util";
 
 export interface Tokens {
@@ -37,25 +37,26 @@ function dimensions(doc: Dict, name: string): [string, number][] {
     .sort(([a], [b]) => compare(a, b));
 }
 
+const DARK_SUFFIX = "-dark";
+
 export function parse(text: string): Tokens {
   const doc = frontMatter(text);
-  const light = section(doc, "colors");
-  const dark = section(doc, "colorsDark");
-  const colors = Object.entries(light)
-    .map(([key, value]): [string, string, string] => {
-      const darkValue = dark[key];
-      if (darkValue === undefined) throw new Error(`colors.${key} に対応する colorsDark.${key} がありません`);
-      for (const [where, v] of [
-        [`colors.${key}`, value],
-        [`colorsDark.${key}`, darkValue],
-      ] as const) {
-        if (!COLOR.test(String(v))) throw new Error(`${where}: "${String(v)}" は #RRGGBB で書いてください`);
-      }
-      return [key, String(value), String(darkValue)];
+  const all = section(doc, "colors");
+  for (const [key, value] of Object.entries(all)) {
+    if (!COLOR.test(String(value))) throw new Error(`colors.${key}: "${String(value)}" は #RRGGBB で書いてください`);
+  }
+  const names = Object.keys(all).filter((key) => !key.endsWith(DARK_SUFFIX));
+  for (const key of Object.keys(all)) {
+    if (key.endsWith(DARK_SUFFIX) && !names.includes(key.slice(0, -DARK_SUFFIX.length))) {
+      throw new Error(`colors.${key} に対応する colors.${key.slice(0, -DARK_SUFFIX.length)} がありません`);
+    }
+  }
+  const colors = names
+    .map((key): [string, string, string] => {
+      const dark = all[`${key}${DARK_SUFFIX}`];
+      if (dark === undefined) throw new Error(`colors.${key} に対応する colors.${key}${DARK_SUFFIX} がありません`);
+      return [key, String(all[key]), String(dark)];
     })
     .sort(([a], [b]) => compare(a, b));
-  for (const key of Object.keys(dark)) {
-    if (!(key in light)) throw new Error(`colorsDark.${key} に対応する colors.${key} がありません`);
-  }
   return { colors, rounded: dimensions(doc, "rounded"), spacing: dimensions(doc, "spacing") };
 }

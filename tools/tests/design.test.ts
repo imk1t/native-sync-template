@@ -1,14 +1,14 @@
 /** DESIGN.md の front matter 読み込みと検証を確かめる。 */
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
+import { main as checkDesign } from "../check-design";
 import * as design from "../lib/design";
 import { readText, ROOT } from "../lib/util";
 
 const BASE = `---
 colors:
   primary: "#3D4DFF"
-colorsDark:
-  primary: "#8C98FF"
+  primary-dark: "#8C98FF"
 rounded:
   card: 22px
 spacing:
@@ -42,12 +42,12 @@ describe("DESIGN.md", () => {
   });
 
   test("暗い値のない色は失敗する", () => {
-    expect(fail(BASE.replace('  primary: "#8C98FF"', '  other: "#000000"'))).toContain("colorsDark.primary");
+    expect(fail(BASE.replace('  primary-dark: "#8C98FF"\n', ""))).toContain("colors.primary-dark");
   });
 
   test("ライトのない暗い値は失敗する", () => {
     expect(
-      fail(BASE.replace('colorsDark:\n  primary: "#8C98FF"', 'colorsDark:\n  primary: "#8C98FF"\n  extra: "#000000"')),
+      fail(BASE.replace('  primary-dark: "#8C98FF"', '  primary-dark: "#8C98FF"\n  extra-dark: "#000000"')),
     ).toContain("colors.extra");
   });
 
@@ -61,5 +61,11 @@ describe("DESIGN.md", () => {
 
   test("front matter がないと失敗する", () => {
     expect(fail("# no front matter")).toContain("front matter");
+  });
+});
+
+describe("DESIGN.md lint", () => {
+  test("公式 lint がエラーも警告も出さない", () => {
+    expect(checkDesign()).toBe(0);
   });
 });
