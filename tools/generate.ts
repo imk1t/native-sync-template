@@ -29,6 +29,30 @@ export const OUTPUTS = {
   androidRoutes: "modules/core/navigation/android/src/main/kotlin/com/example/core/navigation/generated/Routes.kt",
 } as const;
 
+const SWIFT_WEIGHTS: Record<number, string> = {
+  100: "ultraLight",
+  200: "thin",
+  300: "light",
+  400: "regular",
+  500: "medium",
+  600: "semibold",
+  700: "bold",
+  800: "heavy",
+  900: "black",
+};
+
+const KOTLIN_WEIGHTS: Record<number, string> = {
+  100: "Thin",
+  200: "ExtraLight",
+  300: "Light",
+  400: "Normal",
+  500: "Medium",
+  600: "SemiBold",
+  700: "Bold",
+  800: "ExtraBold",
+  900: "Black",
+};
+
 function hex(value: string): string {
   return value.replace(/^#+/, "").slice(0, 6);
 }
@@ -48,8 +72,18 @@ function swiftTokens(tokens: design.Tokens): string {
   for (const [k, v] of tokens.rounded) out.push(`        public static let ${k}: CGFloat = ${v}`);
   out.push("    }", "    public enum Spacing {");
   for (const [k, v] of tokens.spacing) out.push(`        public static let ${k}: CGFloat = ${v}`);
+  out.push("    }", "    public enum Typography {");
+  for (const [k, size, weight] of tokens.typography) {
+    out.push(`        public static let ${k} = DesignTextStyle(size: ${size}, weight: .${SWIFT_WEIGHTS[weight]})`);
+  }
   out.push(
     "    }",
+    "}",
+    "",
+    "/// 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。",
+    "public struct DesignTextStyle: Sendable {",
+    "    public let size: CGFloat",
+    "    public let weight: SwiftUI.Font.Weight",
     "}",
     "",
     "extension SwiftUI.Color {",
@@ -73,7 +107,10 @@ function kotlinTokens(tokens: design.Tokens): string {
     "package com.example.shared.designsystem",
     "",
     "import androidx.compose.ui.graphics.Color",
+    "import androidx.compose.ui.text.font.FontWeight",
+    "import androidx.compose.ui.unit.TextUnit",
     "import androidx.compose.ui.unit.dp",
+    "import androidx.compose.ui.unit.sp",
     "",
     "object Tokens {",
     "    object Colors {",
@@ -85,7 +122,18 @@ function kotlinTokens(tokens: design.Tokens): string {
   for (const [k, v] of tokens.rounded) out.push(`        val ${k} = ${v}.dp`);
   out.push("    }", "    object Spacing {");
   for (const [k, v] of tokens.spacing) out.push(`        val ${k} = ${v}.dp`);
-  out.push("    }", "}", "");
+  out.push("    }", "    object Typography {");
+  for (const [k, size, weight] of tokens.typography) {
+    out.push(`        val ${k} = TextToken(${size}.sp, FontWeight.${KOTLIN_WEIGHTS[weight]})`);
+  }
+  out.push(
+    "    }",
+    "}",
+    "",
+    "/** 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。 */",
+    "data class TextToken(val size: TextUnit, val weight: FontWeight)",
+    "",
+  );
   return out.join("\n");
 }
 

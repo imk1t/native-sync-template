@@ -9,7 +9,7 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Tokens.Spacing.medium) {
-                Text(Message.settingsDisplay.resolve(locale: locale)).font(.footnote).bold()
+                Text(Message.settingsDisplay.resolve(locale: locale)).designCaption()
                     .foregroundStyle(Tokens.Color.muted)
                 Toggle(Message.settingsDescriptions.resolve(locale: locale), isOn: $viewModel.showDescriptions)
                     .disabled(!viewModel.isLoaded || viewModel.isSaving)
@@ -21,13 +21,13 @@ struct SettingsView: View {
                         Task { await viewModel.load() }
                     }
                 }
-                Text(Message.settingsAbout.resolve(locale: locale)).font(.footnote).bold()
+                Text(Message.settingsAbout.resolve(locale: locale)).designCaption()
                     .foregroundStyle(Tokens.Color.muted)
                 VStack(alignment: .leading, spacing: 8) {
                     Text(Message.appName.resolve(locale: locale)).font(.headline)
                     Text(Message.settingsDescription.resolve(locale: locale))
                     Text(Message.settingsStorageNote.resolve(locale: locale))
-                        .font(.footnote).foregroundStyle(Tokens.Color.muted)
+                        .designCaption().foregroundStyle(Tokens.Color.muted)
                 }.designCard()
             }.padding(Tokens.Spacing.medium)
         }

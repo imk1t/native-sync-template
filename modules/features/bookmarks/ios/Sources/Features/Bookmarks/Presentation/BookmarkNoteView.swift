@@ -10,7 +10,7 @@ struct BookmarkNoteView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Tokens.Spacing.medium) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(Message.bookmarksNote.resolve(locale: locale)).font(.footnote).bold()
+                    Text(Message.bookmarksNote.resolve(locale: locale)).designCaption()
                         .foregroundStyle(Tokens.Color.muted)
                     TextField(
                         Message.bookmarksNotePrompt.resolve(locale: locale), text: $viewModel.note, axis: .vertical
@@ -18,7 +18,7 @@ struct BookmarkNoteView: View {
                     .lineLimit(6...12).disabled(!viewModel.isLoaded || viewModel.isSaving)
                     Text(Message.bookmarksNoteCount(count: viewModel.characterCount).resolve(locale: locale))
                         .foregroundStyle(viewModel.characterCount > 1_000 ? .red : Tokens.Color.muted)
-                        .font(.caption)
+                        .designCaption()
                 }.designCard()
                 if let error = viewModel.error {
                     if viewModel.isLoaded {

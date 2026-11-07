@@ -23,7 +23,7 @@ RepositoryRow receives RepositoryRowData (string and numeric display values only
 
 ## Design tokens
 
-Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
+Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Typography is h1 (40), h2 (34), h3 (28), body (15), caption (13), and mono (14), each with a weight; the font family is not generated. Screens use Tokens instead of hard-coded colors, radii, or text sizes. Tappable elements are at least 44pt/dp.
 
 ## Theme
 
@@ -36,6 +36,7 @@ The iOS module is `DesignSystem`, with implementation in `Sources/Shared/DesignS
 On iOS 26 and later, gate Liquid Glass components with `#available` and keep them inside this module.
 
 - iOS lists use `designScreenBackground()` (Tokens' background) and `designListRow()` (no separators, no row background) so each card stands alone; Android screens get the background from `DesignTheme`.
+- iOS `designTheme()` also sets the default text to the body size, and `designFont(_:relativeTo:monospaced:)` / `designCaption()` apply other styles while following Dynamic Type. Android `DesignTheme` maps the styles onto Material 3's `Typography` (headlineLarge/Medium/Small, bodyLarge/Medium, bodySmall); other Material styles keep their defaults.
 - iOS `designTheme()` aligns the accent color (tint) with Tokens; background/text colors and automatic system-bar appearance changes use standard SwiftUI.
 - Android `DesignTheme` builds Material 3 light/dark color schemes from Tokens, consistent with `enableEdgeToEdge()` system-bar appearance. The launch-window theme also switches through `values` / `values-night`.
 - Before a row image loads, iOS displays a person icon and Android displays the owner's initial. Stars use an icon on iOS and a text label on Android.

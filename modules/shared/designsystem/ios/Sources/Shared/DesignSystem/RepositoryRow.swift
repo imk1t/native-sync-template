@@ -33,14 +33,14 @@ public struct RepositoryRow: View {
             AvatarView(url: repository.avatarURL, loadImage: loadImage)
             VStack(alignment: .leading, spacing: 6) {
                 Text(repository.fullName)
-                    .font(.system(.subheadline, design: .monospaced).weight(.medium))
+                    .designFont(Tokens.Typography.mono, relativeTo: .subheadline, monospaced: true)
                     .foregroundStyle(Tokens.Color.onBackground)
                 if showDescription, let description = repository.description, !description.isEmpty {
                     Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
                 }
                 FlowLayout {
                     ForEach(metaItems) { item in metaView(item) }
-                }.font(.caption).foregroundStyle(Tokens.Color.muted)
+                }.designCaption().foregroundStyle(Tokens.Color.muted)
             }.frame(maxWidth: .infinity, alignment: .leading)
         }.accessibilityElement(children: .combine)
     }

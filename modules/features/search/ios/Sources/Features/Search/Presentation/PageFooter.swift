@@ -22,8 +22,8 @@ struct PageFooter<Value: Equatable & Sendable>: View {
                     Message.searchEmptyTitle.resolve(locale: locale),
                     message: Message.searchEmptyMessage.resolve(locale: locale))
             }
-            if state.incomplete { Text(Message.searchIncomplete.resolve(locale: locale)).font(.footnote) }
-            if state.limitReached { Text(Message.searchLimit.resolve(locale: locale)).font(.footnote) }
+            if state.incomplete { Text(Message.searchIncomplete.resolve(locale: locale)).designCaption() }
+            if state.limitReached { Text(Message.searchLimit.resolve(locale: locale)).designCaption() }
             if state.nextPage != nil {
                 Button(Message.searchMore.resolve(locale: locale), action: next).disabled(state.isLoading).frame(
                     maxWidth: .infinity)
