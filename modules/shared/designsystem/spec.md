@@ -39,6 +39,8 @@ On iOS 26 and later, gate Liquid Glass components with `#available` and keep the
 - iOS `designTheme()` also sets the default text to the body size, and `designFont(_:relativeTo:monospaced:)` / `designCaption()` apply other styles while following Dynamic Type. Android `DesignTheme` maps the styles onto Material 3's `Typography` (headlineLarge/Medium/Small, bodyLarge/Medium, bodySmall); other Material styles keep their defaults.
 - iOS `designTheme()` aligns the accent color (tint) with Tokens; background/text colors and automatic system-bar appearance changes use standard SwiftUI.
 - Android `DesignTheme` builds Material 3 light/dark color schemes from Tokens, consistent with `enableEdgeToEdge()` system-bar appearance. The launch-window theme also switches through `values` / `values-night`.
+- Android has no system navigation bar, so `DesignNavTitle` draws the small centered title (iOS inline navigation title) and `AppRoot` overlays `DesignBackButton`, a round button like iOS's back button, at the same height. `DesignSectionLabel`, `DesignActionRow` (icon plus text, primary color), and `DesignDivider` mirror iOS's grouped sections and list rows. `DesignIcons` picks Material icons shaped like the SF Symbols iOS uses (star, bookmark, gear, magnifier, and so on).
+- Search filters are rows in a card (Android's dropdown opens from the row; iOS uses a menu picker), the search field is a pill with a clear button, and the issue state filter is a segmented control on both platforms. Counts are grouped with thousands separators on both platforms.
 - Before a row image loads, iOS displays a person icon and Android displays the owner's initial. Stars use an icon on iOS and a text label on Android.
 
 ## Localization

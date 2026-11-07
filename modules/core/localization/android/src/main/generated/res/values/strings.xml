@@ -9,7 +9,7 @@
     <string name="bookmarks_empty_title" formatted="false">"まだ保存されていません"</string>
     <string name="bookmarks_note" formatted="false">"メモ"</string>
     <plurals name="bookmarks_note_count">
-        <item quantity="other">"%1$d / 1,000文字"</item>
+        <item quantity="other">"%1$,d / 1,000文字"</item>
     </plurals>
     <string name="bookmarks_note_prompt" formatted="false">"気になったことを書いておきましょう"</string>
     <string name="common_back" formatted="false">"戻る"</string>
@@ -27,7 +27,7 @@
     <string name="error_not_found" formatted="false">"見つかりませんでした。削除または公開設定が変更された可能性があります。"</string>
     <string name="error_note_too_long" formatted="false">"メモは1,000文字以内で入力してください。"</string>
     <string name="error_rate_limited">"取得回数の上限です。%1$s以降に再試行してください。"</string>
-    <string name="error_server">"取得に失敗しました（HTTP %1$d）。時間をおいて再試行してください。"</string>
+    <string name="error_server">"取得に失敗しました（HTTP %1$,d）。時間をおいて再試行してください。"</string>
     <string name="error_settings_load" formatted="false">"設定を読み込めませんでした。再試行してください。"</string>
     <string name="error_settings_save" formatted="false">"設定を保存できませんでした。再試行してください。"</string>
     <string name="error_storage_delete" formatted="false">"削除を保存できませんでした。再試行してください。"</string>
@@ -43,12 +43,12 @@
     <string name="issue_unknown_author" formatted="false">"不明な投稿者"</string>
     <string name="issues_title" formatted="false">"Issues"</string>
     <plurals name="repository_forks">
-        <item quantity="other">"Fork %1$d"</item>
+        <item quantity="other">"Fork %1$,d"</item>
     </plurals>
     <string name="repository_issues" formatted="false">"Issue を見る"</string>
     <string name="repository_save" formatted="false">"保存する"</string>
     <plurals name="repository_stars">
-        <item quantity="other">"Star %1$d"</item>
+        <item quantity="other">"Star %1$,d"</item>
     </plurals>
     <string name="repository_title" formatted="false">"リポジトリ"</string>
     <string name="repository_unsave" formatted="false">"保存を解除"</string>
