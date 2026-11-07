@@ -6,7 +6,8 @@ A monorepo for developing native iOS (Swift) and Android (Kotlin) apps together.
 
 - `apps/{ios,android}`: Assembly only; no application logic.
 - The app layer owns startup, the AppRoot container, shared dependencies in AppDependencies, and route mappings in AppRouter. Each feature's public `*Screen` entry point creates and retains its screens and ViewModels.
-- `specs/`: Shared sources of truth: `openapi` (API), `tokens` (design tokens), `routes.yaml` (screens), `scenarios` (shared scenarios), and `third-party.yaml` (cross-platform library mappings).
+- `DESIGN.md` (repo root): Source of truth for design tokens (YAML front matter) and design guidance.
+- `specs/`: Shared sources of truth: `openapi` (API), `routes.yaml` (screens), `scenarios` (shared scenarios), and `third-party.yaml` (cross-platform library mappings).
 - `modules/<core|shared|features>/<name>/{spec.md, ios, android}`: Features and infrastructure. `spec.md` defines the contract for platform alignment.
 - `modules/shared/*`: UI, models, and logic used by multiple features. Common UI and tokens belong in `shared/designsystem`. Root-level `specs/` contains specifications and generation inputs, separate from shared implementations.
 - `docs/adr/`: Architecture decision records.
@@ -17,7 +18,7 @@ A monorepo for developing native iOS (Swift) and Android (Kotlin) apps together.
 Tool versions are pinned in `mise.toml`; check scripts use Bun (TypeScript). Run the following after changes:
 
 ```sh
-bun tools/generate.ts     # Regenerate after changing tokens, OpenAPI, routes, or localization
+bun tools/generate.ts     # Regenerate after changing DESIGN.md tokens, OpenAPI, routes, or localization
 mise run check            # Formatting, types, tooling tests, dependencies, generated files, spec alignment, scenarios (same as CI)
 mise run lint             # SwiftLint and ktlint after Swift/Kotlin changes
 mise run fmt              # bun fmt after changing TypeScript in tools/

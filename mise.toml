@@ -28,6 +28,7 @@ run = [
   "bun tools/check-spec-sync.ts",
   "bun tools/check-deps.ts",
   "bun tools/check-generated.ts",
+  "bun tools/check-design.ts",
   "bun tools/check-scenarios.ts",
 ]
 
