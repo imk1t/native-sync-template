@@ -27,8 +27,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -69,7 +71,13 @@ fun RepositoryRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(Modifier.size(8.dp).clip(CircleShape).background(languageTint(it)))
+                        val dotSize = with(LocalDensity.current) { 8.sp.toDp() }
+                        Box(
+                            Modifier
+                                .size(dotSize)
+                                .clip(CircleShape)
+                                .background(languageTint(it))
+                        )
                         Text(it, style = MaterialTheme.typography.labelMedium, color = muted)
                     }
                 }
@@ -103,7 +111,7 @@ private fun Avatar(url: String?, owner: String, loadImage: suspend (String) -> B
     }
     Box(
         Modifier
-            .size(44.dp)
+            .size(with(LocalDensity.current) { 44.sp.toDp() })
             .clip(RoundedCornerShape(Tokens.Radius.avatar))
             .background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center

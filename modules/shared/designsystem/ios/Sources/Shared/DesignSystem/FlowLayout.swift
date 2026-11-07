@@ -12,8 +12,10 @@ struct FlowLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let origins = arrange(width: bounds.width, subviews: subviews).origins
         for (index, origin) in origins.enumerated() {
+            let ideal = subviews[index].sizeThatFits(.unspecified).width
             subviews[index].place(
-                at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y), proposal: .unspecified)
+                at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y),
+                proposal: ProposedViewSize(width: min(ideal, bounds.width), height: nil))
         }
     }
 
@@ -24,7 +26,8 @@ struct FlowLayout: Layout {
         var usedWidth: CGFloat = 0
         var origins: [CGPoint] = []
         for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
+            var size = subview.sizeThatFits(.unspecified)
+            if size.width > width { size = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)) }
             if posX > 0, posX + size.width > width {
                 posX = 0
                 posY += rowHeight + lineSpacing

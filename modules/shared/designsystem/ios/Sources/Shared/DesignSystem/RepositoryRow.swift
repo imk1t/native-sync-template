@@ -15,6 +15,7 @@ public struct RepositoryRow: View {
     let starsLabel: String
     let savedLabel: String
     let loadImage: (String) async throws -> Data
+    @ScaledMetric(relativeTo: .caption) private var dotSize: CGFloat = 8
 
     public init(
         repository: RepositoryRowData, saved: Bool, showDescription: Bool,
@@ -57,15 +58,15 @@ public struct RepositoryRow: View {
         HStack(spacing: 4) {
             switch item.kind {
             case .language:
-                Circle().fill(languageTint(item.text)).frame(width: 8, height: 8)
+                Circle().fill(languageTint(item.text)).frame(width: dotSize, height: dotSize)
             case .stars:
                 Image(systemName: "star")
             case .saved:
                 Image(systemName: "bookmark.fill")
             }
-            Text(item.text).lineLimit(1)
+            Text(item.text)
         }
-        .fixedSize()
+        .fixedSize(horizontal: false, vertical: true)
         .foregroundStyle(item.kind == .saved ? Tokens.Color.primary : Tokens.Color.muted)
     }
 }

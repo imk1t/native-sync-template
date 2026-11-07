@@ -21,6 +21,10 @@ Provide LoadingIndicator, EmptyState, ErrorState, and StatusBadge. Errors includ
 
 RepositoryRow receives RepositoryRowData (string and numeric display values only) and image-loading behavior, sharing row rendering across search, details, and saved lists. It does not depend on API models or persistence. Use a fallback when image loading fails. A row shows the repository name in a monospaced face, an optional description in muted color, then the language (with its tint dot), star count, and a saved label in the primary color. These items wrap onto the next line when the width runs out, and never truncate or hide the star count. It draws no background; callers wrap rows in a card (`DesignCard` / `designCard()`).
 
+## Text size
+
+All text uses the platform's scalable styles (iOS Dynamic Type text styles, Android `sp`-based Material typography); do not use fixed point sizes. Icons and avatars that sit beside text scale with it (iOS `ScaledMetric`, Android `sp`-to-`dp`). Row metadata wraps to the next line instead of truncating or clipping, and a single label wider than the row wraps within it. Layouts must stay usable at the largest accessibility size on iOS and at 200% font scale on Android.
+
 ## Design tokens
 
 Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Screens use Tokens instead of hard-coded colors or radii. Tappable elements are at least 44pt/dp.
