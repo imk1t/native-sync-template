@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -25,6 +26,7 @@ import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.storage.DisplaySettings
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignSectionLabel
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 
@@ -49,8 +51,13 @@ private fun SettingsContent(viewModel: SettingsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(Message.SettingsTitle.localized(), style = MaterialTheme.typography.headlineLarge)
+        DesignSectionLabel(Message.SettingsDisplay.localized())
         DesignCard {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(Message.SettingsDescriptions.localized(), Modifier.weight(1f))
                 Switch(
                     descriptions,
@@ -62,6 +69,7 @@ private fun SettingsContent(viewModel: SettingsViewModel) {
         }
         if (state.isSaving) LoadingIndicator(Message.CommonLoading.localized())
         state.error?.let { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load) }
+        DesignSectionLabel(Message.SettingsAbout.localized())
         DesignCard {
             Text(Message.AppName.localized(), style = MaterialTheme.typography.titleLarge)
             Text(Message.SettingsDescription.localized())

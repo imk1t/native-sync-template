@@ -9,8 +9,8 @@
     <string name="bookmarks_empty_title" formatted="false">"No saved repositories"</string>
     <string name="bookmarks_note" formatted="false">"Note"</string>
     <plurals name="bookmarks_note_count">
-        <item quantity="one">"%1$d / 1,000 character"</item>
-        <item quantity="other">"%1$d / 1,000 characters"</item>
+        <item quantity="one">"%1$,d / 1,000 character"</item>
+        <item quantity="other">"%1$,d / 1,000 characters"</item>
     </plurals>
     <string name="bookmarks_note_prompt" formatted="false">"Write down what caught your interest"</string>
     <string name="common_back" formatted="false">"Back"</string>
@@ -28,7 +28,7 @@
     <string name="error_not_found" formatted="false">"Not found. It may have been deleted or made private."</string>
     <string name="error_note_too_long" formatted="false">"Notes must be 1,000 characters or fewer."</string>
     <string name="error_rate_limited">"Rate limit reached. Try again after %1$s."</string>
-    <string name="error_server">"Request failed (HTTP %1$d). Please try again later."</string>
+    <string name="error_server">"Request failed (HTTP %1$,d). Please try again later."</string>
     <string name="error_settings_load" formatted="false">"Could not load settings. Please try again."</string>
     <string name="error_settings_save" formatted="false">"Could not save settings. Please try again."</string>
     <string name="error_storage_delete" formatted="false">"Could not save the deletion. Please try again."</string>
@@ -44,14 +44,14 @@
     <string name="issue_unknown_author" formatted="false">"Unknown author"</string>
     <string name="issues_title" formatted="false">"Issues"</string>
     <plurals name="repository_forks">
-        <item quantity="one">"%1$d fork"</item>
-        <item quantity="other">"%1$d forks"</item>
+        <item quantity="one">"%1$,d fork"</item>
+        <item quantity="other">"%1$,d forks"</item>
     </plurals>
     <string name="repository_issues" formatted="false">"View issues"</string>
     <string name="repository_save" formatted="false">"Save repository"</string>
     <plurals name="repository_stars">
-        <item quantity="one">"%1$d star"</item>
-        <item quantity="other">"%1$d stars"</item>
+        <item quantity="one">"%1$,d star"</item>
+        <item quantity="other">"%1$,d stars"</item>
     </plurals>
     <string name="repository_title" formatted="false">"Repository"</string>
     <string name="repository_unsave" formatted="false">"Unsave"</string>

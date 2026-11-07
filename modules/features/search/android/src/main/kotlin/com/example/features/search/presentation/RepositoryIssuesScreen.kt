@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignNavTitle
 import com.example.shared.designsystem.StatusBadge
 
 @Composable
@@ -47,14 +50,25 @@ private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item {
-                Text(Message.IssuesTitle.localized(), style = MaterialTheme.typography.headlineLarge)
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    FilterChip(filter == "open", {
-                        viewModel.changeState("open")
-                    }, label = { Text(Message.IssueOpen.localized()) })
-                    FilterChip(filter == "closed", {
-                        viewModel.changeState("closed")
-                    }, label = { Text(Message.IssueClosed.localized()) })
+                DesignNavTitle(Message.IssuesTitle.localized())
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                    val choices = listOf("open" to Message.IssueOpen, "closed" to Message.IssueClosed)
+                    choices.forEachIndexed { index, (key, label) ->
+                        SegmentedButton(
+                            selected = filter == key,
+                            onClick = { viewModel.changeState(key) },
+                            shape = SegmentedButtonDefaults.itemShape(index, 2),
+                            colors = SegmentedButtonDefaults.colors(
+                                activeContainerColor = MaterialTheme.colorScheme.surface,
+                                activeContentColor = MaterialTheme.colorScheme.onSurface,
+                                activeBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                inactiveContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                inactiveContentColor = MaterialTheme.colorScheme.onSurface,
+                                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
+                            ),
+                            icon = {}
+                        ) { Text(label.localized()) }
+                    }
                 }
             }
             items(state.items, key = { it.id }) { issue ->

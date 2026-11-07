@@ -3,10 +3,10 @@ package com.example.features.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +23,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
+import com.example.shared.designsystem.DesignActionRow
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignDivider
+import com.example.shared.designsystem.DesignIcons
+import com.example.shared.designsystem.DesignNavTitle
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 import com.example.shared.designsystem.RepositoryRow
@@ -50,7 +54,7 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text(Message.RepositoryTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
+            item { DesignNavTitle(Message.RepositoryTitle.localized()) }
             state.items.firstOrNull()?.let { repository ->
                 item {
                     DesignCard {
@@ -71,7 +75,10 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
                             Message.CommonSaved.localized(),
                             viewModel.dependencies.images::load
                         )
-                        Text(Message.RepositoryForks(repository.forks).localized())
+                        Text(
+                            Message.RepositoryForks(repository.forks).localized(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
                 item {
@@ -80,20 +87,24 @@ private fun RepositoryDetailContent(viewModel: RepositoryDetailViewModel) {
                     }
                 }
                 item {
-                    Button(viewModel::toggleBookmark, enabled = !saving) {
-                        Text(
-                            if (bookmarks.any {
-                                    it.id == repository.id
-                                }
-                            ) {
-                                Message.RepositoryUnsave.localized()
-                            } else {
-                                Message.RepositorySave.localized()
-                            }
+                    val saved = bookmarks.any { it.id == repository.id }
+                    DesignCard {
+                        DesignActionRow(
+                            if (saved) DesignIcons.Bookmark else DesignIcons.BookmarkOutline,
+                            if (saved) Message.RepositoryUnsave.localized() else Message.RepositorySave.localized(),
+                            Modifier.fillMaxWidth(),
+                            enabled = !saving,
+                            onClick = viewModel::toggleBookmark
+                        )
+                        DesignDivider()
+                        DesignActionRow(
+                            DesignIcons.Issue,
+                            Message.RepositoryIssues.localized(),
+                            Modifier.fillMaxWidth(),
+                            onClick = viewModel::showIssues
                         )
                     }
                 }
-                item { Button(viewModel::showIssues) { Text(Message.RepositoryIssues.localized()) } }
             }
             saveError?.let { item { Text(it.localized(), color = MaterialTheme.colorScheme.error) } }
             if (state.isLoading) item { LoadingIndicator(Message.CommonLoading.localized()) }

@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignNavTitle
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
 import com.example.shared.designsystem.StatusBadge
@@ -42,7 +43,7 @@ private fun IssueDetailContent(viewModel: IssueDetailViewModel) {
     LaunchedEffect(viewModel) { viewModel.loadIfNeeded() }
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text(Message.IssueTitle.localized(), style = MaterialTheme.typography.headlineLarge) }
+            item { DesignNavTitle(Message.IssueTitle.localized()) }
             state.items.firstOrNull()?.let { issue ->
                 item {
                     DesignCard {

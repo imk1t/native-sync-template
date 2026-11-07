@@ -60,7 +60,7 @@ test("argument reordering follows the source interpolation order on iOS and decl
   const files = outputs(load(root));
   const catalog = JSON.parse(files[`${IOS}/Resources/Localizable.xcstrings`]!);
   expect(catalog.strings.message.localizations.en.stringUnit.value).toBe("%2$@: %1$lld");
-  expect(files[`${ANDROID}/res/values-en/strings.xml`]).toContain("%1$s: %2$d");
+  expect(files[`${ANDROID}/res/values-en/strings.xml`]).toContain("%1$s: %2$,d");
   write("en", { message: "{second}" });
   expect(() => load(root)).toThrow("引数");
   write("en", { message: "{first}: {extra}" });
