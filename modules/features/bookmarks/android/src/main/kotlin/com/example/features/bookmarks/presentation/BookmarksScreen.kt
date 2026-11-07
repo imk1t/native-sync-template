@@ -63,7 +63,13 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
         if (loaded &&
             bookmarks.isEmpty()
         ) {
-            item { EmptyState(Message.BookmarksEmptyTitle.localized(), Message.BookmarksEmptyMessage.localized()) }
+            item {
+                EmptyState(
+                    Message.BookmarksEmptyTitle.localized(),
+                    Message.BookmarksEmptyMessage.localized(),
+                    DesignIcons.BookmarkOutline
+                )
+            }
         }
         items(bookmarks, key = { it.id }) { bookmark ->
             DesignCard {
@@ -88,7 +94,9 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
                     }
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    DesignActionRow(DesignIcons.Edit, Message.BookmarksEditNote.localized()) { viewModel.edit(bookmark) }
+                    DesignActionRow(DesignIcons.Edit, Message.BookmarksEditNote.localized()) {
+                        viewModel.edit(bookmark)
+                    }
                     DesignActionRow(
                         DesignIcons.Delete,
                         Message.CommonDelete.localized(),

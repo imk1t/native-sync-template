@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +50,7 @@ import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.DesignDivider
 import com.example.shared.designsystem.DesignIcons
 import com.example.shared.designsystem.DesignNavTitle
+import com.example.shared.designsystem.DesignSectionLabel
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.RepositoryRow
 import com.example.shared.designsystem.RepositoryRowData
@@ -117,10 +119,22 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
             storageError?.let { item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::retry) } }
             if (!state.hasLoaded && !state.isLoading && state.error == null) {
                 item {
-                    Text(Message.SearchIntro.localized())
-                    Row {
-                        listOf("swift", "compose", "developer tools").forEach { query ->
-                            TextButton({ viewModel.example(query) }) { Text(query) }
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        DesignSectionLabel(Message.SearchTry.localized())
+                        DesignCard {
+                            Text(Message.SearchIntro.localized(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            listOf("swift", "compose", "developer tools").forEach { query ->
+                                DesignDivider()
+                                Text(
+                                    query,
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(min = 44.dp)
+                                        .clickable { viewModel.example(query) }
+                                        .wrapContentHeight(Alignment.CenterVertically),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }
