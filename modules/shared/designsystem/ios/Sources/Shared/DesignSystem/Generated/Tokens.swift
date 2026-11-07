@@ -22,6 +22,20 @@ public enum Tokens {
         public static let medium: CGFloat = 16
         public static let small: CGFloat = 8
     }
+    public enum Typography {
+        public static let body = DesignTextStyle(size: 15, weight: .regular)
+        public static let caption = DesignTextStyle(size: 13, weight: .medium)
+        public static let h1 = DesignTextStyle(size: 40, weight: .bold)
+        public static let h2 = DesignTextStyle(size: 34, weight: .bold)
+        public static let h3 = DesignTextStyle(size: 28, weight: .bold)
+        public static let mono = DesignTextStyle(size: 14, weight: .medium)
+    }
+}
+
+/// 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。
+public struct DesignTextStyle: Sendable {
+    public let size: CGFloat
+    public let weight: SwiftUI.Font.Weight
 }
 
 extension SwiftUI.Color {

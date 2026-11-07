@@ -6,6 +6,8 @@ export interface Tokens {
   colors: [string, string, string][];
   rounded: [string, number][];
   spacing: [string, number][];
+  /** 名前 → [文字サイズ, 太さ(100〜900)]。名前順。書体は生成しない（OS の書体に差し替えられるため）。 */
+  typography: [string, number, number][];
 }
 
 const COLOR = /^#[0-9A-Fa-f]{6}$/;
@@ -39,6 +41,26 @@ function dimensions(doc: Dict, name: string): [string, number][] {
 
 const DARK_SUFFIX = "-dark";
 
+function typography(doc: Dict): [string, number, number][] {
+  return Object.entries(section(doc, "typography"))
+    .map(([key, raw]): [string, number, number] => {
+      if (!isDict(raw)) throw new Error(`typography.${key} はマッピングにしてください`);
+      const size = DIMENSION.exec(String(raw.fontSize));
+      if (!size)
+        throw new Error(
+          `typography.${key}.fontSize: "${String(raw.fontSize)}" は 15 / 15px / 15dp の形で書いてください`,
+        );
+      const weight = Number(raw.fontWeight);
+      if (!Number.isInteger(weight) || weight < 100 || weight > 900 || weight % 100 !== 0) {
+        throw new Error(
+          `typography.${key}.fontWeight: "${String(raw.fontWeight)}" は 100〜900（100 刻み）で書いてください`,
+        );
+      }
+      return [key, Number(size[1]), weight];
+    })
+    .sort(([a], [b]) => compare(a, b));
+}
+
 export function parse(text: string): Tokens {
   const doc = frontMatter(text);
   const all = section(doc, "colors");
@@ -58,5 +80,10 @@ export function parse(text: string): Tokens {
       return [key, String(all[key]), String(dark)];
     })
     .sort(([a], [b]) => compare(a, b));
-  return { colors, rounded: dimensions(doc, "rounded"), spacing: dimensions(doc, "spacing") };
+  return {
+    colors,
+    rounded: dimensions(doc, "rounded"),
+    spacing: dimensions(doc, "spacing"),
+    typography: typography(doc),
+  };
 }

@@ -11,13 +11,13 @@ struct IssueDetailView: View {
             VStack(alignment: .leading, spacing: Tokens.Spacing.medium) {
                 if let issue = viewModel.content.state.items.first {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(issue.title).font(.title2).bold()
+                        Text(issue.title).designFont(Tokens.Typography.h3, relativeTo: .title2)
                         StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
                         let author = issue.author ?? Message.issueUnknownAuthor.resolve(locale: locale)
                         Text("#\(String(issue.number)) · \(author)").foregroundStyle(Tokens.Color.muted)
                     }.designCard()
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(Message.issueBody.resolve(locale: locale)).font(.footnote).bold()
+                        Text(Message.issueBody.resolve(locale: locale)).designCaption()
                             .foregroundStyle(Tokens.Color.muted)
                         Text(
                             issue.body.flatMap { $0.isEmpty ? nil : $0 }

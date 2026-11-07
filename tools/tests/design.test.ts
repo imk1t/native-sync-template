@@ -15,6 +15,11 @@ rounded:
   card: 22px
 spacing:
   small: 8
+typography:
+  body:
+    fontFamily: Inter Tight
+    fontSize: 15px
+    fontWeight: 400
 ---
 # body
 `;
@@ -40,6 +45,7 @@ describe("DESIGN.md", () => {
       colors: [["primary", "#3D4DFF", "#8C98FF"]],
       rounded: [["card", 22]],
       spacing: [["small", 8]],
+      typography: [["body", 15, 400]],
     });
   });
 
@@ -59,6 +65,11 @@ describe("DESIGN.md", () => {
 
   test("寸法は数値と px / dp だけ受け付ける", () => {
     expect(fail(BASE.replace("22px", "2rem"))).toContain("rounded.card");
+  });
+
+  test("文字サイズと太さを検証する", () => {
+    expect(fail(BASE.replace("15px", "big"))).toContain("typography.body.fontSize");
+    expect(fail(BASE.replace("fontWeight: 400", "fontWeight: 450"))).toContain("typography.body.fontWeight");
   });
 
   test("front matter がないと失敗する", () => {

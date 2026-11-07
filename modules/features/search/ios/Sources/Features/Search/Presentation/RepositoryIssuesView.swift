@@ -24,7 +24,7 @@ struct RepositoryIssuesView: View {
                             StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
                             Text("#\(String(issue.number))").foregroundStyle(Tokens.Color.muted)
                         }
-                        Text(issue.updatedAt).font(.caption).foregroundStyle(Tokens.Color.muted)
+                        Text(issue.updatedAt).designCaption().foregroundStyle(Tokens.Color.muted)
                     }.designCard()
                 }.buttonStyle(.plain).designListRow()
             }

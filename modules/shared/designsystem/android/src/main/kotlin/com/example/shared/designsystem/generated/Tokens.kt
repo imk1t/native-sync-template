@@ -2,7 +2,10 @@
 package com.example.shared.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 object Tokens {
     object Colors {
@@ -33,4 +36,15 @@ object Tokens {
         val medium = 16.dp
         val small = 8.dp
     }
+    object Typography {
+        val body = TextToken(15.sp, FontWeight.Normal)
+        val caption = TextToken(13.sp, FontWeight.Medium)
+        val h1 = TextToken(40.sp, FontWeight.Bold)
+        val h2 = TextToken(34.sp, FontWeight.Bold)
+        val h3 = TextToken(28.sp, FontWeight.Bold)
+        val mono = TextToken(14.sp, FontWeight.Medium)
+    }
 }
+
+/** 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。 */
+data class TextToken(val size: TextUnit, val weight: FontWeight)

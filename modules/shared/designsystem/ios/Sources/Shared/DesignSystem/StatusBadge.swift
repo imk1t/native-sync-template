@@ -8,7 +8,7 @@ public struct StatusBadge: View {
         self.emphasized = emphasized
     }
     public var body: some View {
-        Text(text).font(.caption).bold().padding(.horizontal, 10).padding(.vertical, 5)
+        Text(text).designCaption().padding(.horizontal, 10).padding(.vertical, 5)
             .foregroundStyle(emphasized ? Tokens.Color.primary : Tokens.Color.muted)
             .background((emphasized ? Tokens.Color.primary : Tokens.Color.muted).opacity(0.12), in: Capsule())
     }
