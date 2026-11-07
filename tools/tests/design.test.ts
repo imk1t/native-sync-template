@@ -1,5 +1,7 @@
 /** DESIGN.md の front matter 読み込みと検証を確かめる。 */
 import { describe, expect, test } from "bun:test";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { main as checkDesign } from "../check-design";
 import * as design from "../lib/design";
@@ -67,5 +69,24 @@ describe("DESIGN.md", () => {
 describe("DESIGN.md lint", () => {
   test("公式 lint がエラーも警告も出さない", () => {
     expect(checkDesign()).toBe(0);
+  });
+});
+
+describe("DESIGN.md lint の依存", () => {
+  // zod を 4 系に上げて使っているため、lint 自体が壊れていないかを壊れた参照で確かめる。
+  test("壊れたトークン参照をエラーにする", () => {
+    const directory = mkdtempSync(join(tmpdir(), "design-lint-"));
+    try {
+      const path = join(directory, "DESIGN.md");
+      writeFileSync(
+        path,
+        '---\ncolors:\n  primary: "#3D4DFF"\ncomponents:\n  button:\n    backgroundColor: "{colors.nope}"\n---\n# x\n',
+      );
+      const result = Bun.spawnSync(["bun", "x", "designmd", "lint", path], { cwd: ROOT });
+      expect(result.exitCode).toBe(1);
+      expect(result.stdout.toString()).toContain("broken-ref");
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });
