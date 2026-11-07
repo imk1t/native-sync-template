@@ -57,7 +57,16 @@ private fun RepositoryIssuesContent(viewModel: RepositoryIssuesViewModel) {
                         SegmentedButton(
                             selected = filter == key,
                             onClick = { viewModel.changeState(key) },
-                            shape = SegmentedButtonDefaults.itemShape(index, 2)
+                            shape = SegmentedButtonDefaults.itemShape(index, 2),
+                            colors = SegmentedButtonDefaults.colors(
+                                activeContainerColor = MaterialTheme.colorScheme.surface,
+                                activeContentColor = MaterialTheme.colorScheme.onSurface,
+                                activeBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                inactiveContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                inactiveContentColor = MaterialTheme.colorScheme.onSurface,
+                                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
+                            ),
+                            icon = {}
                         ) { Text(label.localized()) }
                     }
                 }

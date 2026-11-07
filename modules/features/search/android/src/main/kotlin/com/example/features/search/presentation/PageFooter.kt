@@ -1,8 +1,14 @@
 package com.example.features.search
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.shared.designsystem.EmptyState
@@ -21,6 +27,12 @@ internal fun <T> PageFooter(state: PagedState<T>, retry: () -> Unit, next: () ->
     if (state.nextPage !=
         null
     ) {
-        TextButton(onClick = next, enabled = !state.isLoading) { Text(Message.SearchMore.localized()) }
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            TextButton(
+                onClick = next,
+                enabled = !state.isLoading,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+            ) { Text(Message.SearchMore.localized()) }
+        }
     }
 }
