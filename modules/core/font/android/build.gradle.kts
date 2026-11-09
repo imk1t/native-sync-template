@@ -1,0 +1,20 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+}
+android {
+    namespace = "com.example.core.font"
+    compileSdk = 36
+    defaultConfig { minSdk = 28 }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+kotlin { jvmToolchain(17) }
+dependencies {
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    testImplementation(libs.kotlin.test)
+}
