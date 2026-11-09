@@ -24,7 +24,7 @@ struct SettingsView: View {
                 Text(Message.settingsAbout.resolve(locale: locale)).designCaption()
                     .foregroundStyle(Tokens.Color.muted)
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(Message.appName.resolve(locale: locale)).font(.headline)
+                    Text(Message.appName.resolve(locale: locale)).designBody(relativeTo: .headline, weightValue: 700)
                     Text(Message.settingsDescription.resolve(locale: locale))
                     Text(Message.settingsStorageNote.resolve(locale: locale))
                         .designCaption().foregroundStyle(Tokens.Color.muted)

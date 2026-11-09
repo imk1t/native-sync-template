@@ -46,3 +46,9 @@ Run JVM tests from `apps/android` with `./gradlew test`. Localization resource t
 - Compose resolves resources for the current Configuration with `Message.localized()`. ViewModels retain only Message and its arguments.
 - Connect the app's `generateLocaleConfig` and `resourceConfigurations` to the generated language list. Initially, only Japanese and English are exposed in the OS app-language settings.
 - CoreLocalization resource tests use AndroidX Test. Following repository conventions, sources live in `src/test/kotlin` and are connected to androidTest through Gradle. With an emulator connected, run `./gradlew :core:localization:connectedDebugAndroidTest`. Regular `./gradlew test` does not include these resource tests.
+
+## Fonts
+- The typefaces are `res/font` resources in `:core:font` (`inter_tight_regular.ttf`, and so on). Resource names must be lower-case letters, digits, and underscores, so they differ from the iOS file names; the files are byte-identical (`tools/tests/font-files.test.ts`).
+- No registration is needed. `FontFamilies` builds the `FontFamily` values, and `FontFamilies.lookup(name)` maps a `DESIGN.md` family name to one (null when not bundled).
+- Compose has no per-script font cascade in one `FontFamily`: a glyph missing from the bundled font (such as Japanese) falls back to the system font (Noto Sans CJK) automatically. A weight that is not bundled is replaced by the nearest bundled weight.
+- Material 3 `Typography` has no default family, so `DesignTheme` copies each of its 15 styles with the family.

@@ -4,7 +4,7 @@
 
 Provide values generated from the front matter of the root `DESIGN.md` and common UI components built on them.
 
-Located in `modules/shared/designsystem`. Only `core/utils` and `core/extensions` dependencies are allowed, and only when used. Do not depend on other shared modules, features, networking, or storage. Other `shared/*` modules must not depend on designsystem either.
+Located in `modules/shared/designsystem`. Only `core/utils`, `core/extensions`, and `core/font` dependencies are allowed, and only when used. Do not depend on other shared modules, features, networking, or storage. Other `shared/*` modules must not depend on designsystem either.
 
 ## Public API
 
@@ -23,7 +23,7 @@ RepositoryRow receives RepositoryRowData (string and numeric display values only
 
 ## Design tokens
 
-Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Typography is h1 (40), h2 (34), h3 (28), body (15), caption (13), and mono (14), each with a weight; the font family is not generated. Screens use Tokens instead of hard-coded colors, radii, or text sizes. Tappable elements are at least 44pt/dp.
+Colors are background, surface, onBackground, muted, line, and primary, each with light and dark values in `DESIGN.md` (every color is a pair, `<name>` and `<name>-dark`). Corner radii (`rounded`) are avatar, chip, card, hero, and pill; spacing is small, medium, and large. Typography is h1 (40), h2 (34), h3 (28), body (15), caption (13), and mono (14), each with a font family and a weight. `Tokens.Typography` carries the family name from `DESIGN.md`; `core/font` supplies the bundled typefaces (Inter Tight, JetBrains Mono), and text falls back to the system typeface when a family or weight is not bundled and for Japanese characters. Screens use Tokens instead of hard-coded colors, radii, or text sizes. Tappable elements are at least 44pt/dp.
 
 ## Theme
 
@@ -37,6 +37,7 @@ On iOS 26 and later, gate Liquid Glass components with `#available` and keep the
 
 - iOS lists use `designScreenBackground()` (Tokens' background) and `designListRow()` (no separators, no row background) so each card stands alone; Android screens get the background from `DesignTheme`.
 - iOS `designTheme()` also sets the default text to the body size, and `designFont(_:relativeTo:monospaced:)` / `designCaption()` apply other styles while following Dynamic Type. Android `DesignTheme` maps the styles onto Material 3's `Typography` (headlineLarge/Medium/Small, bodyLarge/Medium, bodySmall); other Material styles keep their defaults.
+- Typefaces: iOS `designFont` asks `FontRegistry` for the bundled face of the token's family and weight and uses `Font.custom`, else `Font.system`; the app layer registers the fonts at startup. Android `DesignTheme` applies the body family to every Material 3 text style and sets the token families on the styles it maps; `monoTextStyle()` gives the monospaced style (Tokens' mono, else the system monospace). Navigation bars, tab bars, and other system controls keep the system typeface on both platforms.
 - iOS `designTheme()` aligns the accent color (tint) with Tokens; background/text colors and automatic system-bar appearance changes use standard SwiftUI.
 - Android `DesignTheme` builds Material 3 light/dark color schemes from Tokens, consistent with `enableEdgeToEdge()` system-bar appearance. The launch-window theme also switches through `values` / `values-night`.
 - Android has no system navigation bar, so `DesignNavTitle` draws the small centered title (iOS inline navigation title) and `AppRoot` overlays `DesignBackButton`, a round button like iOS's back button, at the same height. `DesignSectionLabel`, `DesignActionRow` (icon plus text, primary color), and `DesignDivider` mirror iOS's grouped sections and list rows. `DesignIcons` picks Material icons shaped like the SF Symbols iOS uses (star, bookmark, gear, magnifier, and so on).

@@ -20,6 +20,8 @@ targets:
       - package: Modules
         product: CoreLocalization
       - package: Modules
+        product: CoreFont
+      - package: Modules
         product: FeatureSearch
       - package: Modules
         product: FeatureBookmarks

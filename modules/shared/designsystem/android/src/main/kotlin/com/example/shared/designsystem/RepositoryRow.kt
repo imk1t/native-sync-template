@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -50,8 +49,7 @@ fun RepositoryRow(
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 repository.fullName,
-                style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Monospace
+                style = monoTextStyle()
             )
             if (showDescription) {
                 repository.description?.takeIf { it.isNotEmpty() }?.let {

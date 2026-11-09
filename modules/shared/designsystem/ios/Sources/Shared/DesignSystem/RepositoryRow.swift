@@ -36,7 +36,8 @@ public struct RepositoryRow: View {
                     .designFont(Tokens.Typography.mono, relativeTo: .subheadline, monospaced: true)
                     .foregroundStyle(Tokens.Color.onBackground)
                 if showDescription, let description = repository.description, !description.isEmpty {
-                    Text(description).font(.subheadline).foregroundStyle(Tokens.Color.muted).lineLimit(3)
+                    Text(description).designBody(relativeTo: .subheadline).foregroundStyle(Tokens.Color.muted)
+                        .lineLimit(3)
                 }
                 FlowLayout {
                     ForEach(metaItems) { item in metaView(item) }
