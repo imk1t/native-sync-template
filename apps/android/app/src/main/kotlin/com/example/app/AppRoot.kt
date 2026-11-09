@@ -1,11 +1,11 @@
 package com.example.app
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,14 +13,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -36,6 +36,8 @@ import com.example.core.navigation.ModalStyle
 import com.example.core.navigation.NavigationEntry
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
+import com.example.shared.designsystem.DesignBackButton
+import com.example.shared.designsystem.DesignIcons
 
 /** Navigator の状態を描くだけ（docs/adr/0002）。タブ・スタック・モーダルは OS の部品に任せる。 */
 @Composable
@@ -64,11 +66,11 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
                         onClick = { navigator.selectTab(tab) },
                         icon = {
                             val icon = when (tab) {
-                                AppTab.Home -> android.R.drawable.ic_menu_search
-                                AppTab.Saved -> android.R.drawable.ic_menu_save
-                                AppTab.Settings -> android.R.drawable.ic_menu_preferences
+                                AppTab.Home -> DesignIcons.Search
+                                AppTab.Saved -> DesignIcons.Bookmark
+                                AppTab.Settings -> DesignIcons.Settings
                             }
-                            Icon(painterResource(icon), contentDescription = null)
+                            Icon(icon, contentDescription = null)
                         },
                         label = {
                             Text(
@@ -85,11 +87,14 @@ fun AppRoot(navigator: Navigator, screen: @Composable (Route) -> Unit) {
         ) {
             // edge-to-edge なので、コンテンツがステータスバーやカメラ切り欠きに重ならないよう上端を避ける
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))) {
-                Column {
-                    if (state.stack(state.selectedTab).isNotEmpty()) {
-                        TextButton(onClick = navigator::pop) { Text(Message.CommonBack.localized()) }
-                    }
-                    NavDisplay(entries = entriesByTab.getValue(state.selectedTab), onBack = navigator::pop)
+                NavDisplay(entries = entriesByTab.getValue(state.selectedTab), onBack = navigator::pop)
+                // 戻るボタンは、各画面の中央タイトル（DesignNavTitle）と同じ高さに重ねる
+                if (state.stack(state.selectedTab).isNotEmpty()) {
+                    DesignBackButton(
+                        Message.CommonBack.localized(),
+                        navigator::pop,
+                        Modifier.align(Alignment.TopStart).padding(start = 20.dp, top = 20.dp)
+                    )
                 }
             }
         }

@@ -171,7 +171,7 @@ function format(text: string, e: Entry, os: "ios" | "android"): string {
     (_, name: string) => {
       const a = e.arguments.find((a) => a.name === name)!;
       const i = os === "ios" ? e.iosOrder.indexOf(name) : e.arguments.indexOf(a);
-      return `%${i + 1}$${a.type === "string" ? (os === "ios" ? "@" : "s") : os === "ios" ? "lld" : "d"}`;
+      return `%${i + 1}$${a.type === "string" ? (os === "ios" ? "@" : "s") : os === "ios" ? "lld" : ",d"}`;
     },
   );
 }

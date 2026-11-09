@@ -28,7 +28,9 @@ import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.navigation.Navigator
 import com.example.shared.bookmarks.Bookmark
+import com.example.shared.designsystem.DesignActionRow
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignIcons
 import com.example.shared.designsystem.EmptyState
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
@@ -61,7 +63,13 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
         if (loaded &&
             bookmarks.isEmpty()
         ) {
-            item { EmptyState(Message.BookmarksEmptyTitle.localized(), Message.BookmarksEmptyMessage.localized()) }
+            item {
+                EmptyState(
+                    Message.BookmarksEmptyTitle.localized(),
+                    Message.BookmarksEmptyMessage.localized(),
+                    DesignIcons.BookmarkOutline
+                )
+            }
         }
         items(bookmarks, key = { it.id }) { bookmark ->
             DesignCard {
@@ -81,13 +89,19 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
                         Message.CommonSaved.localized(),
                         viewModel.dependencies.images::load
                     )
-                    if (bookmark.note.isNotEmpty()) Text(bookmark.note, maxLines = 2)
+                    if (bookmark.note.isNotEmpty()) {
+                        Text(bookmark.note, maxLines = 2, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
-                Row {
-                    TextButton({ viewModel.edit(bookmark) }) { Text(Message.BookmarksEditNote.localized()) }
-                    TextButton({
-                        pendingDelete = bookmark
-                    }) { Text(Message.CommonDelete.localized(), color = MaterialTheme.colorScheme.error) }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    DesignActionRow(DesignIcons.Edit, Message.BookmarksEditNote.localized()) {
+                        viewModel.edit(bookmark)
+                    }
+                    DesignActionRow(
+                        DesignIcons.Delete,
+                        Message.CommonDelete.localized(),
+                        color = MaterialTheme.colorScheme.error
+                    ) { pendingDelete = bookmark }
                 }
             }
         }
