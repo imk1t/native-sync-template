@@ -99,6 +99,8 @@ describe("repo checks", () => {
     ["features/search", "shared/designsystem", true],
     ["shared/designsystem", "core/utils", true],
     ["shared/designsystem", "core/extensions", true],
+    ["shared/designsystem", "core/font", true],
+    ["shared/bookmarks", "core/font", true],
     ["core/utils", "core/extensions", true],
     ["core/utils", "core/network", false],
     ["core/utils", "shared/bookmarks", false],

@@ -67,7 +67,7 @@ A paper-colored background, dark ink, and one indigo accent. Content sits on whi
 
 ## Typography
 
-`h1` 40, `h2` 34, `h3` 28, `body` 15, and `caption` 13. Inter Tight with Noto Sans JP for Japanese text, and a monospaced face (`mono`, JetBrains Mono) for identifiers and numbers. iOS and Android may substitute the system face (SF, Roboto). Sizes and weights are generated into `Tokens.Typography` on both platforms; the font family is documentation only, because each OS uses its own face. iOS applies them with `designFont(_:)` / `designCaption()` and `designTheme()` sets the body size; Android's `DesignTheme` maps them onto the Material 3 `Typography` (h1 → headlineLarge, h2 → headlineMedium, h3 → headlineSmall, body → bodyLarge/bodyMedium, caption → bodySmall).
+`h1` 40, `h2` 34, `h3` 28, `body` 15, and `caption` 13. Inter Tight with Noto Sans JP for Japanese text, and a monospaced face (`mono`, JetBrains Mono) for identifiers and numbers. iOS and Android may substitute the system face (SF, Roboto). Family names, sizes, and weights are generated into `Tokens.Typography` on both platforms. The Latin typefaces (Inter Tight, JetBrains Mono) are bundled by `core/font`; Japanese text, and any family or weight that is not bundled, falls back to the system face (SF / Hiragino on iOS, Roboto / Noto on Android). Noto Sans JP is not bundled. iOS applies them with `designFont(_:)` / `designCaption()` and `designTheme()` sets the body size; Android's `DesignTheme` maps them onto the Material 3 `Typography` (h1 → headlineLarge, h2 → headlineMedium, h3 → headlineSmall, body → bodyLarge/bodyMedium, caption → bodySmall).
 
 ## Layout
 

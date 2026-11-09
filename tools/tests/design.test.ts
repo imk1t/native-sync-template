@@ -45,7 +45,7 @@ describe("DESIGN.md", () => {
       colors: [["primary", "#3D4DFF", "#8C98FF"]],
       rounded: [["card", 22]],
       spacing: [["small", 8]],
-      typography: [["body", 15, 400]],
+      typography: [["body", "Inter Tight", 15, 400]],
     });
   });
 
@@ -69,6 +69,7 @@ describe("DESIGN.md", () => {
 
   test("文字サイズと太さを検証する", () => {
     expect(fail(BASE.replace("15px", "big"))).toContain("typography.body.fontSize");
+    expect(fail(BASE.replace("    fontFamily: Inter Tight\n", ""))).toContain("typography.body.fontFamily");
     expect(fail(BASE.replace("fontWeight: 400", "fontWeight: 450"))).toContain("typography.body.fontWeight");
   });
 

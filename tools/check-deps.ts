@@ -4,7 +4,7 @@
  *   core/extensions     -> 何にも依存しない
  *   core/utils          -> core/extensions のみ
  *   その他の core/*     -> 他の core/* のみ（循環禁止）
- *   shared/designsystem -> core/utils, core/extensions のみ
+ *   shared/designsystem -> core/utils, core/extensions, core/font のみ
  *   その他の shared/*   -> core/*（shared 同士は禁止）
  *   features/*          -> shared/*, core/*（features 同士は禁止）
  */
@@ -142,7 +142,7 @@ export function allowed(src: string, dst: string): boolean {
   if (src === dst || src === "core/extensions") return false;
   if (src === "core/utils") return dst === "core/extensions";
   if (src.startsWith("core/")) return dst.startsWith("core/");
-  if (src === "shared/designsystem") return isFoundationModule(dst);
+  if (src === "shared/designsystem") return isFoundationModule(dst) || dst === "core/font";
   if (src.startsWith("shared/")) return dst.startsWith("core/");
   if (src.startsWith("features/")) {
     return dst.startsWith("shared/") || dst.startsWith("core/");

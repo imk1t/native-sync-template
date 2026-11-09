@@ -73,17 +73,22 @@ function swiftTokens(tokens: design.Tokens): string {
   out.push("    }", "    public enum Spacing {");
   for (const [k, v] of tokens.spacing) out.push(`        public static let ${k}: CGFloat = ${v}`);
   out.push("    }", "    public enum Typography {");
-  for (const [k, size, weight] of tokens.typography) {
-    out.push(`        public static let ${k} = DesignTextStyle(size: ${size}, weight: .${SWIFT_WEIGHTS[weight]})`);
+  for (const [k, family, size, weight] of tokens.typography) {
+    out.push(
+      `        public static let ${k} = DesignTextStyle(family: "${family}", size: ${size}, weight: .${SWIFT_WEIGHTS[weight]}, weightValue: ${weight})`,
+    );
   }
   out.push(
     "    }",
     "}",
     "",
-    "/// 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。",
+    "/// 書体名・文字サイズ・太さ（DESIGN.md の typography）。書体名は core/font の同梱書体の引き当てに使い、ないときは OS の書体にする。",
     "public struct DesignTextStyle: Sendable {",
+    "    public let family: String",
     "    public let size: CGFloat",
     "    public let weight: SwiftUI.Font.Weight",
+    "    /// 同梱書体の引き当てに使う太さ（100〜900）。",
+    "    public let weightValue: Int",
     "}",
     "",
     "extension SwiftUI.Color {",
@@ -123,15 +128,15 @@ function kotlinTokens(tokens: design.Tokens): string {
   out.push("    }", "    object Spacing {");
   for (const [k, v] of tokens.spacing) out.push(`        val ${k} = ${v}.dp`);
   out.push("    }", "    object Typography {");
-  for (const [k, size, weight] of tokens.typography) {
-    out.push(`        val ${k} = TextToken(${size}.sp, FontWeight.${KOTLIN_WEIGHTS[weight]})`);
+  for (const [k, family, size, weight] of tokens.typography) {
+    out.push(`        val ${k} = TextToken("${family}", ${size}.sp, FontWeight.${KOTLIN_WEIGHTS[weight]})`);
   }
   out.push(
     "    }",
     "}",
     "",
-    "/** 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。 */",
-    "data class TextToken(val size: TextUnit, val weight: FontWeight)",
+    "/** 書体名・文字サイズ・太さ（DESIGN.md の typography）。書体名は core/font の同梱書体の引き当てに使い、ないときは OS の書体にする。 */",
+    "data class TextToken(val family: String, val size: TextUnit, val weight: FontWeight)",
     "",
   );
   return out.join("\n");

@@ -23,19 +23,22 @@ public enum Tokens {
         public static let small: CGFloat = 8
     }
     public enum Typography {
-        public static let body = DesignTextStyle(size: 15, weight: .regular)
-        public static let caption = DesignTextStyle(size: 13, weight: .medium)
-        public static let h1 = DesignTextStyle(size: 40, weight: .bold)
-        public static let h2 = DesignTextStyle(size: 34, weight: .bold)
-        public static let h3 = DesignTextStyle(size: 28, weight: .bold)
-        public static let mono = DesignTextStyle(size: 14, weight: .medium)
+        public static let body = DesignTextStyle(family: "Inter Tight", size: 15, weight: .regular, weightValue: 400)
+        public static let caption = DesignTextStyle(family: "Inter Tight", size: 13, weight: .medium, weightValue: 500)
+        public static let h1 = DesignTextStyle(family: "Inter Tight", size: 40, weight: .bold, weightValue: 700)
+        public static let h2 = DesignTextStyle(family: "Inter Tight", size: 34, weight: .bold, weightValue: 700)
+        public static let h3 = DesignTextStyle(family: "Inter Tight", size: 28, weight: .bold, weightValue: 700)
+        public static let mono = DesignTextStyle(family: "JetBrains Mono", size: 14, weight: .medium, weightValue: 500)
     }
 }
 
-/// 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。
+/// 書体名・文字サイズ・太さ（DESIGN.md の typography）。書体名は core/font の同梱書体の引き当てに使い、ないときは OS の書体にする。
 public struct DesignTextStyle: Sendable {
+    public let family: String
     public let size: CGFloat
     public let weight: SwiftUI.Font.Weight
+    /// 同梱書体の引き当てに使う太さ（100〜900）。
+    public let weightValue: Int
 }
 
 extension SwiftUI.Color {
