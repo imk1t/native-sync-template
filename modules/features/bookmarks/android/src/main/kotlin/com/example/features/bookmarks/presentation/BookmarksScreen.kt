@@ -31,6 +31,7 @@ import com.example.shared.bookmarks.Bookmark
 import com.example.shared.designsystem.DesignActionRow
 import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.DesignIcons
+import com.example.shared.designsystem.DesignLargeTitle
 import com.example.shared.designsystem.EmptyState
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
@@ -57,7 +58,7 @@ private fun BookmarksContent(viewModel: BookmarksViewModel) {
     var pendingDelete by remember { mutableStateOf<Bookmark?>(null) }
     LaunchedEffect(viewModel) { viewModel.load() }
     LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text(Message.CommonSaved.localized(), style = MaterialTheme.typography.headlineLarge) }
+        item { DesignLargeTitle(Message.CommonSaved.localized()) }
         if (loading) item { LoadingIndicator(Message.CommonLoading.localized()) }
         error?.let { item { ErrorState(it.localized(), Message.CommonRetry.localized(), viewModel::load) } }
         if (loaded &&

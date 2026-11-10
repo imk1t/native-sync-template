@@ -59,7 +59,7 @@ struct RepositorySearchView: View {
             }
         }
         .designScreenBackground()
-        .navigationTitle(Message.searchTitle.resolve(locale: locale))
+        .navigationTitle(Message.searchTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.large)
         .searchable(
             text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always),
             prompt: Message.searchPrompt.resolve(locale: locale)

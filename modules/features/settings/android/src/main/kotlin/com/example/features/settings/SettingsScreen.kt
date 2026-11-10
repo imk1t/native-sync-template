@@ -26,6 +26,7 @@ import com.example.core.localization.Message
 import com.example.core.localization.localized
 import com.example.core.storage.DisplaySettings
 import com.example.shared.designsystem.DesignCard
+import com.example.shared.designsystem.DesignLargeTitle
 import com.example.shared.designsystem.DesignSectionLabel
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.LoadingIndicator
@@ -50,7 +51,7 @@ private fun SettingsContent(viewModel: SettingsViewModel) {
         Modifier.verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(Message.SettingsTitle.localized(), style = MaterialTheme.typography.headlineLarge)
+        DesignLargeTitle(Message.SettingsTitle.localized())
         DesignSectionLabel(Message.SettingsDisplay.localized())
         DesignCard {
             Row(

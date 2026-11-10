@@ -13,6 +13,8 @@ Own the Search tab and repository/issue browsing. Separate Presentation, Domain,
 | `repositoryIssues` | Issues for `owner`, `repo` |
 | `issueDetail` | Issue details for `owner`, `repo`, `number` |
 
+The Search tab's top-level screen (`repositorySearch`) shows a large left-aligned title like Saved and Settings; the screens it pushes (details, issues, issue details) show a small centered title next to the back button.
+
 Selecting a search result calls `push(repositoryDetail)`; details opens `push(repositoryIssues)`; selecting an issue calls `push(issueDetail)`. Back navigation uses `pop()`. API IDs are 64-bit integers.
 
 ## Screens and state
