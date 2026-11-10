@@ -37,14 +37,14 @@ object Tokens {
         val small = 8.dp
     }
     object Typography {
-        val body = TextToken(15.sp, FontWeight.Normal)
-        val caption = TextToken(13.sp, FontWeight.Medium)
-        val h1 = TextToken(40.sp, FontWeight.Bold)
-        val h2 = TextToken(34.sp, FontWeight.Bold)
-        val h3 = TextToken(28.sp, FontWeight.Bold)
-        val mono = TextToken(14.sp, FontWeight.Medium)
+        val body = TextToken("Inter Tight", 15.sp, FontWeight.Normal)
+        val caption = TextToken("Inter Tight", 13.sp, FontWeight.Medium)
+        val h1 = TextToken("Inter Tight", 40.sp, FontWeight.Bold)
+        val h2 = TextToken("Inter Tight", 34.sp, FontWeight.Bold)
+        val h3 = TextToken("Inter Tight", 28.sp, FontWeight.Bold)
+        val mono = TextToken("JetBrains Mono", 14.sp, FontWeight.Medium)
     }
 }
 
-/** 文字サイズと太さ（DESIGN.md の typography）。書体は OS の標準を使う。 */
-data class TextToken(val size: TextUnit, val weight: FontWeight)
+/** 書体名・文字サイズ・太さ（DESIGN.md の typography）。書体名は core/font の同梱書体の引き当てに使い、ないときは OS の書体にする。 */
+data class TextToken(val family: String, val size: TextUnit, val weight: FontWeight)

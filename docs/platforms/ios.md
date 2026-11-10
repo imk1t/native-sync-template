@@ -46,3 +46,8 @@ Use `xcrun simctl list devices available` to find an installed simulator and rep
 - SwiftPM's `defaultLocalization` and XcodeGen's `developmentLanguage` / `knownRegions` read generated settings. Run `xcodegen generate` after regeneration.
 - Views pass `@Environment(\.locale)` to `Message.resolve(locale:)`. Core specifies `LocalizedStringResource` and `Bundle.module`. Do not store resolved strings in ViewModels.
 - CoreLocalizationTests verifies Japanese, English, unsupported-language fallback, and plurals using real resources on a simulator. See [ADR 0006](../adr/0006-localization.md).
+
+## Fonts
+- The typefaces are static TTF files in the `CoreFont` target's resources (`core/font/ios/Sources/Core/Font/Resources`, `.process`). They are not listed in `Info.plist` because a SwiftPM resource bundle is not the app bundle: `FontRegistry.registerAll()` registers them at startup with `CTFontManagerRegisterFontsForURL` (process scope). Call it before the first view (`AppMain.init`).
+- `Font.custom` needs the PostScript name (`InterTight-Medium`), not the family name; `FontRegistry.postScriptName(family:weight:)` maps the `DESIGN.md` family and weight to it. A weight that is not bundled returns nil and the caller uses the system font. Check `FontRegistry.isAvailable(postScriptName:)` rather than assuming a name works: a wrong name silently renders the system font.
+- Japanese characters are not in these typefaces and fall back to the system font (Hiragino Sans) automatically.

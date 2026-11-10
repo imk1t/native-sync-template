@@ -19,7 +19,7 @@ struct RepositoryIssuesView: View {
                     viewModel.select(issue)
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(issue.title).font(.headline).foregroundStyle(.primary)
+                        Text(issue.title).designBody(relativeTo: .headline, weightValue: 700).foregroundStyle(.primary)
                         HStack {
                             StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
                             Text("#\(String(issue.number))").foregroundStyle(Tokens.Color.muted)

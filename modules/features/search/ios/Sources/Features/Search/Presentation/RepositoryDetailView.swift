@@ -23,7 +23,7 @@ struct RepositoryDetailView: View {
                             savedLabel: Message.commonSaved.resolve(locale: locale),
                             loadImage: { try await viewModel.dependencies.images.load($0) })
                         Text(Message.repositoryForks(count: repository.forks).resolve(locale: locale))
-                            .font(.subheadline).foregroundStyle(Tokens.Color.muted)
+                            .designBody(relativeTo: .subheadline).foregroundStyle(Tokens.Color.muted)
                         if !repository.topics.isEmpty {
                             ScrollView(.horizontal) {
                                 HStack { ForEach(repository.topics, id: \.self) { StatusBadge($0) } }

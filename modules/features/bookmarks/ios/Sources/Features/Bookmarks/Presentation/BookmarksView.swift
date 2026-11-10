@@ -37,7 +37,8 @@ struct BookmarksView: View {
                             loadImage: { try await viewModel.dependencies.images.load($0) })
                     }.buttonStyle(.plain)
                     if !bookmark.note.isEmpty {
-                        Text(bookmark.note).font(.subheadline).lineLimit(2).foregroundStyle(.secondary)
+                        Text(bookmark.note).designBody(relativeTo: .subheadline).lineLimit(2)
+                            .foregroundStyle(.secondary)
                     }
                     HStack {
                         Button(Message.bookmarksEditNote.resolve(locale: locale), systemImage: "square.and.pencil") {
@@ -47,7 +48,7 @@ struct BookmarksView: View {
                         Button(Message.commonDelete.resolve(locale: locale), systemImage: "trash", role: .destructive) {
                             viewModel.pendingDelete = bookmark
                         }
-                    }.buttonStyle(.borderless).font(.subheadline)
+                    }.buttonStyle(.borderless).designBody(relativeTo: .subheadline)
                 }
                 .designCard().designListRow()
             }

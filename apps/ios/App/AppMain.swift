@@ -1,3 +1,4 @@
+import CoreFont
 import CoreNavigation
 import SwiftUI
 
@@ -5,6 +6,11 @@ import SwiftUI
 struct AppMain: App {
     @State private var navigator = Navigator()
     @State private var dependencies = AppDependencies()
+
+    init() {
+        // 同梱の書体を、最初の画面を作る前に登録する。
+        FontRegistry.registerAll()
+    }
 
     var body: some Scene {
         WindowGroup {

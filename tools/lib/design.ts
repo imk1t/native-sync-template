@@ -6,8 +6,8 @@ export interface Tokens {
   colors: [string, string, string][];
   rounded: [string, number][];
   spacing: [string, number][];
-  /** 名前 → [文字サイズ, 太さ(100〜900)]。名前順。書体は生成しない（OS の書体に差し替えられるため）。 */
-  typography: [string, number, number][];
+  /** 名前 → [書体名, 文字サイズ, 太さ(100〜900)]。名前順。書体名は core/font の同梱書体の引き当てに使う。 */
+  typography: [string, string, number, number][];
 }
 
 const COLOR = /^#[0-9A-Fa-f]{6}$/;
@@ -41,10 +41,14 @@ function dimensions(doc: Dict, name: string): [string, number][] {
 
 const DARK_SUFFIX = "-dark";
 
-function typography(doc: Dict): [string, number, number][] {
+function typography(doc: Dict): [string, string, number, number][] {
   return Object.entries(section(doc, "typography"))
-    .map(([key, raw]): [string, number, number] => {
+    .map(([key, raw]): [string, string, number, number] => {
       if (!isDict(raw)) throw new Error(`typography.${key} はマッピングにしてください`);
+      const family = typeof raw.fontFamily === "string" ? raw.fontFamily.trim() : "";
+      if (!family || !/^[A-Za-z0-9 -]+$/.test(family)) {
+        throw new Error(`typography.${key}.fontFamily: 書体名を 1 行の文字列で書いてください`);
+      }
       const size = DIMENSION.exec(String(raw.fontSize));
       if (!size)
         throw new Error(
@@ -56,7 +60,7 @@ function typography(doc: Dict): [string, number, number][] {
           `typography.${key}.fontWeight: "${String(raw.fontWeight)}" は 100〜900（100 刻み）で書いてください`,
         );
       }
-      return [key, Number(size[1]), weight];
+      return [key, family, Number(size[1]), weight];
     })
     .sort(([a], [b]) => compare(a, b));
 }

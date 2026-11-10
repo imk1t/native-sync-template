@@ -8,7 +8,7 @@ description: Create a new module under modules/ (features/<name>, core/<name>, o
 ## Location and naming
 
 - Features go in `modules/features/<name>/`, infrastructure in `modules/core/<name>/`, and UI, models, or logic shared across features in `modules/shared/<name>/`.
-- Common UI and tokens belong in `shared/designsystem`, which may depend only on `core/utils` and `core/extensions`. Other shared modules may depend only on core. Shared modules must not depend on each other.
+- Common UI and tokens belong in `shared/designsystem`, which may depend only on `core/utils`, `core/extensions`, and `core/font`. Other shared modules may depend only on core. Shared modules must not depend on each other.
 - General extensions of standard types belong in `core/extensions` (no internal dependencies); general operations exposed through dedicated types belong in `core/utils` (only `core/extensions` is allowed as an internal dependency). Neither may use third-party libraries. Keep feature-specific extensions in their feature.
 - Each module contains `spec.md`, `ios/`, and `android/`. Use corresponding names on both platforms (`FeatureLogin` on iOS ⇔ `:features:login` on Android).
 
