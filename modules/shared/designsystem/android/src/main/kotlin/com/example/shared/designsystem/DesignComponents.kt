@@ -28,6 +28,12 @@ import androidx.compose.ui.unit.dp
 /** 押せる部品の最小の大きさ（44dp）。 */
 private val TouchTarget = 44.dp
 
+/** タブの最上位の画面（探す・保存済み・設定）の左寄せの大見出し（iOS のラージタイトル）。 */
+@Composable
+fun DesignLargeTitle(text: String) {
+    Text(text, style = MaterialTheme.typography.headlineLarge)
+}
+
 /** 画面上端の小さな中央タイトル（iOS のインライン・ナビゲーションタイトル）。戻るボタンは AppRoot が重ねる。 */
 @Composable
 fun DesignNavTitle(text: String) {

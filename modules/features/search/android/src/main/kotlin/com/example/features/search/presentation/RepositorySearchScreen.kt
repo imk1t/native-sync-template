@@ -49,7 +49,7 @@ import com.example.shared.designsystem.DesignActionRow
 import com.example.shared.designsystem.DesignCard
 import com.example.shared.designsystem.DesignDivider
 import com.example.shared.designsystem.DesignIcons
-import com.example.shared.designsystem.DesignNavTitle
+import com.example.shared.designsystem.DesignLargeTitle
 import com.example.shared.designsystem.DesignSectionLabel
 import com.example.shared.designsystem.ErrorState
 import com.example.shared.designsystem.RepositoryRow
@@ -78,7 +78,7 @@ private fun RepositorySearchContent(viewModel: RepositorySearchViewModel) {
     PullToRefreshBox(state.isLoading && state.hasLoaded, viewModel::refresh, Modifier.fillMaxSize()) {
         LazyColumn(contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
-                DesignNavTitle(Message.SearchTitle.localized())
+                DesignLargeTitle(Message.SearchTitle.localized())
                 SearchField(form.query, { viewModel.edit(form.copy(query = it)) }, viewModel::submit)
             }
             item {

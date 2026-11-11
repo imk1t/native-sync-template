@@ -13,6 +13,8 @@ Own the Search tab and repository/issue browsing. Separate Presentation, Domain,
 | `repositoryIssues` | Issues for `owner`, `repo` |
 | `issueDetail` | Issue details for `owner`, `repo`, `number` |
 
+The Search tab's top-level screen (`repositorySearch`) shows a large left-aligned title like Saved and Settings; the screens it pushes (details, issues, issue details) show a small centered title next to the back button.
+
 Selecting a search result calls `push(repositoryDetail)`; details opens `push(repositoryIssues)`; selecting an issue calls `push(issueDetail)`. Back navigation uses `pop()`. API IDs are 64-bit integers.
 
 ## Screens and state
@@ -45,6 +47,7 @@ Selecting a search result calls `push(repositoryDetail)`; details opens `push(re
 - The iOS module is `FeatureSearch`, with implementation in `Sources/Features/Search` and tests in `Tests/Features/Search`. The Android package is `com.example.features.search`.
 - iOS uses @MainActor / Observation and per-screen @State; Android uses ViewModel / StateFlow and a ViewModelStore per Navigation 3 entry. Fetching is owned by iOS task and Android viewModelScope.
 - Public entry points are Screen on both platforms. Internal rendering uses Swift View / Kotlin Content; API acronyms are GitHubAPI / GitHubApi. Keep Domain and Data responsibilities and type names aligned.
+- The search field is a pill drawn as the first row of the list on both platforms (iOS does not use `searchable`: its always-visible drawer forces a small inline title, which conflicts with the large title of a top-level screen). It has a clear button and submits with the keyboard's search key.
 - Use iOS List / Picker and Android LazyColumn / selection chips. Support accessibility labels and text scaling. Restoring screen stacks after process termination is out of scope.
 
 ## Scenarios

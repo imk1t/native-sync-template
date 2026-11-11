@@ -9,6 +9,10 @@ struct RepositorySearchView: View {
 
     var body: some View {
         List {
+            SearchField(
+                query: $viewModel.query, prompt: Message.searchPrompt.resolve(locale: locale), submit: viewModel.submit
+            )
+            .designListRow()
             Section {
                 Picker(Message.searchLanguage.resolve(locale: locale), selection: $viewModel.language) {
                     Text(Message.searchAll.resolve(locale: locale)).tag("")
@@ -59,13 +63,30 @@ struct RepositorySearchView: View {
             }
         }
         .designScreenBackground()
-        .navigationTitle(Message.searchTitle.resolve(locale: locale))
-        .searchable(
-            text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always),
-            prompt: Message.searchPrompt.resolve(locale: locale)
-        )
-        .onSubmit(of: .search, viewModel.submit)
+        .navigationTitle(Message.searchTitle.resolve(locale: locale)).navigationBarTitleDisplayMode(.large)
         .task(id: viewModel.revision) { await viewModel.loadIfNeeded() }
         .refreshable { await viewModel.refresh() }
+    }
+}
+
+/// 丸い検索欄。大見出しのタイトルと並べるため、システムの searchable ではなく一覧の中に置く。
+private struct SearchField: View {
+    @Binding var query: String
+    let prompt: String
+    let submit: () -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass").foregroundStyle(Tokens.Color.muted)
+            TextField(prompt, text: $query).submitLabel(.search).onSubmit(submit)
+            if !query.isEmpty {
+                Button { query = "" } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(Tokens.Color.muted)
+                }.buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, Tokens.Spacing.medium).frame(minHeight: 44)
+        .background(Tokens.Color.surface, in: Capsule())
+        .overlay(Capsule().stroke(Tokens.Color.line))
     }
 }
