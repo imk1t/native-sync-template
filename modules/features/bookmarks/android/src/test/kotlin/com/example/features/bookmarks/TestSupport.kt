@@ -1,6 +1,7 @@
 package com.example.features.bookmarks
 
 import com.example.core.storage.KeyValueStore
+import com.example.shared.bookmarks.BookmarkedRepository
 import java.io.IOException
 
 class FailingStore : KeyValueStore {
