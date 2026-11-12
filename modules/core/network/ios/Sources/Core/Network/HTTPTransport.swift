@@ -49,7 +49,9 @@ public protocol HTTPTransport: Sendable {
 }
 
 extension HTTPTransport {
-    public func call<T: Decodable & Sendable>(_ request: HTTPRequest, decoding type: T.Type) async throws -> APIResponse<T> {
+    public func call<T: Decodable & Sendable>(
+        _ request: HTTPRequest, decoding type: T.Type
+    ) async throws -> APIResponse<T> {
         let response = try await send(request)
         guard (200..<300).contains(response.status) else {
             throw APIError(status: response.status, headers: response.headers, body: response.body)
