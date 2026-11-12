@@ -1,5 +1,6 @@
 import CoreStorage
 import Foundation
+import SharedBookmarks
 
 actor FailingStore: KeyValueStore {
     var values: [String: String] = [:]
