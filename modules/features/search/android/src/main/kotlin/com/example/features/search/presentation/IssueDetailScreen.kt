@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -47,7 +48,12 @@ private fun IssueDetailContent(viewModel: IssueDetailViewModel) {
             state.items.firstOrNull()?.let { issue ->
                 item {
                     DesignCard {
-                        Text(issue.title, style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            issue.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
                         StatusBadge(issueStateLabel(issue.state), issue.state == "open")
                         Text(
                             "#${issue.number} · ${issue.author ?: Message.IssueUnknownAuthor.localized()}",

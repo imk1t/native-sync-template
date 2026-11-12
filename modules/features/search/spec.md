@@ -26,6 +26,7 @@ Selecting a search result calls `push(repositoryDetail)`; details opens `push(re
 - Trim leading/trailing query whitespace with `core/extensions`' trimmedWhitespace, preserving internal whitespace. Follow that module's defined whitespace set.
 - Fetch 20 items per page, deduplicate by ID, and use API pagination to detect the end. Display the 1,000-result search limit and incomplete results.
 - Details have loading, success, and error states. Support null descriptions, languages, authors, and bodies. Issue bodies are plain text.
+- On the issue details screen, the title in the title card is limited to 3 lines; a longer title ends with an ellipsis (`…`) at the tail. The body below it is always shown in full. The limit applies at every text size and does not change the issue list rows or the repository details title. Assistive technologies still read the whole title.
 - Allow Open / Closed issue selection. Exclude pull requests while preserving next-page controls even on PR-only pages.
 - Load initially only once per screen scope. Explicit refresh bypasses the cache. Ignore stale results after condition changes or cancellation. Cancellation does not display an error; if nothing was loaded, retry when the screen reappears.
 
