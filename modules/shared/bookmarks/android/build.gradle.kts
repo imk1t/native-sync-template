@@ -15,7 +15,6 @@ android {
 kotlin { jvmToolchain(17) }
 dependencies {
     implementation(project(":core:extensions"))
-    implementation(project(":core:network"))
     implementation(project(":core:storage"))
     implementation(libs.serialization.json)
     implementation(libs.coroutines.core)

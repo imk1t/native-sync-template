@@ -23,7 +23,7 @@ Create BookmarkRepository once in the app and share the same instance with searc
 
 ## APIs and tokens
 
-Depend on `core/storage` (KeyValueStore), `core/network` (RepositorySummary), and `core/extensions` (code point counting). Do not handle generated DTOs. No external APIs or tokens.
+Depend on `core/storage` (KeyValueStore), and `core/extensions` (code point counting). `BookmarkedRepository` is this module's own repository snapshot (id, name, full name, owner, avatar URL, description, language, stars, forks, topics, HTML URL) and does not depend on GitHub API types; callers convert. No external APIs or tokens.
 
 ## Platform differences
 

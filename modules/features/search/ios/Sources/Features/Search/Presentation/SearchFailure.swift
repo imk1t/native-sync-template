@@ -1,7 +1,7 @@
 import CoreLocalization
-import CoreNetwork
 import CoreUtils
 import Foundation
+import SharedGitHub
 
 public enum SearchFailure: Equatable, Sendable {
     case message(Message)

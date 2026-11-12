@@ -1,5 +1,4 @@
 import CoreLocalization
-import CoreNetwork
 
 public struct PagedState<Value: Equatable & Sendable>: Equatable {
     public var items: [Value] = []

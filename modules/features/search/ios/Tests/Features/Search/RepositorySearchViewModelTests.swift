@@ -1,6 +1,6 @@
 import CoreNavigation
-import CoreNetwork
 import Foundation
+import SharedGitHub
 import Synchronization
 import Testing
 

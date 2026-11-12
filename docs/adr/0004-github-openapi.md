@@ -6,7 +6,7 @@ The initial source is `descriptions/api.github.com/api.github.com.2026-03-10.jso
 
 `tools/generate.ts` reads `openapi.yaml` and generates Swift/Kotlin DTOs and clients without rewriting the contract. Generation and CI checks do not depend on the network. CI checks regenerated output and shared scenarios against the contract. Unsupported syntax fails generation.
 
-Generated DTOs and clients remain inside core/network. The handwritten GitHubAPI wrapper maps them to domain models and page information. Response headers belong to each call's result and support Link parsing and rate-limit handling.
+Generated DTOs and clients remain inside shared/github ([ADR 0008](0008-split-github-from-core-network.md)). The handwritten GitHubAPI wrapper maps them to domain models and page information. Response headers belong to each call's result and support Link parsing and rate-limit handling.
 
 ## Update procedure
 

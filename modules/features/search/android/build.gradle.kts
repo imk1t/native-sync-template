@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:storage"))
     implementation(project(":shared:bookmarks"))
+    implementation(project(":shared:github"))
     implementation(project(":shared:designsystem"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)

@@ -49,7 +49,7 @@ public protocol HTTPTransport: Sendable {
 }
 
 extension HTTPTransport {
-    func call<T: Decodable & Sendable>(_ request: HTTPRequest, decoding type: T.Type) async throws -> APIResponse<T> {
+    public func call<T: Decodable & Sendable>(_ request: HTTPRequest, decoding type: T.Type) async throws -> APIResponse<T> {
         let response = try await send(request)
         guard (200..<300).contains(response.status) else {
             throw APIError(status: response.status, headers: response.headers, body: response.body)
@@ -57,7 +57,7 @@ extension HTTPTransport {
         return APIResponse(value: try JSONDecoder().decode(T.self, from: response.body), headers: response.headers)
     }
 
-    func call(_ request: HTTPRequest) async throws {
+    public func call(_ request: HTTPRequest) async throws {
         let response = try await send(request)
         guard (200..<300).contains(response.status) else {
             throw APIError(status: response.status, headers: response.headers, body: response.body)
@@ -66,7 +66,7 @@ extension HTTPTransport {
 }
 
 /// パスの 1 区切りとして埋め込む値をエンコードする（"/" もエスケープする）。
-func pathSegment(_ value: some LosslessStringConvertible) -> String {
+public func pathSegment(_ value: some LosslessStringConvertible) -> String {
     var allowed = CharacterSet.urlPathAllowed
     allowed.remove("/")
     return String(value).addingPercentEncoding(withAllowedCharacters: allowed) ?? String(value)

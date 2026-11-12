@@ -1,6 +1,6 @@
 import CoreNavigation
-import CoreNetwork
 import Observation
+import SharedGitHub
 
 @MainActor
 @Observable

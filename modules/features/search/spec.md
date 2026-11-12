@@ -38,8 +38,8 @@ Selecting a search result calls `push(repositoryDetail)`; details opens `push(re
 
 ## APIs and tokens
 
-- APIs: `search/repos`, `repos/get`, `issues/list-for-repo`, and `issues/get`. Wrap `core/network`'s GitHubAPI in a Repository.
-- Depend on `core/navigation`, `core/network`, `core/storage`, `core/extensions`, `core/utils`, `shared/bookmarks`, and `shared/designsystem`. Do not depend on other features.
+- APIs: `search/repos`, `repos/get`, `issues/list-for-repo`, and `issues/get`. Wrap `shared/github`'s GitHubAPI in a Repository.
+- Depend on `core/navigation`, `core/network` (image loading), `core/storage`, `core/extensions`, `core/utils`, `shared/github`, `shared/bookmarks`, and `shared/designsystem`. Do not depend on other features.
 - Use shared/designsystem rows, state displays, and badges.
 
 ## Platform differences

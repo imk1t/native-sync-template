@@ -1,7 +1,7 @@
 package com.example.features.search
 
 import com.example.core.localization.Message
-import com.example.core.network.Page
+import com.example.shared.github.Page
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive

@@ -1,8 +1,6 @@
 package com.example.app
 
 import android.content.Context
-import com.example.core.network.DefaultGitHubApi
-import com.example.core.network.GitHubTransport
 import com.example.core.network.ImageLoader
 import com.example.core.network.UrlConnectionTransport
 import com.example.core.storage.DataStoreKeyValueStore
@@ -11,6 +9,8 @@ import com.example.features.bookmarks.BookmarksDependencies
 import com.example.features.search.GitHubRepositoryImpl
 import com.example.features.search.SearchDependencies
 import com.example.shared.bookmarks.BookmarkRepository
+import com.example.shared.github.DefaultGitHubApi
+import com.example.shared.github.GitHubTransport
 
 /** アプリ全体で共有する保存状態・設定・画像キャッシュを組み立てる。 */
 internal class AppDependencies(context: Context) {

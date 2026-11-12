@@ -1,4 +1,3 @@
-import CoreNetwork
 import CoreStorage
 import Foundation
 
@@ -13,6 +12,6 @@ actor FailingStore: KeyValueStore {
     }
 }
 
-func sample(_ id: Int64 = 5_000_000_001) -> RepositorySummary {
-    RepositorySummary(id: id, name: "repo", fullName: "owner/repo", owner: "owner")
+func sample(_ id: Int64 = 5_000_000_001) -> BookmarkedRepository {
+    BookmarkedRepository(id: id, name: "repo", fullName: "owner/repo", owner: "owner")
 }

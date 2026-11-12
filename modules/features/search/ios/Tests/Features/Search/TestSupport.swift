@@ -2,6 +2,7 @@ import CoreNetwork
 import CoreStorage
 import Foundation
 import SharedBookmarks
+import SharedGitHub
 
 @testable import FeatureSearch
 
