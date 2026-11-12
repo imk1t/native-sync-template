@@ -12,6 +12,7 @@ struct IssueDetailView: View {
                 if let issue = viewModel.content.state.items.first {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(issue.title).designFont(Tokens.Typography.h3, relativeTo: .title2)
+                            .lineLimit(3).truncationMode(.tail)
                         StatusBadge(issueStateLabel(issue.state, locale: locale), emphasized: issue.state == "open")
                         let author = issue.author ?? Message.issueUnknownAuthor.resolve(locale: locale)
                         Text("#\(String(issue.number)) · \(author)").foregroundStyle(Tokens.Color.muted)
