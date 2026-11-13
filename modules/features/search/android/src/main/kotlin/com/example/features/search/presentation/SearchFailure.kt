@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.core.localization.Message as LocalizedMessage
 import com.example.core.localization.localized
 import com.example.core.utils.DateTimeUtils
-import com.example.shared.github.GitHubError
+import com.example.shared.githubrest.GitHubError
 import java.time.Instant
 import java.time.ZoneId
 

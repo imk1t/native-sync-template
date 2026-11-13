@@ -1,9 +1,9 @@
 package com.example.features.search
 
-import com.example.shared.github.GitHubApi
-import com.example.shared.github.GitHubIssue
-import com.example.shared.github.Page
-import com.example.shared.github.RepositorySummary
+import com.example.shared.githubrest.GitHubApi
+import com.example.shared.githubrest.GitHubIssue
+import com.example.shared.githubrest.Page
+import com.example.shared.githubrest.RepositorySummary
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 

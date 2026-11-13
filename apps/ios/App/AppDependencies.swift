@@ -4,7 +4,7 @@ import FeatureBookmarks
 import FeatureSearch
 import Foundation
 import SharedBookmarks
-import SharedGitHub
+import SharedGitHubREST
 
 @MainActor
 final class AppDependencies {

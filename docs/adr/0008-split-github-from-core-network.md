@@ -5,9 +5,9 @@
 ## Decision
 
 - `core/network` keeps only API-independent pieces: HTTPRequest / HTTPResponse, HTTPTransport and its URLSession / HttpURLConnection implementations, the `call` decoding helpers, APIResponse, APIError, `pathSegment`, and ImageLoader.
-- A new `shared/github` module (`SharedGitHub` / `com.example.shared.github`) holds GitHubAPI, DefaultGitHubAPI, GitHubTransport, GitHubError, the domain models, and the generated DTOs and APIClient. `tools/generate.ts` writes there. The shared scenario is renamed `github-api`.
+- A new `shared/github-rest` module (`SharedGitHubREST` / `com.example.shared.githubrest`) holds GitHubAPI, DefaultGitHubAPI, GitHubTransport, GitHubError, the domain models, and the generated DTOs and APIClient. `tools/generate.ts` writes there. The shared scenario is renamed `github-api`.
 - Each additional API gets its own `shared/<service>` module on the same pattern.
-- `shared/bookmarks` must not depend on `shared/github` (shared-to-shared dependencies are forbidden). It owns `BookmarkedRepository`, a snapshot type whose JSON matches the previously saved format, and `features/search` converts `RepositorySummary` to it.
+- `shared/bookmarks` must not depend on `shared/github-rest` (shared-to-shared dependencies are forbidden). It owns `BookmarkedRepository`, a snapshot type whose JSON matches the previously saved format, and `features/search` converts `RepositorySummary` to it.
 
 ## Consequences
 

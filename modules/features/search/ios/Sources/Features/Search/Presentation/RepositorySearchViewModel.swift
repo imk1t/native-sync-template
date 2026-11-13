@@ -3,7 +3,7 @@ import CoreLocalization
 import CoreNavigation
 import Foundation
 import Observation
-import SharedGitHub
+import SharedGitHubREST
 
 @MainActor
 @Observable

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Provide HTTP transport that does not depend on any particular API. Service-specific clients, domain models, and error classification belong in `shared/*` modules such as `shared/github` ([ADR 0008](../../../docs/adr/0008-split-github-from-core-network.md)).
+Provide HTTP transport that does not depend on any particular API. Service-specific clients, domain models, and error classification belong in `shared/*` modules such as `shared/github-rest` ([ADR 0008](../../../docs/adr/0008-split-github-from-core-network.md)).
 
 ## Public API
 
@@ -15,7 +15,7 @@ Provide HTTP transport that does not depend on any particular API. Service-speci
 
 The iOS module is `CoreNetwork`, with implementation in `Sources/Core/Network`. The Android package is `com.example.core.network`.
 
-Swift uses API / HTTP; Kotlin uses Api / Http. JSON uses Codable / kotlinx.serialization; HTTP uses URLSession / HttpURLConnection. Android uses 15-second connection and 30-second read timeouts, disconnecting and interrupting on cancellation. iOS follows URLSession task cancellation. Image data uses Data / ByteArray. Android tests for UrlConnectionTransport live in `android/src/test`; iOS exercises the transport through the `shared/github` tests with stubs.
+Swift uses API / HTTP; Kotlin uses Api / Http. JSON uses Codable / kotlinx.serialization; HTTP uses URLSession / HttpURLConnection. Android uses 15-second connection and 30-second read timeouts, disconnecting and interrupting on cancellation. iOS follows URLSession task cancellation. Image data uses Data / ByteArray. Android tests for UrlConnectionTransport live in `android/src/test`; iOS exercises the transport through the `shared/github-rest` tests with stubs.
 
 ## Error presentation
 

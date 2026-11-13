@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
-import com.example.shared.github.Page
-import com.example.shared.github.RepositorySummary
+import com.example.shared.githubrest.Page
+import com.example.shared.githubrest.RepositorySummary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

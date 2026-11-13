@@ -26,7 +26,7 @@ Run `mise run generate` (or `bun tools/generate.ts`) after changing generation i
 
 | Input | Output |
 | --- | --- |
-| `specs/openapi/openapi.yaml` | Internal DTOs and API clients in `shared/github` |
+| `specs/openapi/openapi.yaml` | Internal DTOs and API clients in `shared/github-rest` |
 | `DESIGN.md` (front matter) | Color and spacing tokens in `shared/designsystem` |
 | `specs/routes.yaml` | `Route`, `AppTab`, and deep-link parsing in `core/navigation` |
 | `specs/localization/messages-*.yaml` | Native resources, typed messages, and app language settings |

@@ -70,7 +70,7 @@ export function androidDependencies(root: string = ROOT): [Graph, External] {
   }
   for (const mod of registered.values()) {
     const text = readText(join(modules, mod, "android/build.gradle.kts")).replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, "");
-    const found = [...text.matchAll(/project\(\s*(?:path\s*=\s*)?"(:[\w:]+)"\s*\)/g)].map((m) => m[1] as string);
+    const found = [...text.matchAll(/project\(\s*(?:path\s*=\s*)?"(:[\w:-]+)"\s*\)/g)].map((m) => m[1] as string);
     if (text.split("project(").length - 1 !== found.length) throw new Error(`${mod}: 未対応の project 依存構文`);
     const unknown = sorted(new Set(found.filter((p) => !registered.has(p))));
     if (unknown.length > 0) throw new Error(`${mod}: 不明な Android project: ${JSON.stringify(unknown)}`);

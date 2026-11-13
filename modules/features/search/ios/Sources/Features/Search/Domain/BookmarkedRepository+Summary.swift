@@ -1,5 +1,5 @@
 import SharedBookmarks
-import SharedGitHub
+import SharedGitHubREST
 
 extension BookmarkedRepository {
     /// 検索結果のリポジトリを、保存用のスナップショットに変換する。

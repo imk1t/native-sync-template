@@ -1,5 +1,5 @@
 import Foundation
-import SharedGitHub
+import SharedGitHubREST
 import Testing
 
 @testable import FeatureSearch

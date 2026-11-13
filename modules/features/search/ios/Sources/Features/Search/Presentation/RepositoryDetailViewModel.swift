@@ -2,7 +2,7 @@ import CoreLocalization
 import CoreNavigation
 import Observation
 import SharedBookmarks
-import SharedGitHub
+import SharedGitHubREST
 
 @MainActor
 @Observable

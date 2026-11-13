@@ -1,5 +1,5 @@
 import Observation
-import SharedGitHub
+import SharedGitHubREST
 
 @MainActor
 @Observable

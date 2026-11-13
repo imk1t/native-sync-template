@@ -2,8 +2,8 @@ package com.example.features.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shared.github.GitHubIssue
-import com.example.shared.github.Page
+import com.example.shared.githubrest.GitHubIssue
+import com.example.shared.githubrest.Page
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 

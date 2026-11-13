@@ -1,7 +1,7 @@
 package com.example.features.search
 
-import com.example.shared.github.Page
-import com.example.shared.github.RepositorySummary
+import com.example.shared.githubrest.Page
+import com.example.shared.githubrest.RepositorySummary
 import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals

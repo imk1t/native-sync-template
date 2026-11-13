@@ -9,8 +9,8 @@ import com.example.features.bookmarks.BookmarksDependencies
 import com.example.features.search.GitHubRepositoryImpl
 import com.example.features.search.SearchDependencies
 import com.example.shared.bookmarks.BookmarkRepository
-import com.example.shared.github.DefaultGitHubApi
-import com.example.shared.github.GitHubTransport
+import com.example.shared.githubrest.DefaultGitHubApi
+import com.example.shared.githubrest.GitHubTransport
 
 /** アプリ全体で共有する保存状態・設定・画像キャッシュを組み立てる。 */
 internal class AppDependencies(context: Context) {

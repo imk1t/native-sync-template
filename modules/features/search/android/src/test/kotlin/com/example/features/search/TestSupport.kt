@@ -6,9 +6,9 @@ import com.example.core.network.HttpTransport
 import com.example.core.storage.DisplaySettings
 import com.example.core.storage.InMemoryKeyValueStore
 import com.example.shared.bookmarks.BookmarkRepository
-import com.example.shared.github.DefaultGitHubApi
-import com.example.shared.github.GitHubTransport
-import com.example.shared.github.RepositorySummary
+import com.example.shared.githubrest.DefaultGitHubApi
+import com.example.shared.githubrest.GitHubTransport
+import com.example.shared.githubrest.RepositorySummary
 
 class RecordingTransport : HttpTransport {
     val requests = mutableListOf<HttpRequest>()

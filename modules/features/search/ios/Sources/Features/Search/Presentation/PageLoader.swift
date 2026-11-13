@@ -1,7 +1,7 @@
 import CoreLocalization
 import Foundation
 import Observation
-import SharedGitHub
+import SharedGitHubREST
 
 @MainActor
 @Observable
