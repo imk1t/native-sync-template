@@ -1,9 +1,9 @@
-import CoreLocalization
 import CoreExtensions
+import CoreLocalization
 import CoreNavigation
-import CoreNetwork
 import Foundation
 import Observation
+import SharedGitHubREST
 
 @MainActor
 @Observable

@@ -1,5 +1,5 @@
-import CoreNetwork
 import Observation
+import SharedGitHubREST
 
 @MainActor
 @Observable

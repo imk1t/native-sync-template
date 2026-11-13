@@ -1,5 +1,5 @@
-import CoreNetwork
 import Foundation
+import SharedGitHubREST
 
 public actor GitHubRepositoryImpl: GitHubRepository {
     private let api: any GitHubAPI

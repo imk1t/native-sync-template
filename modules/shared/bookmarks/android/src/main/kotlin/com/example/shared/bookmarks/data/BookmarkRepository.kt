@@ -1,6 +1,5 @@
 package com.example.shared.bookmarks
 
-import com.example.core.network.RepositorySummary
 import com.example.core.storage.KeyValueStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +31,7 @@ class BookmarkRepository(private val store: KeyValueStore) {
 
     fun contains(id: Long) = items.value.any { it.id == id }
 
-    suspend fun toggle(repository: RepositorySummary) = mutate { items ->
+    suspend fun toggle(repository: BookmarkedRepository) = mutate { items ->
         if (items.any { it.id == repository.id }) {
             items.filter { it.id != repository.id }
         } else {

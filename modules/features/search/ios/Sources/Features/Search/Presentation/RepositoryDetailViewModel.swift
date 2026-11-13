@@ -1,7 +1,8 @@
 import CoreLocalization
 import CoreNavigation
-import CoreNetwork
 import Observation
+import SharedBookmarks
+import SharedGitHubREST
 
 @MainActor
 @Observable
@@ -38,7 +39,7 @@ final class RepositoryDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await dependencies.bookmarks.toggle(repository)
+            try await dependencies.bookmarks.toggle(BookmarkedRepository(repository))
             saveError = nil
         } catch { saveError = bookmarkMessage(for: error, fallback: .errorStorageSave) }
     }

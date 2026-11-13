@@ -1,14 +1,14 @@
 package com.example.features.search
 
-import com.example.core.network.DefaultGitHubApi
-import com.example.core.network.GitHubTransport
 import com.example.core.network.HttpRequest
 import com.example.core.network.HttpResponse
 import com.example.core.network.HttpTransport
-import com.example.core.network.RepositorySummary
 import com.example.core.storage.DisplaySettings
 import com.example.core.storage.InMemoryKeyValueStore
 import com.example.shared.bookmarks.BookmarkRepository
+import com.example.shared.githubrest.DefaultGitHubApi
+import com.example.shared.githubrest.GitHubTransport
+import com.example.shared.githubrest.RepositorySummary
 
 class RecordingTransport : HttpTransport {
     val requests = mutableListOf<HttpRequest>()

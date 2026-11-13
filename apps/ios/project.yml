@@ -36,4 +36,6 @@ targets:
       - package: Modules
         product: CoreNetwork
       - package: Modules
+        product: SharedGitHubREST
+      - package: Modules
         product: CoreNavigation

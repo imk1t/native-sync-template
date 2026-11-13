@@ -380,6 +380,7 @@ export function swiftModels(spec: Spec): string {
 export function swiftClient(spec: Spec): string {
   const out = [
     HEADER,
+    "import CoreNetwork",
     "import Foundation",
     "",
     "/// specs/openapi の operation を 1 メソッドずつ持つ。通信は HTTPTransport に任せる。",
@@ -455,7 +456,20 @@ export function kotlinModels(spec: Spec, pkg: string): string {
 }
 
 export function kotlinClient(spec: Spec, pkg: string): string {
-  const imports = spec.operations.some((op) => op.body) ? ["import kotlinx.serialization.encodeToString", ""] : [];
+  const hasBody = spec.operations.some((op) => op.body);
+  const hasReturn = spec.operations.some((op) => op.returns);
+  const hasUnit = spec.operations.some((op) => !op.returns);
+  const imports = [
+    "import com.example.core.network.ApiResponse",
+    ...(hasBody ? ["import com.example.core.network.ApiJson"] : []),
+    "import com.example.core.network.HttpRequest",
+    "import com.example.core.network.HttpTransport",
+    ...(hasReturn ? ["import com.example.core.network.call"] : []),
+    ...(hasUnit ? ["import com.example.core.network.callUnit"] : []),
+    "import com.example.core.network.pathSegment",
+    ...(hasBody ? ["import kotlinx.serialization.encodeToString"] : []),
+    "",
+  ];
   const out = [
     HEADER,
     `package ${pkg}`,

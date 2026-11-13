@@ -1,4 +1,4 @@
-import CoreNetwork
+import SharedGitHubREST
 
 public protocol GitHubRepository: Sendable {
     func search(query: String, sort: String?, page: Int, refresh: Bool) async throws -> Page<RepositorySummary>

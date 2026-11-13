@@ -1,6 +1,5 @@
 package com.example.shared.bookmarks
 
-import com.example.core.network.RepositorySummary
 import com.example.core.storage.KeyValueStore
 import java.io.IOException
 
@@ -14,4 +13,4 @@ class FailingStore : KeyValueStore {
     }
 }
 
-fun sample(id: Long = 5_000_000_001) = RepositorySummary(id, "repo", "owner/repo", "owner")
+fun sample(id: Long = 5_000_000_001) = BookmarkedRepository(id, "repo", "owner/repo", "owner")

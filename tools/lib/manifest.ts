@@ -41,7 +41,7 @@ export function androidModules(root: string): Map<string, string> {
   const modules = new Map<string, string>();
   for (const line of text.split(/\r?\n/)) {
     if (!line.trim().startsWith("module(")) continue;
-    const match = /^\s*module\("(:[\w:]+)",\s*"([^"]+)"\)\s*$/.exec(line);
+    const match = /^\s*module\("(:[\w:-]+)",\s*"([^"]+)"\)\s*$/.exec(line);
     if (!match) throw new Error(`Android module は1行で記述してください: ${line.trim()}`);
     const [, name = "", path = ""] = match;
     if (modules.has(name) || [...modules.values()].includes(path)) {

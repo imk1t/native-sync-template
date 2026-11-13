@@ -1,8 +1,8 @@
 package com.example.features.search
 
-import com.example.core.network.GitHubIssue
-import com.example.core.network.Page
-import com.example.core.network.RepositorySummary
+import com.example.shared.githubrest.GitHubIssue
+import com.example.shared.githubrest.Page
+import com.example.shared.githubrest.RepositorySummary
 
 interface GitHubRepository {
     suspend fun search(query: String, sort: String?, page: Int, refresh: Boolean): Page<RepositorySummary>

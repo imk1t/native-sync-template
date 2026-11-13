@@ -2,7 +2,7 @@ package com.example.features.search
 
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
-import com.example.core.network.DefaultGitHubApi
+import com.example.shared.githubrest.DefaultGitHubApi
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

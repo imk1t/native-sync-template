@@ -1,12 +1,11 @@
 package com.example.shared.bookmarks
 
-import com.example.core.network.RepositorySummary
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Bookmark(
-    val repository: RepositorySummary,
+    val repository: BookmarkedRepository,
     @Required val note: String = "",
     @Required val savedAt: Double = System.currentTimeMillis() / 1000.0
 ) {

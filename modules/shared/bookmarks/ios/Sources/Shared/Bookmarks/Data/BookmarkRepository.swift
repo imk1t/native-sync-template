@@ -1,4 +1,3 @@
-import CoreNetwork
 import CoreStorage
 import Foundation
 import Observation
@@ -46,7 +45,7 @@ public final class BookmarkRepository {
 
     public func contains(_ id: Int64) -> Bool { items.contains { $0.id == id } }
 
-    public func toggle(_ repository: RepositorySummary) async throws {
+    public func toggle(_ repository: BookmarkedRepository) async throws {
         try await mutate { items in
             if items.contains(where: { $0.id == repository.id }) { return items.filter { $0.id != repository.id } }
             guard items.count < 100 else { throw BookmarkError.limit }

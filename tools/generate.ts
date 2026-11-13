@@ -2,7 +2,7 @@
  * specs/ の定義から Swift / Kotlin のコードを生成する。出力は決定的（再生成して差分が出ないこと）。
  *
  * - DESIGN.md（front matter）→ shared/designsystem の Tokens（tools/lib/design.ts）
- * - specs/openapi/openapi.yaml → core/network の DTO と APIClient（tools/lib/openapi.ts）
+ * - specs/openapi/openapi.yaml → shared/github-rest の DTO と APIClient（tools/lib/openapi.ts）
  * - specs/routes.yaml → core/navigation の Route と AppTab（tools/lib/routes.ts）
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -13,8 +13,8 @@ import * as openapi from "./lib/openapi";
 import * as routes from "./lib/routes";
 import { compare, type Dict, isDict, join, readText, readYaml, ROOT } from "./lib/util";
 
-const IOS_NETWORK = "modules/core/network/ios/Sources/Core/Network/Generated";
-const ANDROID_NETWORK = "modules/core/network/android/src/main/kotlin/com/example/core/network/generated";
+const IOS_NETWORK = "modules/shared/github-rest/ios/Sources/Shared/GitHubREST/Generated";
+const ANDROID_NETWORK = "modules/shared/github-rest/android/src/main/kotlin/com/example/shared/githubrest/generated";
 
 /** 生成先のファイル。tools/check-generated.ts もこの一覧を使う。 */
 export const OUTPUTS = {
@@ -159,8 +159,8 @@ export function generate(root: string = ROOT): void {
   const spec = new openapi.Spec(isDict(api) ? api : ({} as Dict));
   pending[OUTPUTS.iosModels] = openapi.swiftModels(spec);
   pending[OUTPUTS.iosClient] = openapi.swiftClient(spec);
-  pending[OUTPUTS.androidModels] = openapi.kotlinModels(spec, "com.example.core.network");
-  pending[OUTPUTS.androidClient] = openapi.kotlinClient(spec, "com.example.core.network");
+  pending[OUTPUTS.androidModels] = openapi.kotlinModels(spec, "com.example.shared.githubrest");
+  pending[OUTPUTS.androidClient] = openapi.kotlinClient(spec, "com.example.shared.githubrest");
 
   const model = routes.load(readYaml(join(root, "specs/routes.yaml")), root);
   pending[OUTPUTS.iosRoutes] = routes.swift(model);

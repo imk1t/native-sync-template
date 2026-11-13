@@ -35,7 +35,7 @@ Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>`
 ## Rules
 
 - Do not edit files under `Generated/` or `generated/` by hand. Regenerate with `tools/generate.ts`.
-- Keep generated DTOs and APIClient inside `core/network`. Expose domain models through handwritten wrappers such as `DefaultGitHubAPI`.
+- Keep generated DTOs and APIClient inside `shared/github-rest`; `core/network` holds only API-independent transport. Expose domain models through handwritten wrappers such as `DefaultGitHubAPI`.
 - Use `core/navigation`'s `Navigator` (`push`, `present`, etc.) for all navigation. Do not open screens directly with `NavigationLink` or similar APIs. When adding a screen, register it in `specs/routes.yaml`, document it under “Navigation” in the feature's spec, and add the app-layer `Route` → screen mapping ([ADR 0002](docs/adr/0002-navigation.md)).
 - Document intentional platform differences under “Platform differences” in `spec.md`. Undocumented differences are bugs.
 - Implement every step in `specs/scenarios` in both platforms' tests, annotated with `// @scenario <scenario-name>/<id>`.

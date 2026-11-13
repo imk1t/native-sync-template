@@ -1,5 +1,5 @@
-import CoreNetwork
 import Foundation
+import SharedGitHubREST
 import Testing
 
 @testable import FeatureSearch

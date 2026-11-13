@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.localization.Message
 import com.example.core.navigation.Navigator
 import com.example.core.navigation.Route
-import com.example.core.network.Page
-import com.example.core.network.RepositorySummary
+import com.example.shared.githubrest.Page
+import com.example.shared.githubrest.RepositorySummary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +60,7 @@ internal class RepositoryDetailViewModel(
         val repository = content.state.value.items.firstOrNull() ?: return
         mutableSaving.value = true
         try {
-            dependencies.bookmarks.toggle(repository)
+            dependencies.bookmarks.toggle(repository.toBookmarked())
             mutableSaveError.value = null
         } catch (
             e: CancellationException

@@ -36,24 +36,24 @@ interface HttpTransport {
 }
 
 /** 未知のキーは無視する。必須 nullable のキー欠落を null とみなさず、両 OS で拒否する。 */
-internal val ApiJson = Json {
+val ApiJson = Json {
     ignoreUnknownKeys = true
     explicitNulls = true
 }
 
-internal suspend inline fun <reified T> HttpTransport.call(request: HttpRequest): ApiResponse<T> {
+suspend inline fun <reified T> HttpTransport.call(request: HttpRequest): ApiResponse<T> {
     val response = send(request)
     if (response.status !in 200..299) throw ApiException(response.status, response.headers, response.body)
     return ApiResponse(ApiJson.decodeFromString<T>(response.body), response.headers)
 }
 
-internal suspend fun HttpTransport.callUnit(request: HttpRequest) {
+suspend fun HttpTransport.callUnit(request: HttpRequest) {
     val response = send(request)
     if (response.status !in 200..299) throw ApiException(response.status, response.headers, response.body)
 }
 
 /** パスの 1 区切りとして埋め込む値をエンコードする（"/" もエスケープする）。 */
-internal fun pathSegment(value: String): String = encode(value)
+fun pathSegment(value: String): String = encode(value)
 
 private fun encode(value: String): String = URLEncoder.encode(value, "UTF-8").replace("+", "%20")
 
