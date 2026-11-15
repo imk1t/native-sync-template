@@ -4,6 +4,7 @@
  * - DESIGN.md（front matter）→ shared/designsystem の Tokens（tools/lib/design.ts）
  * - specs/openapi/openapi.yaml → shared/github-rest の DTO と APIClient（tools/lib/openapi.ts）
  * - specs/routes.yaml → core/navigation の Route と AppTab（tools/lib/routes.ts）
+ * - specs/scenarios/*.yaml → 各モジュールのテスト用 ScenarioFixtures（tools/lib/scenarios.ts）
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -11,6 +12,7 @@ import * as design from "./lib/design";
 import * as localization from "./lib/localization";
 import * as openapi from "./lib/openapi";
 import * as routes from "./lib/routes";
+import * as scenarios from "./lib/scenarios";
 import { compare, type Dict, isDict, join, readText, readYaml, ROOT } from "./lib/util";
 
 const IOS_NETWORK = "modules/shared/github-rest/ios/Sources/Shared/GitHubREST/Generated";
@@ -166,8 +168,12 @@ export function generate(root: string = ROOT): void {
   pending[OUTPUTS.iosRoutes] = routes.swift(model);
   pending[OUTPUTS.androidRoutes] = routes.kotlin(model, "com.example.core.navigation");
 
+  const fixtures = scenarios.outputs(root, spec);
+
   localization.clean(root);
+  scenarios.clean(root);
   for (const [path, text] of Object.entries(pending)) write(root, path, text);
+  for (const [path, text] of Object.entries(fixtures)) write(root, path, text);
   for (const [path, text] of Object.entries(localized)) write(root, path, text);
 }
 

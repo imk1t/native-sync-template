@@ -2,13 +2,15 @@
  * specs/scenarios の共通シナリオを検査する。
  *
  * - 形式: name（ファイル名と一致）・feature・steps（id・name・given・when・then）
- * - given のキーは specs/openapi の operationId。2xx の body はレスポンスの schema に合うこと
+ * - given のキーは specs/openapi の operationId。値はレスポンス 1 件か、返す順に並べた配列。2xx の body はレスポンスの schema に合うこと
  *   （`navigation` は画面遷移、`localState` は保存値・読み書き失敗の初期状態）
+ * - API レスポンスを持つ step は、両 OS のテストが生成された `ScenarioFixtures.<シナリオ>.<step>` を使っていること
  * - feature の spec.md がシナリオを参照していること
  * - 各 step が iOS と Android の両方のテストで `@scenario <name>/<step id>` として参照されていること
  */
 import { basename, relative } from "node:path";
-import { Spec, validateValue } from "./lib/openapi";
+import { type Operation, Spec, validateValue } from "./lib/openapi";
+import { load as loadFixtures, servesResponses } from "./lib/scenarios";
 import { type Dict, glob, isDict, isFile, join, readText, readYaml, ROOT, sorted } from "./lib/util";
 
 const MARKER = /@scenario\s+([\w-]+)\/([\w-]+)/g;
@@ -40,6 +42,45 @@ function markers(root: string, moduleDir: string, platform: Platform): Map<strin
     }
   }
   return found;
+}
+
+/** operationId に対するレスポンス 1 件を検査する。 */
+function checkStub(spec: Spec, op: Operation, stub: unknown, w: string): string[] {
+  const errors: string[] = [];
+  if (!isDict(stub)) {
+    errors.push(`${w}: status か pending が必要です`);
+    return errors;
+  }
+  const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending", "headers"].includes(key)));
+  if (unknown.length > 0) errors.push(`${w}: 未知のキーです: ${JSON.stringify(unknown)}`);
+  if (stub.pending === true) {
+    if (Object.keys(stub).join() !== "pending") errors.push(`${w}: pending: true は単独で書いてください`);
+    return errors;
+  }
+  if ("headers" in stub && (!isDict(stub.headers) || Object.values(stub.headers).some((v) => typeof v !== "string"))) {
+    errors.push(`${w}.headers: 文字列の辞書が必要です`);
+  }
+  const status = stub.status;
+  if (typeof status !== "number" || !Number.isInteger(status) || status < 100 || status > 599) {
+    errors.push(`${w}.status: HTTP ステータスが必要です`);
+    return errors;
+  }
+  if (status >= 200 && status < 300 && op.returns) {
+    if (!("body" in stub)) {
+      errors.push(`${w}.body: 2xx のレスポンス body が必要です`);
+      return errors;
+    }
+    try {
+      validateValue(spec, op.returns, stub.body, `${w}.body`);
+    } catch (error) {
+      errors.push(error instanceof Error ? error.message : String(error));
+    }
+  } else if ("body" in stub && status >= 400 && !isDict(stub.body)) {
+    errors.push(`${w}.body: エラー body は辞書で書いてください`);
+  } else if ("body" in stub && status < 400) {
+    errors.push(`${w}.body: この status では body を検査できません`);
+  }
+  return errors;
 }
 
 function checkGiven(spec: Spec, given: unknown, where: string): string[] {
@@ -84,41 +125,46 @@ function checkGiven(spec: Spec, given: unknown, where: string): string[] {
       errors.push(`${w}: specs/openapi に無い operationId です`);
       continue;
     }
-    if (!isDict(stub)) {
-      errors.push(`${w}: status か pending が必要です`);
-      continue;
-    }
-    const unknown = sorted(Object.keys(stub).filter((key) => !["status", "body", "pending", "headers"].includes(key)));
-    if (unknown.length > 0) errors.push(`${w}: 未知のキーです: ${JSON.stringify(unknown)}`);
-    if (stub.pending === true) {
-      if (Object.keys(stub).join() !== "pending") errors.push(`${w}: pending: true は単独で書いてください`);
-      continue;
-    }
-    if (
-      "headers" in stub &&
-      (!isDict(stub.headers) || Object.values(stub.headers).some((v) => typeof v !== "string"))
-    ) {
-      errors.push(`${w}.headers: 文字列の辞書が必要です`);
-    }
-    const status = stub.status;
-    if (typeof status !== "number" || !Number.isInteger(status) || status < 100 || status > 599) {
-      errors.push(`${w}.status: HTTP ステータスが必要です`);
-      continue;
-    }
-    if (status >= 200 && status < 300 && op.returns) {
-      if (!("body" in stub)) {
-        errors.push(`${w}.body: 2xx のレスポンス body が必要です`);
-        continue;
+    if (Array.isArray(stub)) {
+      if (stub.length === 0) errors.push(`${w}: レスポンスを 1 件以上書いてください`);
+      stub.forEach((item, index) => {
+        errors.push(...checkStub(spec, op, item, `${w}[${index}]`));
+      });
+    } else errors.push(...checkStub(spec, op, stub, w));
+  }
+  return errors;
+}
+
+/** モジュールの手書きテスト（生成物を除く）の本文をまとめて返す。 */
+function testSources(moduleDir: string, platform: Platform): string {
+  return TEST_GLOBS[platform]
+    .flatMap((pattern) => glob(moduleDir, pattern))
+    .filter((path) => !/\/generated\//i.test(`/${path}`))
+    .map((path) => readText(join(moduleDir, path)))
+    .join("\n");
+}
+
+/** API レスポンスを持つ step が、両 OS のテストで生成データとして使われているかを検査する。 */
+function checkFixtureUse(root: string, spec: Spec): string[] {
+  const errors: string[] = [];
+  let fixtures: ReturnType<typeof loadFixtures>;
+  try {
+    fixtures = loadFixtures(root, spec);
+  } catch (error) {
+    return [error instanceof Error ? error.message : String(error)];
+  }
+  for (const scenario of fixtures) {
+    const moduleDir = join(root, "modules", scenario.feature);
+    for (const platform of PLATFORMS) {
+      const text = testSources(moduleDir, platform);
+      for (const step of scenario.steps.filter(servesResponses)) {
+        const name = `ScenarioFixtures.${scenario.type}.${step.member}`;
+        if (!new RegExp(`${name.replaceAll(".", "\\.")}\\b`).test(text)) {
+          errors.push(
+            `modules/${scenario.feature}/${platform}: テストが \`${name}\` を使っていません（${scenario.name}/${step.id} の given を入力にしてください）`,
+          );
+        }
       }
-      try {
-        validateValue(spec, op.returns, stub.body, `${w}.body`);
-      } catch (error) {
-        errors.push(error instanceof Error ? error.message : String(error));
-      }
-    } else if ("body" in stub && status >= 400 && !isDict(stub.body)) {
-      errors.push(`${w}.body: エラー body は辞書で書いてください`);
-    } else if ("body" in stub && status < 400) {
-      errors.push(`${w}.body: この status では body を検査できません`);
     }
   }
   return errors;
@@ -212,6 +258,7 @@ export function main(root: string = ROOT, log: (line: string) => void = console.
       }
     }
   }
+  if (errors.length === 0) errors.push(...checkFixtureUse(root, spec));
   for (const e of errors) log(e);
   if (errors.length > 0) return 1;
   const steps = [...scenarios.values()].reduce((sum, s) => sum + s.ids.length, 0);

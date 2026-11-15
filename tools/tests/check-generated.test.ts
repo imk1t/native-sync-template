@@ -3,9 +3,14 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOTS, load, outputs } from "../lib/localization";
-import { ROOT } from "../lib/util";
+import { Spec } from "../lib/openapi";
+import * as scenarios from "../lib/scenarios";
+import { type Dict, isDict, readYaml, ROOT } from "../lib/util";
 import { OUTPUTS } from "../generate";
 import { copyRepo } from "./helpers";
+
+const api = readYaml(join(ROOT, "specs/openapi/openapi.yaml"));
+const FIXTURES = Object.keys(scenarios.outputs(ROOT, new Spec(isDict(api) ? api : ({} as Dict))));
 
 const FILES = [
   "node_modules/yaml",
@@ -16,11 +21,14 @@ const FILES = [
   "specs/openapi",
   "specs/routes.yaml",
   "specs/localization",
+  "specs/scenarios",
+  "modules/Package.swift",
   ...ROOTS,
   "modules/features/search/spec.md",
   "modules/features/bookmarks/spec.md",
   "modules/features/settings/spec.md",
   ...Object.values(OUTPUTS),
+  ...FIXTURES,
 ];
 
 describe("check-generated", () => {
@@ -96,7 +104,7 @@ describe("check-generated", () => {
   });
 
   test("どの生成物を消してコミットしても失敗する", () => {
-    for (const output of [...Object.values(OUTPUTS), ...Object.keys(outputs(load(ROOT)))]) {
+    for (const output of [...Object.values(OUTPUTS), ...Object.keys(outputs(load(ROOT))), ...FIXTURES]) {
       const baseline = git("rev-parse", "HEAD").trim();
       git("rm", output);
       commit();
@@ -105,6 +113,16 @@ describe("check-generated", () => {
       expect(result.output).toContain(`?? ${output}`);
       git("reset", "--hard", baseline);
     }
+  });
+
+  test("シナリオを変えて再生成しないと失敗する", () => {
+    const path = join(repo, "specs/scenarios/github-detail.yaml");
+    writeFileSync(path, readFileSync(path, "utf-8").replace("stargazers_count: 120", "stargazers_count: 121"));
+    git("add", ".");
+    commit();
+    const { code, output } = checkGenerated();
+    expect(code, output).toBe(1);
+    expect(output).toContain("ScenarioFixtures");
   });
 
   test("言語を削除して生成物を残すと失敗する", () => {

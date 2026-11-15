@@ -15,7 +15,7 @@ Each module's `spec.md` is the source of truth. Update the specification before 
    - Screens: Add entries to `specs/routes.yaml`, regenerate, and describe screens and transitions (such as `push(...)`) under “Navigation” in the spec. ViewModels call `Navigator`. Each feature's public `*Screen` entry point creates and retains its ViewModel. Add the `Route` → entry-point mapping to both platforms' app-layer `AppRouter`. Do not create individual screens or their ViewModels in the app layer.
 2. Implement one platform (`<module>/ios/` or `<module>/android/`).
 3. Implement the other with **matching type names and structure**. Document intentional differences under “Platform differences” in `spec.md`.
-4. If state transitions or errors change, update `specs/scenarios/*.yaml`. Give new steps an `id` and annotate both platforms' tests with `// @scenario <scenario-name>/<id>`.
+4. If state transitions or errors change, update `specs/scenarios/*.yaml`. Give new steps an `id`, annotate both platforms' tests with `// @scenario <scenario-name>/<id>`, and feed API responses from the generated `ScenarioFixtures` (run `bun tools/generate.ts` after editing `given`).
 5. Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>` (use `ios` or `android` if only one platform is aligned).
 6. Pass all applicable checks under “Commands” in AGENTS.md.
 7. Include both platforms' changes in one PR. If a PR covers only one platform, link to the issue tracking the other platform's implementation.

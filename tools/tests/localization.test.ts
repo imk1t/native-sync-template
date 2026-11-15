@@ -109,6 +109,7 @@ test("adding and removing a language updates metadata and removes only owned out
   const repo = copyRepo([
     "specs",
     "DESIGN.md",
+    "modules/Package.swift",
     "modules/features/search/spec.md",
     "modules/features/bookmarks/spec.md",
     "modules/features/settings/spec.md",

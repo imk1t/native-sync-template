@@ -30,10 +30,11 @@ Run `mise run generate` (or `bun tools/generate.ts`) after changing generation i
 | `DESIGN.md` (front matter) | Color and spacing tokens in `shared/designsystem` |
 | `specs/routes.yaml` | `Route`, `AppTab`, and deep-link parsing in `core/navigation` |
 | `specs/localization/messages-*.yaml` | Native resources, typed messages, and app language settings |
+| API responses in `specs/scenarios/*.yaml` (`given`) | `ScenarioFixtures` and `ScenarioTransport` in the test directory of the scenario's `feature` module (`Generated/` on iOS, `generated/` on Android) |
 
 Generation runs offline without rewriting the API contract. `DefaultGitHubAPI` / `DefaultGitHubApi` maps generated DTOs to public domain models; `HTTPTransport` / `HttpTransport` can be replaced in tests. The supported OpenAPI subset is documented in `tools/lib/openapi.ts`; unsupported syntax fails generation. See [ADR 0004](adr/0004-github-openapi.md) for contract updates and [ADR 0006](adr/0006-localization.md) for localization.
 
-Each step in `specs/scenarios/*.yaml` has an `id` and must be referenced in both platforms' tests with `// @scenario <scenario-name>/<id>`. The scenario checker verifies those references, the module spec's scenario references, and API fixtures against OpenAPI. Fixtures can describe navigation, local storage values and failures, response headers, and error bodies.
+Each step in `specs/scenarios/*.yaml` has an `id` and must be referenced in both platforms' tests with `// @scenario <scenario-name>/<id>`. The scenario checker verifies those references, the module spec's scenario references, and API fixtures against OpenAPI. A `given` value keyed by an operationId is one response or a list returned in order (the last repeats); `pending: true` marks a request the test holds open itself. Generation turns these responses into `ScenarioFixtures.<Scenario>.<step>` and a `ScenarioTransport` that both platforms' tests use as their HTTP transport, so both platforms are fed identical data. The checker fails when a step with API responses is not used through its fixture. Conditions the fixture cannot express (clock, cancellation, mutated bodies) stay in the test, and `then` is still read by the test author. Fixtures can describe navigation, local storage values and failures, response headers, and error bodies.
 
 Each module's `ios/.spec-sync` and `android/.spec-sync` records the hash of the specification implemented by that platform. After aligning an implementation, update its marker:
 
