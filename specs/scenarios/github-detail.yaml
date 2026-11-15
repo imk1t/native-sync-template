@@ -1,2 +1,74 @@
 # Use matching @scenario markers in both platforms' tests.
-{name: github-detail,feature: features/search,steps: [{id: repository,name: Show repository details without fetching twice on redisplay,given: {repos/get: {status: 200,body: {id: 5000000001,name: Hello-World,full_name: octocat/Hello-World,description: GitHub API を使うネイティブアプリのサンプル。,owner: {login: octocat,avatar_url: ""},language: Swift,stargazers_count: 120,forks_count: 20,topics: [swift,android,sample],html_url: https://github.com/octocat/Hello-World}}},when: Open repository details,then: {fullName: octocat/Hello-World}},{id: not-found,name: Allow retry after a 404,given: {repos/get: {status: 404,body: {message: Not Found}}},when: Refresh after an error and return 200,then: {error: null}},{id: issue-filter,name: Fetch Open and Closed issues separately,given: {issues/list-for-repo: {status: 200,body: [{id: 5000000002,number: 1,title: サンプルの動作を確認する,state: open,body: 検索、ブックマーク、メモ編集を試してみましょう。,user: {login: octocat,avatar_url: ""},updated_at: 2026-11-03T00:00:00Z}]}},when: Change the filter from Open to Closed,then: {state: closed,page: 1}},{id: issue-detail,name: Open details for the selected issue number,given: {issues/get: {status: 200,body: {id: 5000000002,number: 1,title: サンプルの動作を確認する,state: open,body: 検索、ブックマーク、メモ編集を試してみましょう。,user: {login: octocat,avatar_url: ""},updated_at: 2026-11-03T00:00:00Z}}},when: Select an issue,then: {number: 1}}]}
+# given は両 OS のテストの入力として生成される（tools/lib/scenarios.ts）。
+name: github-detail
+feature: features/search
+steps:
+  - id: repository
+    name: Show repository details without fetching twice on redisplay
+    given:
+      repos/get: &repository
+        status: 200
+        body:
+          id: 5000000001
+          name: Hello-World
+          full_name: octocat/Hello-World
+          description: GitHub API を使うネイティブアプリのサンプル。
+          owner:
+            login: octocat
+            avatar_url: ""
+          language: Swift
+          stargazers_count: 120
+          forks_count: 20
+          topics:
+            - swift
+            - android
+            - sample
+          html_url: https://github.com/octocat/Hello-World
+    when: Open repository details and redisplay the screen
+    then:
+      fullName: octocat/Hello-World
+      requests: 1
+  - id: not-found
+    name: Allow retry after a 404
+    given:
+      repos/get:
+        - status: 404
+          body:
+            message: Not Found
+        - *repository
+    when: Open repository details, then refresh after the error
+    then:
+      error: null
+      fullName: octocat/Hello-World
+      requests: 2
+  - id: issue-filter
+    name: Fetch Open and Closed issues separately
+    given:
+      issues/list-for-repo: &issues
+        status: 200
+        body:
+          - &issue
+            id: 5000000002
+            number: 1
+            title: サンプルの動作を確認する
+            state: open
+            body: 検索、ブックマーク、メモ編集を試してみましょう。
+            user:
+              login: octocat
+              avatar_url: ""
+            updated_at: "2026-11-03T00:00:00Z"
+    when: Change the filter from Open to Closed
+    then:
+      state: closed
+      page: 1
+  - id: issue-detail
+    name: Open details for the selected issue number
+    given:
+      issues/list-for-repo: *issues
+      issues/get:
+        status: 200
+        body: *issue
+    when: Select the first issue in the list and open its details
+    then:
+      route: issueDetail(octocat, Hello-World, 1)
+      number: 1

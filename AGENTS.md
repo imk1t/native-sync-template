@@ -18,7 +18,7 @@ A monorepo for developing native iOS (Swift) and Android (Kotlin) apps together.
 Tool versions are pinned in `mise.toml`; check scripts use Bun (TypeScript). Run the following after changes:
 
 ```sh
-bun tools/generate.ts     # Regenerate after changing DESIGN.md tokens, OpenAPI, routes, or localization
+bun tools/generate.ts     # Regenerate after changing DESIGN.md tokens, OpenAPI, routes, localization, or API responses in scenarios
 mise run check            # Formatting, types, tooling tests, dependencies, generated files, spec alignment, scenarios (same as CI)
 mise run lint             # SwiftLint and ktlint after Swift/Kotlin changes
 mise run fmt              # bun fmt after changing TypeScript in tools/
@@ -38,7 +38,7 @@ Record alignment with `bun tools/check-spec-sync.ts --update both <module-path>`
 - Keep generated DTOs and APIClient inside `shared/github-rest`; `core/network` holds only API-independent transport. Expose domain models through handwritten wrappers such as `DefaultGitHubAPI`.
 - Use `core/navigation`'s `Navigator` (`push`, `present`, etc.) for all navigation. Do not open screens directly with `NavigationLink` or similar APIs. When adding a screen, register it in `specs/routes.yaml`, document it under “Navigation” in the feature's spec, and add the app-layer `Route` → screen mapping ([ADR 0002](docs/adr/0002-navigation.md)).
 - Document intentional platform differences under “Platform differences” in `spec.md`. Undocumented differences are bugs.
-- Implement every step in `specs/scenarios` in both platforms' tests, annotated with `// @scenario <scenario-name>/<id>`.
+- Implement every step in `specs/scenarios` in both platforms' tests, annotated with `// @scenario <scenario-name>/<id>`. Tests must take API responses from the generated `ScenarioFixtures.<Scenario>.<step>` (`ScenarioTransport`), never from hand-written copies.
 - Dependencies: `core/extensions` has no internal dependencies; `core/utils` may depend only on `core/extensions`; other `core/*` may depend only on other `core/*`; `shared/designsystem` may depend only on `core/utils`, `core/extensions`, and `core/font`; other `shared/*` may depend only on `core/*` (no shared-to-shared dependencies); `features/*` may depend only on `shared/*` and `core/*` (no feature-to-feature dependencies). Add a dependency only when it is used.
 - Put general extensions of standard types in `core/extensions` and general operations exposed through dedicated types in `core/utils`. Keep feature-, business-, and UI-specific extensions in their owning modules. Use properties for queries and predicates, functions for transformations. Do not expose the same operation through both a utility and an extension.
 - Use third-party libraries through `core/*` wrappers and record both platforms in `specs/third-party.yaml`. `core/extensions` and `core/utils` must not depend on third-party libraries (the standard library, Foundation, and JDK are allowed). AndroidX, Kotlin, and kotlinx are official infrastructure and may be used directly outside those two modules; they do not require library mappings. Test dependencies are exempt.

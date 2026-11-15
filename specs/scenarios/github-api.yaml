@@ -1,2 +1,125 @@
 # Use matching @scenario markers in both platforms' tests.
-{name: github-api,feature: shared/github-rest,steps: [{id: nullable,name: Accept 64-bit IDs and null values and reject missing required keys,given: &given {search/repos: {status: 200,body: {total_count: 1,incomplete_results: false,items: [{id: 5000000001,name: Hello-World,full_name: octocat/Hello-World,description: GitHub API を使うネイティブアプリのサンプル。,owner: {login: octocat,avatar_url: ""},language: Swift,stargazers_count: 120,forks_count: 20,topics: [swift,android,sample],html_url: https://github.com/octocat/Hello-World}]}}},when: Decode a response containing null values and unknown fields,then: {id: 5000000001,missingRequired: error}},{id: pull-requests,name: Preserve Link pagination even for PR-only pages,given: {issues/list-for-repo: {status: 200,headers: {Link: "<https://api.github.com/repos/octocat/Hello-World/issues?page=2>; rel=\"next\""},body: []}},when: Filter pull requests and read null authors and omitted bodies,then: {count: 0,nextPage: 2,author: null,body: null}},{id: search-limit,name: Expose the 1000-result limit and incomplete results,given: *given,when: Receive page 50 of a search exceeding the result limit,then: {nextPage: null,limitReached: true,incomplete: true}},{id: rate-limit,name: Suppress requests until the retry time for 403 and 429 rate limits,given: {search/repos: {status: 429,headers: {Retry-After: "120"},body: {message: rate limit}}},when: Send twice and retry after the waiting period,then: {requestsBeforeDeadline: 1,requestsAfterDeadline: 2}},{id: ordinary-forbidden,name: Distinguish ordinary 403 responses from rate limits,given: {repos/get: {status: 403,body: {message: Forbidden}}},when: Retry after an ordinary 403,then: {error: forbidden,requests: 2}}]}
+# given は両 OS のテストの入力として生成される（tools/lib/scenarios.ts）。
+name: github-api
+feature: shared/github-rest
+steps:
+  - id: path-encoding
+    name: Percent-encode each path segment
+    given:
+      repos/get:
+        status: 200
+        body: &repository
+          id: 5000000001
+          name: Hello-World
+          full_name: octocat/Hello-World
+          description: null
+          owner:
+            login: octocat
+            avatar_url: ""
+          language: null
+          stargazers_count: 0
+          forks_count: 0
+          html_url: https://github.com/octocat/Hello-World
+    when: Fetch a repository whose owner and name contain slashes
+    then:
+      path: /repos/owner%2Fname/repo%2Fname
+  - id: nullable
+    name: Accept 64-bit IDs, null values, and unknown fields, and reject missing required keys
+    given:
+      search/repos:
+        status: 200
+        body:
+          total_count: 1
+          incomplete_results: false
+          items:
+            - id: 5000000001
+              name: Hello-World
+              full_name: octocat/Hello-World
+              description: null
+              owner: null
+              language: null
+              stargazers_count: 0
+              forks_count: 0
+              html_url: https://github.com/octocat/Hello-World
+    when: Decode the response, then add an unknown field, then remove the required description key
+    then:
+      id: 5000000001
+      owner: octocat
+      missingRequired: error
+  - id: pull-requests
+    name: Preserve Link pagination even for PR-only pages
+    given:
+      issues/get:
+        status: 200
+        body:
+          id: 5000000002
+          number: 1
+          title: Test issue
+          state: open
+          user: null
+          updated_at: "2026-11-03T00:00:00Z"
+      issues/list-for-repo:
+        status: 200
+        headers:
+          Link: <https://api.github.com/repos/octocat/Hello-World/issues?page=2>; rel="next"
+        body:
+          - id: 5000000002
+            number: 1
+            title: Test issue
+            state: open
+            user: null
+            updated_at: "2026-11-03T00:00:00Z"
+            pull_request:
+              url: https://api.github.com/repos/octocat/Hello-World/pulls/1
+    when: Read an issue with a null author and an omitted body, then list a page that contains only a pull request
+    then:
+      author: null
+      body: null
+      count: 0
+      nextPage: 2
+  - id: search-limit
+    name: Expose the 1000-result limit and incomplete results
+    given:
+      search/repos:
+        status: 200
+        headers:
+          LINK: <https://api.github.com/search/repositories?page=51>; rel="next"
+        body:
+          total_count: 1001
+          incomplete_results: true
+          items:
+            - *repository
+    when: Receive page 50 of a search exceeding the result limit
+    then:
+      nextPage: null
+      limitReached: true
+      incomplete: true
+  - id: rate-limit
+    name: Suppress requests until the retry time for 403 and 429 rate limits
+    given:
+      search/repos:
+        - status: 403
+          headers:
+            X-RateLimit-Remaining: "0"
+            X-RateLimit-Reset: "1120"
+        - status: 429
+          headers:
+            Retry-After: "120"
+        - status: 403
+          body:
+            message: secondary rate limit
+    when: For each kind of rate-limit response at time 1000, send twice and retry after 121 seconds
+    then:
+      requestsBeforeDeadline: 1
+      requestsAfterDeadline: 2
+  - id: ordinary-forbidden
+    name: Distinguish ordinary 403 responses from rate limits
+    given:
+      repos/get:
+        status: 403
+        body:
+          message: Forbidden
+    when: Retry after an ordinary 403
+    then:
+      error: forbidden
+      requests: 2

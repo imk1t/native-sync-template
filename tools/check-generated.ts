@@ -2,13 +2,14 @@
 import { dirname } from "node:path";
 import { generate, OUTPUTS } from "./generate";
 import { ROOTS } from "./lib/localization";
+import { PATHSPECS } from "./lib/scenarios";
 import { ROOT, sorted } from "./lib/util";
 
 export function main(root: string = ROOT): number {
   generate(root);
   // diff だけでは、削除後に再生成された未追跡ファイルを検出できない。
   const dirs = sorted(new Set([...Object.values(OUTPUTS).map((path) => dirname(path)), ...ROOTS]));
-  const result = Bun.spawnSync(["git", "status", "--porcelain", "--untracked-files=all", "--", ...dirs], {
+  const result = Bun.spawnSync(["git", "status", "--porcelain", "--untracked-files=all", "--", ...dirs, ...PATHSPECS], {
     cwd: root,
     stderr: "inherit",
   });

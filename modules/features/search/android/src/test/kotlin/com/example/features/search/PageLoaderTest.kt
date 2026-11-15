@@ -19,8 +19,6 @@ import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PageLoaderTest {
-    // @scenario github-search/empty
-    // @scenario github-search/pagination
     @Test fun emptyAndPagingRetainContentAfterFailure() = runTest {
         val loader = PageLoader<RepositorySummary> { it.id }
         loader.load(1) { Page(emptyList()) }

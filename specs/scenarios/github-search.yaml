@@ -1,10 +1,11 @@
+# given は両 OS のテストの入力として生成される（tools/lib/scenarios.ts）。
 name: github-search
 feature: features/search
 steps:
   - id: load-succeeds
     name: Show submitted search results without fetching twice on redisplay
     given: &a1
-      search/repos:
+      search/repos: &ok
         status: 200
         body:
           total_count: 1
@@ -48,9 +49,10 @@ steps:
     name: Display failures and allow manual retry
     given:
       search/repos:
-        status: 500
-        body:
-          message: failed
+        - status: 500
+          body:
+            message: failed
+        - *ok
     when: Retry after a fetch failure and return 200
     then:
       count: 1
@@ -70,15 +72,58 @@ steps:
       count: 0
   - id: pagination
     name: Preserve items after pagination failure and handle duplicate IDs and the final page
-    given: *a1
+    given:
+      search/repos:
+        - status: 200
+          headers:
+            Link: <https://api.github.com/search/repositories?page=2>; rel="next"
+          body:
+            total_count: 1001
+            incomplete_results: true
+            items:
+              - &first
+                id: 1
+                name: first
+                full_name: octocat/first
+                description: null
+                owner:
+                  login: octocat
+                  avatar_url: ""
+                language: null
+                stargazers_count: 0
+                forks_count: 0
+                html_url: https://github.com/octocat/first
+        - status: 500
+          body:
+            message: failed
+        - status: 200
+          body:
+            total_count: 1001
+            incomplete_results: true
+            items:
+              - *first
+              - id: 2
+                name: second
+                full_name: octocat/second
+                description: null
+                owner:
+                  login: octocat
+                  avatar_url: ""
+                language: null
+                stargazers_count: 0
+                forks_count: 0
+                html_url: https://github.com/octocat/second
     when: Fetch one item, fail page two, then retry with two items including a duplicate
     then:
+      idsAfterFailure:
+        - 1
+      nextPageAfterFailure: 2
       ids:
         - 1
         - 2
       nextPage: null
-      incomplete: Display the API value
-      limitReached: Display the API value
+      incomplete: true
+      limitReached: true
   - id: stale-response
     name: Ignore delayed results from previous search conditions
     given: &a2

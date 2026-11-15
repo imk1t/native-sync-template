@@ -6,8 +6,6 @@ import Testing
 
 @MainActor
 struct PageLoaderTests {
-    // @scenario github-search/empty
-    // @scenario github-search/pagination
     @Test func emptyAndPagingRetainContentAfterFailure() async {
         let loader = PageLoader<RepositorySummary>()
         await loader.load(page: 1) { Page(items: []) }

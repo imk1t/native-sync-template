@@ -52,6 +52,24 @@ describe("check-scenarios", () => {
     updateGiven({ "search/repos": { status: 200, body: { total_count: "1", incomplete_results: false, items: [] } } });
     expectFails("int32 ではありません");
   });
+  test("テストが生成データを使っていないと失敗する", () => {
+    replace(root, IOS_TEST, "ScenarioFixtures.GithubSearch.loadFails", "ScenarioFixtures.GithubSearch.empty");
+    expectFails("ios: テストが `ScenarioFixtures.GithubSearch.loadFails` を使っていません");
+  });
+  test("given にレスポンスを順に並べられる", () => {
+    updateGiven({ "search/repos": [{ status: 500, body: { message: "failed" } }, { status: 429 }] });
+    const { code, output } = capture(main, root);
+    expect(output).not.toContain("search/repos");
+    expect(code, output).toBe(0);
+  });
+  test("配列の中のレスポンスも検査する", () => {
+    updateGiven({ "search/repos": [{ status: 500, body: { message: "failed" } }, { status: "x" }] });
+    expectFails("given.search/repos[1].status: HTTP ステータスが必要です");
+  });
+  test("空の配列は失敗する", () => {
+    updateGiven({ "search/repos": [] });
+    expectFails("レスポンスを 1 件以上書いてください");
+  });
   test("step id の重複は失敗する", () => {
     replace(root, SCENARIO, "id: load-fails", "id: load-succeeds");
     expectFails("重複しています: load-succeeds");
